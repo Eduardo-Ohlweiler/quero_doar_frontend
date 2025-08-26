@@ -6,8 +6,12 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider} from "./context/AuthContext ";
 import CreateUser from "./pages/CreateUser";
+import CreateDonation from "./pages/CreateDonation";
+import UserDonation from "./pages/UserDonation";
+import User from "./pages/User";
+
+
 function App() {
- 
 
   return (
     <AuthProvider>
@@ -22,6 +26,26 @@ function App() {
                 <Home/>
               </ProtectedRoute>
             } />
+
+            <Route path="/createdonation" element={
+              <ProtectedRoute>
+                <CreateDonation/>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/userdonation" element={
+              <ProtectedRoute>
+                <UserDonation/>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/user" element={
+              <ProtectedRoute>
+                <User/>
+              </ProtectedRoute>
+            } />
+
+
         </Routes>
       </Router>
       </AuthProvider>
