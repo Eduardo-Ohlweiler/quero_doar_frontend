@@ -1,1 +1,6 @@
 @import 'tailwindcss';
+
+:root {
+	--color-primary: #00c48c;
+    --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%);
+}
