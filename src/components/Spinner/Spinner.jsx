@@ -13,6 +13,7 @@ export default function Spinner({
     return (
         <div
             className={twMerge(clsx(spinnerStyles({ size, strokeWidth, color }), className))}
+            data-testid='loading-spinner'
             aria-label="Carregando..."
             {...rest}
         >
