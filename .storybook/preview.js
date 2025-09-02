@@ -17,4 +17,6 @@ const preview = {
   },
 };
 
+import '../src/index.css'; // Adicionado para carregar os estilos do Tailwind
+
 export default preview;
