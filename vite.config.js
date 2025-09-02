@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import svgr from 'vite-plugin-svgr';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
@@ -11,7 +12,7 @@ const dirname = typeof __dirname !== 'undefined'
   : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), svgr()],
   test: {
     projects: [
       // Projeto 1: Storybook
@@ -35,7 +36,7 @@ export default defineConfig({
       },
       // Projeto 2: Unit tests
       {
-        plugins: [react(), tailwindcss()],
+        plugins: [react(), tailwindcss(), svgr()],
         test: {
           name: 'unit',
           globals: true,
