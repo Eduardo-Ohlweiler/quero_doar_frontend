@@ -1,11 +1,12 @@
 import axios from 'axios';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 class ApiService {
     constructor() {
         if (!ApiService.instance) {
             ApiService.instance = this;
             this.api = axios.create({
-                baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/api',
+                baseURL,
                 withCredentials: true,
                 headers: {
                     'Accept': 'application/json',
