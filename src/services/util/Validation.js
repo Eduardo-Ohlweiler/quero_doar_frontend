@@ -1,20 +1,20 @@
-export default class Validation {
+class Validation {
     static isEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
     static objectHasAllAttributes(attributesNames, obj) {
-        if(!obj || typeof obj !== 'object') {
+        if (!obj || typeof obj !== 'object') {
             return false;
         }
-        return attributesNames.every(attr => obj.hasOwnProperty(attr) && obj[attr] !== undefined);
+        return attributesNames.every(attr => Object.prototype.hasOwnProperty.call(obj, attr) && obj[attr] !== undefined);
     }
 
     static jsonHasAllAttributes(attributesNames, json) {
         try {
             const obj = JSON.parse(json);
-            return this.objectHasAllAttributes(attributesNames, obj);
+            return Validation.objectHasAllAttributes(attributesNames, obj);
         } catch (e) {
             return false;
         }
@@ -22,7 +22,7 @@ export default class Validation {
 
     static isType(value, type) {
         if (Array.isArray(type)) {
-            return type.some(t => this.isType(value, t));
+            return type.some(t => Validation.isType(value, t));
         }
 
         if (typeof type === 'string') {
@@ -43,39 +43,33 @@ export default class Validation {
         }
 
         if (typeof type === 'function') {
-            // handle primitive constructors
             if (type === String) return typeof value === 'string';
             if (type === Number) return typeof value === 'number' && !Number.isNaN(value);
             if (type === Boolean) return typeof value === 'boolean';
             if (type === Array) return Array.isArray(value);
             if (type === Object) return value !== null && typeof value === 'object' && !Array.isArray(value);
             if (type === Date) return value instanceof Date && !isNaN(value.valueOf());
-            // fallback to instanceof for custom classes
             return value instanceof type;
         }
 
         return false;
     }
 
-    // valida um objeto contra um schema de tipos
-    // schema example: { street: 'string', number: ['string','null'], tags: Array, meta: Object }
     static objectTypesMatch(schema, obj) {
         if (!schema || typeof schema !== 'object') throw new Error('Schema inválido');
         if (!obj || typeof obj !== 'object') throw new Error('Objeto inválido');
 
         return Object.keys(schema).every((key) => {
             const expected = schema[key];
-            // se a propriedade não existe no objeto, considera inválido
             if (!Object.prototype.hasOwnProperty.call(obj, key)) return false;
-            return this.isType(obj[key], expected);
+            return Validation.isType(obj[key], expected);
         });
     }
-
-    //TODO: Validar no backend os requisitos de senha
-    // static isPassword(password) {
-    //     // Pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial
-    //     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    //     return passwordRegex.test(password);
-    // }
-
 }
+
+export const isEmail = Validation.isEmail;
+export const objectHasAllAttributes = Validation.objectHasAllAttributes;
+export const jsonHasAllAttributes = Validation.jsonHasAllAttributes;
+export const isType = Validation.isType;
+export const objectTypesMatch = Validation.objectTypesMatch;
+export default Validation;
