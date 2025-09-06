@@ -20,6 +20,8 @@ class Validation {
         }
     }
 
+    // Example usage:
+    // Validation.isType('hello', 'string'); // true
     static isType(value, type) {
         if (Array.isArray(type)) {
             return type.some(t => Validation.isType(value, t));
@@ -55,6 +57,10 @@ class Validation {
         return false;
     }
 
+    // Example usage:
+    // const schema = { name: 'string', age: 'number', isActive: ['boolean', 'null'] };
+    // const obj = { name: 'John', age: 30, isActive: true };
+    // Validation.objectTypesMatch(schema, obj); // true
     static objectTypesMatch(schema, obj) {
         if (!schema || typeof schema !== 'object') throw new Error('Schema inválido');
         if (!obj || typeof obj !== 'object') throw new Error('Objeto inválido');
