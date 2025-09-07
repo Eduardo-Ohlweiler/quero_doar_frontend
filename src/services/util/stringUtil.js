@@ -38,5 +38,6 @@ export default class StringUtil  {
         const finalUrl = basePath + queryString + fragment;
         return finalUrl;
     }
-
 }
+
+export const buildLink = StringUtil.buildLink;
