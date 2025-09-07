@@ -1,4 +1,4 @@
-import { objectTypesMatch } from '../util/Validation.js';
+import { objectTypesMatch } from '../../util/Validation';
 
 export default class VAddressDTO {
     constructor(
