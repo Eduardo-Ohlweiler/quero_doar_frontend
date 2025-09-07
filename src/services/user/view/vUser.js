@@ -1,8 +1,8 @@
-import { objectTypesMatch } from '../../util/Validation.js';
-import VUserStatisticDTO from '../dto/VUserStatisticDTO.js'
-import VAddressDTO from '../../../address/dto/vAddressDTO.js';
-import VUserDonationAchievementDTO from '../../dto/VUserDonationAchievementDTO.js';
-import VUserFeedbackAchievementDTO from '../../dto/VUserFeedbackAchievementDTO.js';
+import { objectTypesMatch } from '../../util/Validation';
+import VUserStatisticDTO from '../dto/VUserStatisticDTO'
+import VAddressDTO from '../../address/dto/vAddressDTO';
+import VUserDonationAchievementDTO from '../../gaming/dto/VUserDonationAchievementDTO';
+import VUserFeedbackAchievementDTO from '../../gaming/dto/VUserFeedbackAchievementDTO';
 
 export default class VUser {
     constructor(
