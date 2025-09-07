@@ -13,6 +13,10 @@ class ApiService {
         });     
     }
 
+    getAxiosInstance() {
+        return this.api;
+    }
+
     setAuthToken(token) {
         if (token && typeof token === 'string') {
             this.api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
