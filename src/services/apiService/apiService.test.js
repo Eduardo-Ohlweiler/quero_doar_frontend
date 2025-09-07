@@ -13,7 +13,7 @@ describe('ApiService', () => {
 
     beforeEach(() => {
         // Guardar instância original e substituir por mock para evitar chamadas de rede
-        originalApiInstance = apiService.getInstance();
+        originalApiInstance = apiService.getAxiosInstance();
 
         // Mock da instância do axios
         mockApiInstance = {
@@ -46,7 +46,7 @@ describe('ApiService', () => {
 
     describe('Configuração da instância do axios', () => {
         it('CT4: deve configurar baseURL e headers padrão corretamente', () => {
-            const instance = apiService.getInstance();
+            const instance = apiService.getAxiosInstance();
             expect(instance.defaults.baseURL).toBe('http://localhost:3000/api');
             expect(instance.defaults.withCredentials).toBe(true);
         });
