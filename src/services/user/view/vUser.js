@@ -1,4 +1,8 @@
 import { objectTypesMatch } from '../../util/Validation.js';
+import VUserStatisticDTO from '../dto/VUserStatisticDTO.js'
+import VAddressDTO from '../../../address/dto/vAddressDTO.js';
+import VUserDonationAchievementDTO from '../../dto/VUserDonationAchievementDTO.js';
+import VUserFeedbackAchievementDTO from '../../dto/VUserFeedbackAchievementDTO.js';
 
 export default class VUser {
     constructor(
@@ -27,10 +31,10 @@ export default class VUser {
         this.verified = verified ?? null;
         this.role = role ?? null;
         this.photo = photo ?? null;
-        this.vUserStatistic = vUserStatistic ?? null;
-        this.vAddress = vAddress ?? null;
-        this.vUserDonationAchievement = vUserDonationAchievement ?? null;
-        this.vUserFeedbackAchievement = vUserFeedbackAchievement ?? null;
+        this.vUserStatistic = vUserStatistic !== null ? VUserStatisticDTO.fromJson(vUserStatistic) : vUserStatistic;
+        this.vAddress = vAddress !== null ? VAddressDTO.fromJson(vAddress) : vAddress;
+        this.vUserDonationAchievement = vUserDonationAchievement !== null ? VUserDonationAchievementDTO.fromJson(vUserDonationAchievement) : vUserDonationAchievement;
+        this.vUserFeedbackAchievement = vUserFeedbackAchievement !== null ? VUserFeedbackAchievementDTO.fromJson(vUserFeedbackAchievement) : vUserFeedbackAchievement;
     }
 
     static schema = {
@@ -68,10 +72,10 @@ export default class VUser {
             verified: obj.verified,
             role: obj.role,
             photo: obj.photo,
-            vUserStatistic: statistic,
-            vAddress: address,
-            vUserDonationAchievement: donationAchievements,
-            vUserFeedbackAchievement: feedbackAchievements,
+            vUserStatistic: obj.vUserStatistic,
+            vAddress: obj.vAddress,
+            vUserDonationAchievement: obj.vUserDonationAchievement,
+            vUserFeedbackAchievement: obj.vUserFeedbackAchievement,
         });
 
         if(!vUser.vUserStatistic.isValid()) {
