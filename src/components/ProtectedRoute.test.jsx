@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import { AuthProvider, useAuth } from '../context/AuthContext .jsx';
+import { AuthProvider, useAuth } from '../context/AuthContext.jsx';
 
 // Mock do authService
 vi.mock('../services/auth/authService.js', () => ({
