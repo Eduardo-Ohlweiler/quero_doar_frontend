@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import { AuthProvider, useAuth } from '../context/AuthContext.jsx';
+import { AuthProvider, useAuth } from '../../context/AuthContext.jsx';
 
 // Mock do authService
 vi.mock('../services/auth/authService.js', () => ({
@@ -14,12 +14,16 @@ vi.mock('../services/auth/authService.js', () => ({
     }
 }));
 
-// Mock do useAuth para controlar os estados nos testes
-vi.mock('../context/AuthContext .jsx', async () => {
-    const actual = await vi.importActual('../context/AuthContext .jsx');
+// Corrigindo o mock do useAuth para evitar erros nos testes
+vi.mock('../../context/AuthContext.jsx', async () => {
+    const actual = await vi.importActual('../../context/AuthContext.jsx');
     return {
         ...actual,
-        useAuth: vi.fn()
+        useAuth: vi.fn(() => ({
+            isAuthenticated: false,
+            loading: false,
+            user: null
+        }))
     };
 });
 
