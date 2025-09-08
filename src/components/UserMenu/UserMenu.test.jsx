@@ -119,22 +119,25 @@ describe("UserMenu component", () => {
     // Abrir menu
     const trigger = screen.getByTestId("user-menu-trigger");
     await user.click(trigger);
-    expect(screen.getByTestId("user-menu-dropdown")).toBeInTheDocument();
+    const dropdown = screen.getByTestId("user-menu-dropdown");
+    expect(dropdown.className).toContain('opacity-100');
     
     // Clicar fora
     fireEvent.mouseDown(document.body);
     await waitFor(() => {
-      expect(screen.queryByTestId("user-menu-dropdown")).not.toBeInTheDocument();
+      expect(dropdown.className).toContain('opacity-0');
     });
     
     // Reabrir menu
     await user.click(trigger);
-    expect(screen.getByTestId("user-menu-dropdown")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(dropdown.className).toContain('opacity-100');
+    });
     
     // Pressionar ESC
     fireEvent.keyDown(document, { key: 'Escape' });
     await waitFor(() => {
-      expect(screen.queryByTestId("user-menu-dropdown")).not.toBeInTheDocument();
+      expect(dropdown.className).toContain('opacity-0');
     });
   });
 
@@ -195,12 +198,95 @@ describe("UserMenu component", () => {
     // Abrir menu
     const trigger = screen.getByTestId("user-menu-trigger");
     await user.click(trigger);
-    expect(screen.getByTestId("user-menu-dropdown")).toBeInTheDocument();
+    const dropdown = screen.getByTestId("user-menu-dropdown");
+    expect(dropdown.className).toContain('opacity-100');
     
     // Selecionar uma opção
     await user.click(screen.getByTestId("menu-item-profile"));
     
     // Verificar se o menu fechou
-    expect(screen.queryByTestId("user-menu-dropdown")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(dropdown.className).toContain('opacity-0');
+    });
+  });
+
+  //CT10: Testar diferentes tamanhos
+  it("CT10: aplica classes corretas para diferentes tamanhos", () => {
+    const sizes = ["small", "medium", "large"];
+    
+    sizes.forEach((size) => {
+      cleanup();
+      render(<UserMenu user={defaultUser} size={size} {...mockCallbacks} />);
+      const trigger = screen.getByTestId("user-menu-trigger");
+      
+      // Verificar se as classes de tamanho são aplicadas
+      expect(trigger.className).toContain(
+        size === 'small' ? 'px-2 py-1.5' : 
+        size === 'large' ? 'px-4 py-3' : 
+        'px-3 py-2'
+      );
+    });
+  });
+
+  //CT11: Testar diferentes aparências
+  it("CT11: aplica classes corretas para diferentes aparências", () => {
+    const appearances = ["primary", "secondary", "ghost"];
+    
+    appearances.forEach((appearance) => {
+      cleanup();
+      render(<UserMenu user={defaultUser} appearance={appearance} {...mockCallbacks} />);
+      const trigger = screen.getByTestId("user-menu-trigger");
+      
+      // Verificar se as classes de aparência são aplicadas
+      expect(trigger.className).toContain(
+        appearance === 'primary' ? 'bg-[var(--color-primary)]' : 
+        appearance === 'ghost' ? 'bg-transparent' : 
+        'bg-white'
+      );
+    });
+  });
+
+  //CT12: Testar funcionalidade showUserName
+  it("CT12: controla exibição do nome do usuário", () => {
+    // Com nome
+    const { rerender } = render(<UserMenu user={defaultUser} showUserName={true} {...mockCallbacks} />);
+    expect(screen.getByText("Maria Silva")).toBeInTheDocument();
+    
+    // Sem nome
+    rerender(<UserMenu user={defaultUser} showUserName={false} {...mockCallbacks} />);
+    expect(screen.queryByText("Maria Silva")).not.toBeInTheDocument();
+    expect(screen.getByText("MS")).toBeInTheDocument(); // Iniciais ainda devem aparecer
+  });
+
+  //CT13: Testar repasse de avatarProps
+  it("CT13: repassa propriedades para o UserAvatar", () => {
+    render(
+      <UserMenu 
+        user={defaultUser} 
+        avatarProps={{ frame: true, showLevel: true, level: "10" }}
+        {...mockCallbacks} 
+      />
+    );
+    
+    // Verificar se nível aparece
+    expect(screen.getByText("10")).toBeInTheDocument();
+  });
+
+  //CT14: Testar fixedWidth
+  it("CT14: aplica largura fixa quando habilitada", async () => {
+    const user = userEvent.setup();
+    render(<UserMenu user={defaultUser} fixedWidth={true} {...mockCallbacks} />);
+    
+    await user.click(screen.getByTestId("user-menu-trigger"));
+    const dropdown = screen.getByTestId("user-menu-dropdown");
+    
+    expect(dropdown.className).toContain('left-0 right-0');
+  });
+
+  //CT15: Testar aplicação de className customizada
+  it("CT15: aplica className customizada", () => {
+    render(<UserMenu user={defaultUser} className="custom-class" {...mockCallbacks} />);
+    const container = screen.getByTestId("user-menu-trigger").parentElement;
+    expect(container).toHaveClass('custom-class');
   });
 });
