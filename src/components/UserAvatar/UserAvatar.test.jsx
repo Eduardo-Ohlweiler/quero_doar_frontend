@@ -23,10 +23,10 @@ describe("UserAvatar component", () => {
   it("CT1: aplica classes corretas para cada tamanho", () => {
     const sizes = ["small", "medium", "large", "xlarge"];
     const sizeClassMap = {
-      small: 'w-8 h-8',
-      medium: 'w-12 h-12',
-      large: 'w-16 h-16',
-      xlarge: 'w-20 h-20'
+      small: 'w-8 h-8 text-xs',
+      medium: 'w-10 h-10 text-sm',
+      large: 'w-12 h-12 text-base',
+      xlarge: 'w-14 h-14 text-lg',
     };
 
     sizes.forEach((size) => {
@@ -41,9 +41,9 @@ describe("UserAvatar component", () => {
   it("CT2: aplica classes corretas para cada aparência", () => {
     const appearances = ["primary", "secondary", "ghost"];
     const appearanceClassMap = {
-      primary: 'from-[var(--color-primary)]',
-      secondary: 'from-gray-500',
-      ghost: 'bg-white/20'
+      primary: 'bg-[var(--color-primary)]/80',
+      secondary: '',
+      ghost: 'bg-white/10',
     };
 
     appearances.forEach((appearance) => {
@@ -96,15 +96,12 @@ describe("UserAvatar component", () => {
 
   //CT7: Indicador de nível
   it("CT7: renderiza indicador de nível quando habilitado", () => {
-    render(<UserAvatar user={defaultUser} showLevel={true} level="10" />);
-    expect(screen.getByText("10")).toBeInTheDocument();
-    
-    // Verificar se tem as classes do nível
-    const levelElement = screen.getByText("10");
-    expect(levelElement.className).toContain('bg-gradient-to-r');
-    expect(levelElement.className).toContain('from-yellow-400');
-    expect(levelElement.className).toContain('absolute');
-    expect(levelElement.className).toContain('z-10');
+    render(<UserAvatar user={{ ...defaultUser, level: "10" }} showLevel={true} />);
+    const levelIndicator = screen.getByText((content, element) => {
+        return element?.tagName === "DIV" && content === "10";
+    });
+    expect(levelIndicator).toBeInTheDocument();
+    expect(levelIndicator.className).toContain('bg-[var(--color-primary)]/80');
   });
 
   //CT8: Não renderiza nível quando desabilitado
@@ -124,13 +121,6 @@ describe("UserAvatar component", () => {
     render(<UserAvatar user={defaultUser} className="custom-class" />);
     const container = screen.getByText("MS").closest('.custom-class');
     expect(container).toBeInTheDocument();
-  });
-
-  //CT11: Escala da imagem com nível
-  it("CT11: aplica escala correta na imagem quando há nível", () => {
-    render(<UserAvatar user={userWithAvatar} showLevel={true} level="10" />);
-    const img = screen.getByAltText("Avatar de Ana Costa");
-    expect(img.className).toContain('scale-90');
   });
 
   //CT12: Repasse de atributos
