@@ -20,18 +20,36 @@ const Header = ({
   return (
     <header className={twMerge(clsx(headerStyles(), className))}>
       <div className="flex items-center justify-between w-full px-4 py-2">
-        <Logo />
-        {showSearchBar && <SearchBar className="w-[50vw] max-w-[800px]" appearance="outlined" onSearch={onSearch} placeholder="Buscar..." />}
-        <div className="flex items-center gap-4">
-          {isAuthenticated ? (
-            <UserMenu user={user} appearance="secondary" />
-          ) : (
-            showLoginButton && (
-              <Button appearance="secondary" onClick={onLogin}>
-                Entrar
-              </Button>
-            )
+        {/* Left: fixed width area for logo to match actions width */}
+        <div className="w-48 flex items-center justify-start">
+          <Logo />
+        </div>
+
+        {/* Center: flexible search area that keeps size regardless of auth state */}
+        <div className="flex-1 flex justify-center px-4">
+          {showSearchBar && (
+            <SearchBar
+              className="w-full max-w-[800px]"
+              appearance="outlined"
+              onSearch={onSearch}
+              placeholder="Buscar..."
+            />
           )}
+        </div>
+
+        {/* Right: fixed width area for actions (user menu or login) */}
+        <div className="w-48 flex items-center justify-end">
+          <div className="flex items-center gap-4">
+            {isAuthenticated ? (
+              <UserMenu user={user} appearance="secondary" />
+            ) : (
+              showLoginButton && (
+                <Button appearance="secondary" onClick={onLogin}>
+                  Entrar
+                </Button>
+              )
+            )}
+          </div>
         </div>
       </div>
     </header>
