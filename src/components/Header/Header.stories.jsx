@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from './Header';
+import { AuthProvider } from '../../context/AuthContext.jsx';
 
 const ZOO_BG = 'https://upload.wikimedia.org/wikipedia/commons/8/8d/San_Diego_Zoo_April_2013_07.JPG';
 
@@ -7,6 +8,7 @@ export default {
   title: 'Components/Header',
   component: Header,
   tags: ['autodocs'],
+  decorators: [(Story) => <AuthProvider><Story/></AuthProvider>],
   parameters: {
     layout: 'fullscreen',
     backgrounds: {

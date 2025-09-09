@@ -2,6 +2,18 @@ import React from "react";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, vi, describe, it, beforeEach } from "vitest";
+// Mock useAuth to avoid requiring AuthProvider in unit tests
+vi.mock('../../context/AuthContext.jsx', () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: true,
+    loading: false,
+    login: vi.fn(),
+    logout: vi.fn(),
+    refreshUser: vi.fn(),
+  })
+}));
+
 import UserMenu from "./UserMenu";
 
 describe("UserMenu component", () => {
@@ -219,11 +231,11 @@ describe("UserMenu component", () => {
       render(<UserMenu user={defaultUser} size={size} {...mockCallbacks} />);
       const trigger = screen.getByTestId("user-menu-trigger");
       
-      // Verificar se as classes de tamanho são aplicadas
+      // Verificar se as classes de tamanho são aplicadas (refletindo UserMenu.styles.jsx)
       expect(trigger.className).toContain(
-        size === 'small' ? 'px-2 py-1.5' : 
-        size === 'large' ? 'px-4 py-3' : 
-        'px-3 py-2'
+        size === 'small' ? 'px-1 py-0.5' : 
+        size === 'large' ? 'px-2 py-1.5' : 
+        'px-1.5 py-1'
       );
     });
   });

@@ -10,6 +10,8 @@ vi.mock('../services/auth/authService.js', () => ({
         login: vi.fn(),
         logout: vi.fn(),
         isUserAuthenticated: vi.fn(),
+        initialize: vi.fn().mockResolvedValue(),
+        refreshCurrentUser: vi.fn().mockResolvedValue(null),
         currentUser: null
     }
 }));
@@ -322,6 +324,8 @@ describe('AuthContext', () => {
             // Simula que o usuário foi autenticado externamente
             authService.isUserAuthenticated.mockReturnValue(true);
             authService.currentUser = mockUser;
+            // Mocka refreshCurrentUser para retornar o usuário ao ser chamado
+            authService.refreshCurrentUser.mockResolvedValue(mockUser);
 
             // Act - Chama refreshUser
             await act(async () => {
