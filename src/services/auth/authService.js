@@ -10,7 +10,18 @@ class AuthService {
         this.currentUser = null;
         this.isAuthenticated = false;
         this.initialized = false;
-        this.#initializeFromStorage();
+    }
+
+    /**
+     * Inicializa o serviço (carrega token do storage se existir e válido)
+     * @returns {Promise<void>}
+     */
+    async initialize() {
+        if (!this.initialized) {
+            await this.#initializeFromStorage();
+        }
+
+        this.initialized = true;
     }
 
     /**
@@ -24,8 +35,6 @@ class AuthService {
             this.isAuthenticated = true;
             this.currentUser = await this.#getCurrentUser();
         }
-
-        this.initialized = true;
     }
 
     /**
@@ -110,8 +119,12 @@ class AuthService {
                 return null;
             }
 
+            // Pegar sub do token jwt
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const userId = payload.sub;
+
             //Pega o usuário atual no backend
-            const user = await userService.GetUserViewSearch(null, credentials.email);
+            const user = await userService.GetUserViewSearch(userId, null);
             this.currentUser = user;
 
             return this.currentUser;
@@ -159,6 +172,15 @@ class AuthService {
             console.error('Erro ao decodificar JWT:', error);
             return false;
         }
+    }
+
+    /**
+     * Atualiza os dados do usuário logado
+     * @returns {Promise<VUser|null>}
+     */
+    async refreshCurrentUser() {
+        this.currentUser = await this.#getCurrentUser();
+        return this.currentUser;
     }
 }
 

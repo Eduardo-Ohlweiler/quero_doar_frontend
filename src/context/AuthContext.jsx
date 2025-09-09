@@ -44,6 +44,9 @@ export const AuthProvider = ({ children }) => {
         const initializeAuth = async () => {
             try {
                 setLoading(true);
+
+                // Aguarda a inicialização do authService
+                await authService.initialize();
                 
                 // Verifica se há token válido armazenado
                 if (authService.isUserAuthenticated()) {
@@ -123,8 +126,9 @@ export const AuthProvider = ({ children }) => {
                 return null;
             }
 
+
             // Note: authService.getCurrentUser() é privado, então usamos currentUser
-            const currentUser = authService.currentUser;
+            const currentUser = await authService.refreshCurrentUser();
             if (currentUser) {
                 setUser(currentUser);
                 setIsAuthenticated(true);
