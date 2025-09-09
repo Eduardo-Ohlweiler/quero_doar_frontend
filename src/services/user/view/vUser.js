@@ -16,10 +16,10 @@ export default class VUser {
         verified,
         role,
         photo,
-        vUserStatistic,
-        vAddress,
-        vUserDonationAchievement,
-        vUserFeedbackAchievement
+        vuserStatistic,
+        vaddress,
+        vuserDonationAchievement,
+        vuserFeedbackAchievement
     ) {
         this.userId = userId ?? null;
         this.name = name ?? null;
@@ -31,10 +31,10 @@ export default class VUser {
         this.verified = verified ?? null;
         this.role = role ?? null;
         this.photo = photo ?? null;
-        this.vUserStatistic = vUserStatistic !== null ? VUserStatisticDTO.fromJson(vUserStatistic) : vUserStatistic;
-        this.vAddress = vAddress !== null ? VAddressDTO.fromJson(vAddress) : vAddress;
-        this.vUserDonationAchievement = vUserDonationAchievement !== null ? VUserDonationAchievementDTO.fromJson(vUserDonationAchievement) : vUserDonationAchievement;
-        this.vUserFeedbackAchievement = vUserFeedbackAchievement !== null ? VUserFeedbackAchievementDTO.fromJson(vUserFeedbackAchievement) : vUserFeedbackAchievement;
+        this.vuserStatistic = vuserStatistic !== null ? VUserStatisticDTO.fromJson(vuserStatistic) : vuserStatistic;
+        this.vaddress = vaddress !== null ? VAddressDTO.fromJson(vaddress) : vaddress;
+        this.vuserDonationAchievement = vuserDonationAchievement !== null ? VUserDonationAchievementDTO.fromJson(vuserDonationAchievement) : vuserDonationAchievement;
+        this.vuserFeedbackAchievement = vuserFeedbackAchievement !== null ? VUserFeedbackAchievementDTO.fromJson(vuserFeedbackAchievement) : vuserFeedbackAchievement;
     }
 
     static schema = {
@@ -48,10 +48,10 @@ export default class VUser {
         verified: ['boolean', 'null'],
         role: ['string', 'null'],
         photo: ['string', 'null'],
-        vUserStatistic: ['object', 'null'],
-        vAddress: ['object', 'null'],
-        vUserDonationAchievement: ['object', 'null'],
-        vUserFeedbackAchievement: ['object', 'null'],
+        vuserStatistic: ['object', 'null'],
+        vaddress: ['object', 'null'],
+        vuserDonationAchievement: ['object', 'null'],
+        vuserFeedbackAchievement: ['object', 'null'],
     };
 
     static fromJson(json) {
@@ -61,37 +61,37 @@ export default class VUser {
             throw new Error('JSON inválido para VUser (campos primitivos)');
         }
 
-        let vUser = new VUser({
-            userId: obj.userId,
-            name: obj.name,
-            email: obj.email,
-            cellPhone: obj.cellPhone,
-            homePhone: obj.homePhone,
-            whatsapp: obj.whatsapp,
-            isActive: obj.isActive,
-            verified: obj.verified,
-            role: obj.role,
-            photo: obj.photo,
-            vUserStatistic: obj.vUserStatistic,
-            vAddress: obj.vAddress,
-            vUserDonationAchievement: obj.vUserDonationAchievement,
-            vUserFeedbackAchievement: obj.vUserFeedbackAchievement,
-        });
+        let vUser = new VUser(
+            obj.userId,
+            obj.name,
+            obj.email,
+            obj.cellPhone,
+            obj.homePhone,
+            obj.whatsapp,
+            obj.isActive,
+            obj.verified,
+            obj.role,
+            obj.photo,
+            obj.vuserStatistic,
+            obj.vaddress,
+            obj.vuserDonationAchievement,
+            obj.vuserFeedbackAchievement,
+        );
 
-        if(!vUser.vUserStatistic.isValid()) {
-            throw new Error('JSON inválido para VUserStatisticDTO');
+        if(vUser.vuserStatistic && !vUser.vuserStatistic.isValid()) {
+            throw new Error('JSON inválido para vuserStatisticDTO');
         }
 
-        if(!vUser.vAddress.isValid()) {
-            throw new Error('JSON inválido para VAddressDTO');
+        if(vUser.vaddress && !vUser.vaddress.isValid()) {
+            throw new Error('JSON inválido para vaddressDTO');
         }
 
-        if(!vUser.vUserDonationAchievement.isValid()) {
-            throw new Error('JSON inválido para VUserDonationAchievementDTO');
+        if(vUser.vuserDonationAchievement && !vUser.vuserDonationAchievement.isValid()) {
+            throw new Error('JSON inválido para vuserDonationAchievementDTO');
         }
 
-        if(!vUser.vUserFeedbackAchievement.isValid()) {
-            throw new Error('JSON inválido para VUserFeedbackAchievementDTO');
+        if(vUser.vuserFeedbackAchievement && !vUser.vuserFeedbackAchievement.isValid()) {
+            throw new Error('JSON inválido para vuserFeedbackAchievementDTO');
         }
 
         return vUser;

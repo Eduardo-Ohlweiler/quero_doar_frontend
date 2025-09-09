@@ -47,7 +47,7 @@ describe('UserService', () => {
 
             const result = await userService.GetUserViewSearch(123);
 
-            expect(apiService.get).toHaveBeenCalledWith('/user/view/search?userId=123');
+            expect(apiService.get).toHaveBeenCalledWith('/api/user/view/search?userId=123');
             expect(VUser.fromJson).toHaveBeenCalledWith(mockUserData);
             expect(result).toBe(mockVUser);
         });
@@ -61,7 +61,7 @@ describe('UserService', () => {
 
             const result = await userService.GetUserViewSearch(null, 'joao@test.com');
 
-            expect(apiService.get).toHaveBeenCalledWith('/user/view/search?email=joao@test.com');
+            expect(apiService.get).toHaveBeenCalledWith('/api/user/view/search?email=joao@test.com');
             expect(VUser.fromJson).toHaveBeenCalledWith(mockUserData);
             expect(result).toBe(mockVUser);
         });
@@ -75,7 +75,7 @@ describe('UserService', () => {
 
             const result = await userService.GetUserViewSearch(789, 'maria@test.com');
 
-            expect(apiService.get).toHaveBeenCalledWith('/user/view/search?userId=789&email=maria@test.com');
+            expect(apiService.get).toHaveBeenCalledWith('/api/user/view/search?userId=789&email=maria@test.com');
             expect(VUser.fromJson).toHaveBeenCalledWith(mockUserData);
             expect(result).toBe(mockVUser);
         });

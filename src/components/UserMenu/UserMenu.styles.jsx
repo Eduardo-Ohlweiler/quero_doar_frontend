@@ -6,9 +6,9 @@ export const userMenuStyles = cva(
     {
         variants: {
             size: {
-                small: 'px-2 py-1.5 text-sm',
-                medium: 'px-3 py-2 text-base',
-                large: 'px-4 py-3 text-lg',
+                small: 'px-1 py-0.5 text-sm',
+                medium: 'px-1.5 py-1 text-base',
+                large: 'px-2 py-1.5 text-lg',
             },
             appearance: {
                 primary: 'text-white bg-[var(--color-primary)]/80 hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary)]/80 disabled:text-white/50',
@@ -60,7 +60,7 @@ export const userMenuDropdownStyles = cva(
             },
             appearance: {
                 primary: 'bg-[var(--color-primary)]/80',
-                secondary: 'bg-white/80',
+                secondary: 'bg-white/90',
                 ghost: 'bg-transparent',
             },
             isOpen: {

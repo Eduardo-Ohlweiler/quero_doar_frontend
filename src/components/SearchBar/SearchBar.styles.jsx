@@ -29,7 +29,8 @@ export const searchInputStyles = cva(
             appearance: {
                 default: 'text-gray-800 placeholder:text-gray-500',
                 minimal: 'text-white placeholder:text-white/70',
-                outlined: 'text-white placeholder:text-white/60',
+                // outlined: 'text-white placeholder:text-white/60',
+                outlined: 'text-black placeholder:text-black/60',
             },
             size: {
                 sm: 'px-2 py-1 text-sm',
@@ -88,7 +89,8 @@ export const searchIconStyles = cva(
             appearance: {
                 default: 'text-gray-500 hover:text-gray-700',
                 minimal: 'text-white/70 hover:text-white',
-                outlined: 'text-white/60 hover:text-white/80',
+                // outlined: 'text-white/60 hover:text-white/80',
+                outlined: 'text-black/60 hover:text-black/80',
             },
             size: {
                 sm: 'w-4 h-4',

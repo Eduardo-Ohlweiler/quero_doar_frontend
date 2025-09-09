@@ -56,7 +56,7 @@ describe('AuthService', () => {
             const result = await authService.login(credentials);
 
             expect(apiService.post).toHaveBeenCalledWith(
-                '/auth/login', 
+                '/api/auth/login', 
                 expect.any(LoginDTO)
             );
             expect(localStorageMock.setItem).toHaveBeenCalledWith('authToken', mockToken);

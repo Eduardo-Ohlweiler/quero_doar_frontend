@@ -10,6 +10,30 @@ import {
     userMenuIconStyles 
 } from './UserMenu.styles';
 import UserAvatar from '../UserAvatar/UserAvatar';
+import { buildLink } from '../../services/util/stringUtil';
+import { useAuth } from '../../context/AuthContext';
+
+const BASE_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const AVATAR_PATH = import.meta.env.VITE_GET_MEDIA_USER_ROUTE || '/media/user';
+const DEFAULT_AVATAR = import.meta.env.VITE_GET_MEDIA_USER_DEFAULT_PHOTO || 'default.webp';
+
+export class user {
+    constructor(firstName, lastName, avatar, isAdmin = false) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.avatar = avatar;
+        this.isAdmin = isAdmin;
+    }
+
+    static fromVUser(vUser) {
+        if (!vUser) return null;
+        const names = vUser.name ? vUser.name.split(' ') : [];
+        const firstName = names.length > 0 ? names[0] : '';
+        const lastName = names.length > 1 ? names[names.length - 1] : '';
+        const avatar = vUser.photo ? buildLink([BASE_API_URL, AVATAR_PATH, vUser.photo]) : buildLink([BASE_API_URL, AVATAR_PATH, DEFAULT_AVATAR]);
+        return new user(firstName, lastName, avatar, vUser.role === 'ADMIN');
+    }
+}
 
 export default function UserMenu({ 
     user,
@@ -26,6 +50,13 @@ export default function UserMenu({
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
     const triggerRef = useRef(null);
+    const { logout } = useAuth();
+
+    // Função para logout que chama o callback
+    const handleLogout = () => {
+        if (onLogout) onLogout();
+        logout();
+    }
 
     // Função para fechar o menu
     const closeMenu = () => setIsOpen(false);
@@ -170,8 +201,8 @@ export default function UserMenu({
                 <div 
                     role="menuitem"
                     tabIndex={0}
-                    onClick={() => handleMenuItemClick(onLogout)}
-                    onKeyDown={(e) => handleMenuItemKeyDown(e, onLogout)}
+                    onClick={() => handleMenuItemClick(handleLogout)}
+                    onKeyDown={(e) => handleMenuItemKeyDown(e, handleLogout)}
                     className={userMenuItemStyles({ size, appearance })}
                     data-testid="menu-item-logout"
                 >

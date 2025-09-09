@@ -1,5 +1,6 @@
 import React from 'react';
 import UserMenu from './UserMenu';
+import { AuthProvider } from '../../context/AuthContext.jsx';
 
 export default {
   title: 'Components/UserMenu',
@@ -17,6 +18,8 @@ export default {
     },
   },
   tags: ['autodocs'],
+  // Wrap stories with AuthProvider so components using useAuth don't throw
+  decorators: [(Story) => <AuthProvider><Story/></AuthProvider>],
   argTypes: {
     user: {
       control: { type: 'object' },
