@@ -3,9 +3,12 @@
 
 import { Outlet, useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
+import { useAuth } from "../../context/AuthContext";
+import { user as userMenuUser } from "../UserMenu/UserMenu";
 
 export default function MainLayout() {
     const navigate = useNavigate();
+    const { isAuthenticated, user } = useAuth();
     const handleLogin = () => {
         navigate('/login');
     }
@@ -17,6 +20,8 @@ export default function MainLayout() {
                 showSearchBar={true}
                 showLoginButton={true}
                 onLogin={handleLogin}
+                isAuthenticated={isAuthenticated}
+                user={userMenuUser.fromVUser(user)}
             />
             <main className={`flex-1`}>
                 <Outlet />
