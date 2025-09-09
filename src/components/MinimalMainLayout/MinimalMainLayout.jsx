@@ -4,12 +4,20 @@ import Header from "../Header/Header";
 
 export default function MinimalMainLayout() {
     return (
-        <>
-            <Header className="fixed top-0 z-60" showSearchBar={false} showLoginButton={false} /> {/* header em variante minimal para login */}
-            <main>
+        <div className="min-h-screen flex flex-col">
+            <Header
+                className="fixed top-0 left-0 right-0 z-60"
+                showSearchBar={false}
+                showLoginButton={false}
+            />
+            <main className="flex-1">
                 <Outlet />
             </main>
-            {/* <Footer /> Adicionar footer quando implementado */}
-        </>
+            {/* Fake Footer */}
+            <div className="h-14 bg-gray-100 flex items-center justify-center">
+                <p className="text-gray-500">© 2024 Quero Doar. Todos os direitos reservados.</p>
+            </div>            
+            {/* <Footer /> */}
+        </div>
     );
 }
