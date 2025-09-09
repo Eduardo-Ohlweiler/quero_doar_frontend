@@ -2,7 +2,7 @@ import apiService from '../apiService/apiService.js';
 import userService from '../user/userService.js';
 import LoginDTO from './dto/loginDto.js';
 
-const AUTH_LOGIN_ROUTE = import.meta.env.VITE_AUTH_LOGIN_ROUTE || '/auth/login';
+const AUTH_LOGIN_ROUTE = import.meta.env.VITE_POST_AUTH_LOGIN_ROUTE || '/auth/login';
 const AUTH_TOKEN_STORAGE_KEY = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY || 'authToken';
 
 class AuthService {
