@@ -21,7 +21,7 @@ const Login = () => {
     }
 
     return (
-        <div className="flex items-center justify-center bg-emerald-700 p-4">
+        <div className="flex items-center justify-center bg-emerald-700 p-4 h-[var(--view-height-minus-header)]">
             <div className="grid grid-cols-2 md:grid-cols-2 bg-emerald-50 rounded-lg shadow-xl overflow-hidden max-w-4xl w-full">
                 <div className="flex flex-col items-center justify-center p-8 text-center bg-emerald-100 text-emerald-950">
                     <h1 className="text-3xl font-bold mb-2">Quero Doar</h1>

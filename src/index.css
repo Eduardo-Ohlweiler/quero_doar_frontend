@@ -4,4 +4,5 @@
 	/* --color-primary: #00c48c; */
 	--color-primary: #00564a;
     --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%);
+	--view-height-minus-header: calc(100vh - 3.5rem);
 }
