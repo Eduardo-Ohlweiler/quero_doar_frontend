@@ -78,4 +78,4 @@ Header.defaultProps = {
 };
 
 export default Header;
-export const HEADER_REM_HEIGHT = 14; // 14rem height for layout calculations
+export const HEADER_REM_HEIGHT = 3.5; // 14rem height for layout calculations
