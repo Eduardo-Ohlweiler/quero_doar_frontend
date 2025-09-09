@@ -63,11 +63,19 @@ class Validation {
     // Validation.objectTypesMatch(schema, obj); // true
     static objectTypesMatch(schema, obj) {
         if (!schema || typeof schema !== 'object') throw new Error('Schema inválido');
-        if (!obj || typeof obj !== 'object') throw new Error('Objeto inválido');
+        if (!obj || typeof obj !== 'object') {
+            console.error('Objeto inválido para validação');
+            console.error(obj);
+            throw new Error('Objeto inválido');
+        } 
 
         return Object.keys(schema).every((key) => {
             const expected = schema[key];
-            if (!Object.prototype.hasOwnProperty.call(obj, key)) return false;
+            if (!Object.prototype.hasOwnProperty.call(obj, key)) {
+                console.error(`Chave ausente: ${key}`);
+                console.error(obj);
+                return false;
+            }
             return Validation.isType(obj[key], expected);
         });
     }
