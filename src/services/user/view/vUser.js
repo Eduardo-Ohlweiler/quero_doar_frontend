@@ -78,19 +78,19 @@ export default class VUser {
             obj.vuserFeedbackAchievement,
         );
 
-        if(!vUser.vuserStatistic.isValid()) {
+        if(vUser.vuserStatistic && !vUser.vuserStatistic.isValid()) {
             throw new Error('JSON inválido para vuserStatisticDTO');
         }
 
-        if(!vUser.vaddress.isValid()) {
+        if(vUser.vaddress && !vUser.vaddress.isValid()) {
             throw new Error('JSON inválido para vaddressDTO');
         }
 
-        if(!vUser.vuserDonationAchievement.isValid()) {
+        if(vUser.vuserDonationAchievement && !vUser.vuserDonationAchievement.isValid()) {
             throw new Error('JSON inválido para vuserDonationAchievementDTO');
         }
 
-        if(!vUser.vuserFeedbackAchievement.isValid()) {
+        if(vUser.vuserFeedbackAchievement && !vUser.vuserFeedbackAchievement.isValid()) {
             throw new Error('JSON inválido para vuserFeedbackAchievementDTO');
         }
 
