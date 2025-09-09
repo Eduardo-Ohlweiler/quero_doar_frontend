@@ -33,6 +33,7 @@ const Header = ({
               appearance="outlined"
               onSearch={onSearch}
               placeholder="Buscar..."
+              iconPosition="right"
             />
           )}
         </div>
