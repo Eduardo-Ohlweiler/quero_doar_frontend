@@ -11,6 +11,7 @@ import {
 } from './UserMenu.styles';
 import UserAvatar from '../UserAvatar/UserAvatar';
 import { buildLink } from '../../services/util/stringUtil';
+import { useAuth } from '../../context/AuthContext';
 
 const BASE_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 const AVATAR_PATH = import.meta.env.VITE_GET_MEDIA_USER_ROUTE || '/media/user';
@@ -49,6 +50,13 @@ export default function UserMenu({
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
     const triggerRef = useRef(null);
+    const { logout } = useAuth();
+
+    // Função para logout que chama o callback
+    const handleLogout = () => {
+        if (onLogout) onLogout();
+        logout();
+    }
 
     // Função para fechar o menu
     const closeMenu = () => setIsOpen(false);
@@ -193,8 +201,8 @@ export default function UserMenu({
                 <div 
                     role="menuitem"
                     tabIndex={0}
-                    onClick={() => handleMenuItemClick(onLogout)}
-                    onKeyDown={(e) => handleMenuItemKeyDown(e, onLogout)}
+                    onClick={() => handleMenuItemClick(handleLogout)}
+                    onKeyDown={(e) => handleMenuItemKeyDown(e, handleLogout)}
                     className={userMenuItemStyles({ size, appearance })}
                     data-testid="menu-item-logout"
                 >
