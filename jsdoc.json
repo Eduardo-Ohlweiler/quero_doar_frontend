@@ -6,6 +6,7 @@
   },
   "plugins": [],
   "opts": {
-    "encoding": "utf8"
+    "encoding": "utf8",
+    "recursive": true
   }
 }
