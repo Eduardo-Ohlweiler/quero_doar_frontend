@@ -6,7 +6,7 @@ export default function MinimalMainLayout() {
     return (
         <div className="min-h-screen flex flex-col">
             <Header
-                className="fixed top-0 left-0 right-0 z-60"
+                className="fixed top-0 left-0 right-0 z-30"
                 showSearchBar={false}
                 showLoginButton={false}
             />
