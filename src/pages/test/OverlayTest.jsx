@@ -1,4 +1,4 @@
-import Overlay from "../components/Overlay/Overlay";
+import Overlay from "../../components/Overlay/Overlay";
 import { useState } from "react";
 
 export default function OverlayTest() {
