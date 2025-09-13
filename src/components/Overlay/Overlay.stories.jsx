@@ -4,6 +4,7 @@ import Overlay from './Overlay';
 export default {
   title: 'Components/Overlay',
   component: Overlay,
+  tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
   },
