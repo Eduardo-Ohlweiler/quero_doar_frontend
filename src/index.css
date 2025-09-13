@@ -3,6 +3,18 @@
 :root {
 	/* --color-primary: #00c48c; */
 	--color-primary: #00564a;
-    --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%);
+  --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%);
 	--view-height-minus-header: calc(100vh - 3.5rem);
+}
+
+/* Animações para o componente LevelAchievement */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
