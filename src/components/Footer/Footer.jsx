@@ -1,8 +1,9 @@
 import { footerStyles, footerContainerStyles, footerSectionStyles } from './Footer.styles';
+import { FaFacebookF, FaInstagram, FaXTwitter, FaLinkedinIn } from 'react-icons/fa6';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from '../Logo/Logo';
 import Button from '../Button/Button';
 
@@ -12,21 +13,9 @@ const Footer = ({
     className,
     ...rest 
 }) => {
-    const navigate = useNavigate();
-
     const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-
-    const socialLinks = [
-        { name: 'Facebook', url: 'https://facebook.com', icon: '📘' },
-        { name: 'Instagram', url: 'https://instagram.com', icon: '📷' },
-        { name: 'Twitter', url: 'https://twitter.com', icon: '🐦' },
-        { name: 'LinkedIn', url: 'https://linkedin.com', icon: '💼' },
-    ];
 
     const institutionalLinks = [
         { name: 'Quem Somos', path: '/sobre' },
@@ -43,19 +32,10 @@ const Footer = ({
     ];
 
     const renderMinimalFooter = () => (
-        <div className={twMerge(clsx(footerContainerStyles({ variant, appearance })))}>
-            <div className="container mx-auto px-4 py-6">
-                <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-                    <Logo 
-                        variant="full" 
-                        size="md" 
-                        color={appearance === 'white' ? 'primary' : 'white'} 
-                    />
-                    <p className="text-sm text-center">
-                        © 2025 Quero Doar. Todos os direitos reservados.
-                    </p>
-                </div>
-            </div>
+        <div className={twMerge(clsx(footerContainerStyles({ variant, appearance })), "h-14 flex items-center justify-center")}>
+            <p className="text-sm text-center">
+                © 2025 Quero Doar. Todos os direitos reservados.
+            </p>
         </div>
     );
 
@@ -115,23 +95,70 @@ const Footer = ({
                     <div className={twMerge(clsx(footerSectionStyles()))}>
                         <h3 className="font-semibold text-lg mb-4">Conecte-se</h3>
                         <div className="flex justify-between mb-4">
-                            {socialLinks.map((social) => (
-                                <a
-                                    key={social.name}
-                                    href={social.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition-all duration-200 text-xl"
-                                    aria-label={`Visite nosso ${social.name}`}
-                                >
-                                    {social.icon}
-                                </a>
-                            ))}
+                            <a
+                                href="https://facebook.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={twMerge(
+                                    clsx(
+                                        "w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/30 transition-all duration-200",
+                                        appearance === 'white' ? 'text-[var(--color-primary)] bg-white/0' : 'text-white bg-white/20'
+                                    )
+                                )}
+                                aria-label="Visite nosso Facebook"
+                            >
+                                <FaFacebookF className="w-5 h-5" aria-hidden="true" />
+                            </a>
+
+                            <a
+                                href="https://instagram.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={twMerge(
+                                    clsx(
+                                        "w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/30 transition-all duration-200",
+                                        appearance === 'white' ? 'text-[var(--color-primary)] bg-white/0' : 'text-white bg-white/20'
+                                    )
+                                )}
+                                aria-label="Visite nosso Instagram"
+                            >
+                                <FaInstagram className="w-5 h-5" aria-hidden="true" />
+                            </a>
+
+                            <a
+                                href="https://x.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={twMerge(
+                                    clsx(
+                                        "w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/30 transition-all duration-200",
+                                        appearance === 'white' ? 'text-[var(--color-primary)] bg-white/0' : 'text-white bg-white/20'
+                                    )
+                                )}
+                                aria-label="Visite nosso Twitter"
+                            >
+                                <FaXTwitter className="w-5 h-5" aria-hidden="true" />
+                            </a>
+
+                            <a
+                                href="https://linkedin.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={twMerge(
+                                    clsx(
+                                        "w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/30 transition-all duration-200",
+                                        appearance === 'white' ? 'text-[var(--color-primary)] bg-white/0' : 'text-white bg-white/20'
+                                    )
+                                )}
+                                aria-label="Visite nosso LinkedIn"
+                            >
+                                <FaLinkedinIn className="w-5 h-5" aria-hidden="true" />
+                            </a>
                         </div>
                         
                         {/* Back to top button */}
                         <Button
-                            appearance="ghost"
+                            appearance={appearance === 'white' ? 'primary' : 'ghost'}
                             size="small"
                             onClick={scrollToTop}
                             className="mt-4"
