@@ -1,10 +1,19 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 :root {
 	/* --color-primary: #00c48c; */
 	--color-primary: #00564a;
   --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%);
 	--view-height-minus-header: calc(100vh - 3.5rem);
+	--viewport-height-minus-header-full: calc(100vh - 3.5rem);
+	--viewport-height-minus-header-minimal: calc(100vh - 3.5rem);
+}
+
+/* Utilities customizadas para gradientes */
+@layer utilities {
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
 }
 
 /* Animações para o componente LevelAchievement */

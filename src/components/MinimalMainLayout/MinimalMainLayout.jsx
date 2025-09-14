@@ -1,6 +1,6 @@
-//TODO: ADICIONAR FOOTER, na sua variante minima, FUTURAMENTE QUANDO IMPLEMENTADO
 import { Outlet } from "react-router-dom";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 
 export default function MinimalMainLayout() {
     return (
@@ -13,10 +13,11 @@ export default function MinimalMainLayout() {
             <main className="flex-1">
                 <Outlet />
             </main>
+            <Footer variant="minimal" appearance="gradient" />
             {/* Fake Footer */}
-            <div className="h-14 bg-gray-100 flex items-center justify-center">
+            {/* <div className="h-14 bg-gray-100 flex items-center justify-center">
                 <p className="text-gray-500">© 2024 Quero Doar. Todos os direitos reservados.</p>
-            </div>            
+            </div>             */}
             {/* <Footer /> */}
         </div>
     );
