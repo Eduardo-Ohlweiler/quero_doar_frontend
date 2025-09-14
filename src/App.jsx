@@ -11,6 +11,8 @@ import UserDonation from "./pages/UserDonation";
 import User from "./pages/User";
 import MinimalMainLayout from "./components/MinimalMainLayout/MinimalMainLayout";
 import MainLayout from "./components/MainLayout/MainLayout";
+import OverlayTest from "./pages/test/OverlayTest";
+import LevelUpOverlayTest from "./pages/test/LevelUpOverlayTest";
 
 
 function App() {
@@ -22,13 +24,17 @@ function App() {
           {/* Layout mínimo do header e do footer */}
           <Route element={<MinimalMainLayout />}>
             <Route path="/login" element={<Login />} />
+            
+
+            {/* TESTES */}
+            <Route path="/test/overlaytest" element={<OverlayTest />} />
+            <Route path="/test/levelupoverlaytest" element={<LevelUpOverlayTest />} />
+
           </Route>
           {/* Layout completo do header e do footer */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />          
           </Route>
-
-
 
           {/* <Route path="/createuser" element={<CreateUser />} /> */}
           <Route path="/createdonation" element={
