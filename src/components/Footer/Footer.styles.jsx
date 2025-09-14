@@ -24,8 +24,7 @@ export const footerStyles = cva(
 
 export const footerContainerStyles = cva(
     // Estilo base do container
-    // 'w-full backdrop-blur-[2px]',
-    'w-full',
+    'w-full backdrop-blur-[2px] border-t border-white/40',
     {
         variants: {
             variant: {
@@ -33,7 +32,7 @@ export const footerContainerStyles = cva(
                 minimal: '',
             },
             appearance: {
-                gradient: 'bg-gradient-primary',
+                gradient: 'bg-gradient-primary', // Usa a classe definida em @layer utilities
                 white: 'bg-white text-[var(--color-primary)] border-t border-gray-200',
                 ghost: 'bg-black/20 backdrop-blur-[10px] border-t border-white/10',
             },

@@ -61,7 +61,7 @@ const Footer = ({
 
     const renderFullFooter = () => (
         <div className={twMerge(clsx(footerContainerStyles({ variant, appearance })))}>
-            <div className="container mx-auto px-4 py-12">
+            <div className="container mx-auto px-4 py-4">
                 {/* Main content */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Logo and description */}
@@ -72,9 +72,6 @@ const Footer = ({
                             color={appearance === 'white' ? 'primary' : 'white'} 
                             className="mb-4"
                         />
-                        <p className="text-sm leading-relaxed mb-4">
-                            🧡 Quero Doar
-                        </p>
                         <p className="text-sm leading-relaxed">
                             Conectando pessoas através da solidariedade. Transforme vidas com um simples gesto de doação.
                         </p>
@@ -117,7 +114,7 @@ const Footer = ({
                     {/* Conecte-se section */}
                     <div className={twMerge(clsx(footerSectionStyles()))}>
                         <h3 className="font-semibold text-lg mb-4">Conecte-se</h3>
-                        <div className="flex flex-wrap gap-3 mb-4">
+                        <div className="flex justify-between mb-4">
                             {socialLinks.map((social) => (
                                 <a
                                     key={social.name}
