@@ -32,46 +32,40 @@ export default function LoginRegister({
 }) {
     const [isSignUpMode, setIsSignUpMode] = useState(false);
     
-    // Sign In form state
-    const [signInForm, setSignInForm] = useState({
-        email: '',
-        password: '',
-    });
-    
-    // Sign Up form state
-    const [signUpForm, setSignUpForm] = useState({
+    // Unified form state that adapts to current mode
+    const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
     });
 
-    const handleSignInInputChange = (field) => (e) => {
-        setSignInForm(prev => ({
+    const handleInputChange = (field) => (e) => {
+        setFormData(prev => ({
             ...prev,
             [field]: e.target.value,
         }));
     };
 
-    const handleSignUpInputChange = (field) => (e) => {
-        setSignUpForm(prev => ({
-            ...prev,
-            [field]: e.target.value,
-        }));
-    };
-
-    const handleSignInSubmit = (e) => {
-        alert("Login\Entrar!");
+    const handleFormSubmit = (e) => {
         e.preventDefault();
-        if (onSignIn) {
-            onSignIn(signInForm);
-        }
-    };
-
-    const handleSignUpSubmit = (e) => {
-        alert("Cadastro!");
-        e.preventDefault();
-        if (onSignUp) {
-            onSignUp(signUpForm);
+        
+        if (isSignUpMode) {
+            alert("Cadastro!");
+            if (onSignUp) {
+                onSignUp({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                });
+            }
+        } else {
+            alert("Login\\Entrar!");
+            if (onSignIn) {
+                onSignIn({
+                    email: formData.email,
+                    password: formData.password,
+                });
+            }
         }
     };
 
@@ -113,157 +107,108 @@ export default function LoginRegister({
                 )}
                 {...rest}
             >
-                {/* Single form that contains two groups which morph between each other */}
+                {/* Single unified form container */}
                 <div 
                     className={twMerge(clsx(formContainerStyles({ type: 'signIn', active: isSignUpMode })))}
                 >
                     <form
-                        // className={twMerge(clsx(formStyles(), singleFormWrapperStyles()))}
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            // submit according to current mode
-                            if (isSignUpMode) {
-                                handleSignUpSubmit(e);
-                            } else {
-                                handleSignInSubmit(e);
-                            }
-                        }}
+                        onSubmit={handleFormSubmit}
+                        role="form"
                     >
-                        {/* Sign In Group */}
-                        <div
-                            className={twMerge(
-                                clsx(
-                                    singleFormGroupStyles(),
-                                    // when switching to signUp, move signIn group left and fade
-                                    isSignUpMode && 'transform -translate-x-8 opacity-0 scale-95 pointer-events-none',
-                                    !isSignUpMode && 'transform translate-x-0 opacity-100 scale-100'
-                                )
-                            )}
+                        <div 
+                            className={singleFormGroupStyles()}
                         >
-                            <h1 className={titleStyles()}>Entrar</h1>
-                            {/* <div className={socialContainerStyles()}>
-                                <a href="#" className={socialLinkStyles()} aria-label="Entrar com Facebook">
-                                    <i className="fab fa-facebook-f text-gray-600" />
-                                </a>
-                                <a href="#" className={socialLinkStyles()} aria-label="Entrar com Google">
-                                    <i className="fab fa-google text-gray-600" />
-                                </a>
-                                <a href="#" className={socialLinkStyles()} aria-label="Entrar com LinkedIn">
-                                    <i className="fab fa-linkedin-in text-gray-600" />
-                                </a>
-                            </div> */}
 
-                            <Button
-                                appearance="ghost"
-                                className="rounded-full m-2"
-                                type="button"
-                                onClick={() => alert(`${signInForm.email} ${signInForm.password}`)}
-                            >
-                                <FaGoogle />
-                            </Button>
+                            <h1 className={titleStyles()}>
+                                {isSignUpMode ? 'Criar Conta' : 'Entrar'}
+                            </h1>
 
-                            <span className={subtitleStyles()}>ou informe seus dados para entrar</span>
+                            {/* Social login section - only show for sign up mode */}
+                            {isSignUpMode && (
+                                <div className={socialContainerStyles()}>
+                                    <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Facebook">
+                                        <i className="fab fa-facebook-f text-gray-600" />
+                                    </a>
+                                    <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Google">
+                                        <i className="fab fa-google text-gray-600" />
+                                    </a>
+                                    <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com LinkedIn">
+                                        <i className="fab fa-linkedin-in text-gray-600" />
+                                    </a>
+                                </div>
+                            )}
+
+                            {/* Google button for sign in mode */}
+                            {!isSignUpMode && (
+                                <Button
+                                    appearance="ghost"
+                                    className="rounded-full m-2"
+                                    type="button"
+                                    onClick={() => alert(`${formData.email} ${formData.password}`)}
+                                >
+                                    <FaGoogle />
+                                </Button>
+                            )}
+
+                            <span className={subtitleStyles()}>
+                                {isSignUpMode ? 'ou use seu email para registro' : 'ou informe seus dados para entrar'}
+                            </span>
 
                             <div className="w-full space-y-3">
+                                {/* Name field - only visible in sign up mode */}
+                                {isSignUpMode && (
+                                    <Input
+                                        type="text"
+                                        label="Nome"
+                                        placeholder="Digite seu nome aqui"
+                                        helperText="Informe seu nome completo"
+                                        appearance="outlined-white"
+                                        value={formData.name}
+                                        onChange={handleInputChange('name')}
+                                        required
+                                    />
+                                )}
+                                
+                                {/* Email field - always visible */}
                                 <Input
                                     type="email"
                                     label="E-mail"
-                                    placeholder="Digite seu e-mail aqui"
-                                    helperText="Informe seu e-mail utilizado no cadastro"
+                                    placeholder={isSignUpMode ? "Digite seu e-mail aqui" : "Digite seu e-mail aqui"}
+                                    helperText={isSignUpMode ? "Informe um e-mail válido" : "Informe seu e-mail utilizado no cadastro"}
                                     appearance="outlined-white"
-                                    value={signInForm.email}
-                                    onChange={handleSignInInputChange('email')}
+                                    value={formData.email}
+                                    onChange={handleInputChange('email')}
                                     required
                                 />
+                                
+                                {/* Password field - always visible */}
                                 <Input
                                     type="password"
                                     label="Senha"
                                     placeholder="Digite sua senha aqui"
-                                    helperText="Informe sua senha"
+                                    helperText={isSignUpMode ? "Crie uma senha segura" : "Informe sua senha"}
                                     appearance="outlined-white"
-                                    value={signInForm.password}
-                                    onChange={handleSignInInputChange('password')}
+                                    value={formData.password}
+                                    onChange={handleInputChange('password')}
                                     required
                                 />
                             </div>
 
-                            <a href="#" className={linkStyles()}>
-                                Esqueceu sua senha?
-                            </a>
-
-                            <Button
-                                type="submit"
-                                appearance="ghost"
-                                size="medium"
-                                loading={signInLoading}
-                                className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
-                            >
-                                Entrar
-                            </Button>
-                        </div>
-
-                        {/* Sign Up Group */}
-                        <div
-                            className={twMerge(
-                                clsx(
-                                    singleFormGroupStyles(),
-                                    // when in signUp mode bring group into view
-                                    isSignUpMode && 'transform translate-x-0 opacity-100 scale-100 z-[5]',
-                                    !isSignUpMode && 'transform translate-x-8 opacity-0 scale-95 pointer-events-none'
-                                )
+                            {/* Forgot password link - only visible in sign in mode */}
+                            {!isSignUpMode && (
+                                <a href="#" className={linkStyles()}>
+                                    Esqueceu sua senha?
+                                </a>
                             )}
-                        >
-                            <h1 className={titleStyles()}>Criar Conta</h1>
-
-                            <div className={socialContainerStyles()}>
-                                <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Facebook">
-                                    <i className="fab fa-facebook-f text-gray-600" />
-                                </a>
-                                <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Google">
-                                    <i className="fab fa-google text-gray-600" />
-                                </a>
-                                <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com LinkedIn">
-                                    <i className="fab fa-linkedin-in text-gray-600" />
-                                </a>
-                            </div>
-
-                            <span className={subtitleStyles()}>ou use seu email para registro</span>
-
-                            <div className="w-full space-y-3">
-                                <Input
-                                    type="text"
-                                    placeholder="Nome"
-                                    value={signUpForm.name}
-                                    onChange={handleSignUpInputChange('name')}
-                                    required
-                                    className="w-full"
-                                />
-                                <Input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={signUpForm.email}
-                                    onChange={handleSignUpInputChange('email')}
-                                    required
-                                    className="w-full"
-                                />
-                                <Input
-                                    type="password"
-                                    placeholder="Senha"
-                                    value={signUpForm.password}
-                                    onChange={handleSignUpInputChange('password')}
-                                    required
-                                    className="w-full"
-                                />
-                            </div>
 
                             <Button
                                 type="submit"
-                                appearance="primary"
+                                appearance={isSignUpMode ? "primary" : "ghost"}
                                 size="medium"
-                                loading={signUpLoading}
+                                loading={isSignUpMode ? signUpLoading : signInLoading}
                                 className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
                             >
-                                Cadastrar
+                                {isSignUpMode ? 'Cadastrar' : 'Entrar'}
                             </Button>
                         </div>
                     </form>

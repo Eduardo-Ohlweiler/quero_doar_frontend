@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, cleanup, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, vi, describe, it, beforeEach } from 'vitest';
 import LoginRegister from './LoginRegister';
@@ -14,9 +14,11 @@ describe('LoginRegister component', () => {
     render(<LoginRegister />);
     
     // Verifica se os elementos de sign in estão visíveis
-    expect(screen.getByText('Entrar')).toBeInTheDocument();
-    expect(screen.getByText('ou use sua conta')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Entrar' })).toBeInTheDocument();
+    expect(screen.getByText('ou informe seus dados para entrar')).toBeInTheDocument();
     expect(screen.getByText('Esqueceu sua senha?')).toBeInTheDocument();
+    // Verifica que o campo nome não está visível no modo sign in
+    expect(screen.queryByPlaceholderText('Digite seu nome aqui')).not.toBeInTheDocument();
   });
 
   // CT2: Alternância para modo sign up
@@ -24,16 +26,17 @@ describe('LoginRegister component', () => {
     const user = userEvent.setup();
     render(<LoginRegister />);
     
-    // Clica no botão "Cadastrar" no painel lateral (o último na página)
-    const signUpButtons = screen.getAllByRole('button', { name: /cadastrar/i });
-    const overlaySignUpButton = signUpButtons[signUpButtons.length - 1];
+    // Clica no botão "Cadastrar" no painel lateral
+    const overlaySignUpButton = screen.getByRole('button', { name: /cadastrar/i });
     await user.click(overlaySignUpButton);
     
     // Verifica se mudou para o modo sign up
     await waitFor(() => {
       expect(screen.getByText('Criar Conta')).toBeInTheDocument();
       expect(screen.getByText('ou use seu email para registro')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Nome')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Digite seu nome aqui')).toBeInTheDocument();
+      // Verifica que o link "Esqueceu sua senha?" não está mais visível
+      expect(screen.queryByText('Esqueceu sua senha?')).not.toBeInTheDocument();
     });
   });
 
@@ -43,21 +46,20 @@ describe('LoginRegister component', () => {
     render(<LoginRegister />);
     
     // Primeiro vai para sign up
-    const signUpButtons = screen.getAllByRole('button', { name: /cadastrar/i });
-    const overlaySignUpButton = signUpButtons[signUpButtons.length - 1];
+    const overlaySignUpButton = screen.getByRole('button', { name: /cadastrar/i });
     await user.click(overlaySignUpButton);
     
     // Depois volta para sign in
     await waitFor(async () => {
-      const signInButtons = screen.getAllByRole('button', { name: /entrar/i });
-      const overlaySignInButton = signInButtons[signInButtons.length - 1];
+      const overlaySignInButton = screen.getByRole('button', { name: /entrar/i });
       await user.click(overlaySignInButton);
     });
     
     // Verifica se voltou para sign in
     await waitFor(() => {
-      expect(screen.getByText('Entrar')).toBeInTheDocument();
-      expect(screen.getByText('ou use sua conta')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Entrar' })).toBeInTheDocument();
+      expect(screen.getByText('ou informe seus dados para entrar')).toBeInTheDocument();
+      expect(screen.queryByPlaceholderText('Digite seu nome aqui')).not.toBeInTheDocument();
     });
   });
 
@@ -67,20 +69,16 @@ describe('LoginRegister component', () => {
     const mockOnSignIn = vi.fn();
     render(<LoginRegister onSignIn={mockOnSignIn} />);
     
-    // Preenche os campos (usa os campos visíveis)
-    const emailInputs = screen.getAllByPlaceholderText('Email');
-    const passwordInputs = screen.getAllByPlaceholderText('Senha');
-    
-    // Usa o segundo conjunto de inputs (sign in)
-    const emailInput = emailInputs[1];
-    const passwordInput = passwordInputs[1];
+    // Preenche os campos
+    const emailInput = screen.getByPlaceholderText('Digite seu e-mail aqui');
+    const passwordInput = screen.getByPlaceholderText('Digite sua senha aqui');
     
     await user.type(emailInput, 'test@example.com');
     await user.type(passwordInput, 'password123');
     
-    // Submete o formulário (usa o primeiro botão Entrar)
-    const submitButtons = screen.getAllByRole('button', { name: /entrar/i });
-    const submitButton = submitButtons[0];
+    // Submete o formulário - busca especificamente o botão submit do form
+    const form = screen.getByRole('form');
+    const submitButton = within(form).getByRole('button', { name: /entrar/i });
     await user.click(submitButton);
     
     // Verifica se a função foi chamada com os dados corretos
@@ -97,27 +95,22 @@ describe('LoginRegister component', () => {
     render(<LoginRegister onSignUp={mockOnSignUp} />);
     
     // Vai para modo sign up
-    const signUpButtons = screen.getAllByRole('button', { name: /cadastrar/i });
-    const overlaySignUpButton = signUpButtons[signUpButtons.length - 1];
+    const overlaySignUpButton = screen.getByRole('button', { name: /cadastrar/i });
     await user.click(overlaySignUpButton);
     
     await waitFor(async () => {
       // Preenche os campos
-      const nameInput = screen.getByPlaceholderText('Nome');
-      const emailInputs = screen.getAllByPlaceholderText('Email');
-      const passwordInputs = screen.getAllByPlaceholderText('Senha');
-      
-      // Usa o primeiro conjunto de inputs (sign up)
-      const emailInput = emailInputs[0];
-      const passwordInput = passwordInputs[0];
+      const nameInput = screen.getByPlaceholderText('Digite seu nome aqui');
+      const emailInput = screen.getByPlaceholderText('Digite seu e-mail aqui');
+      const passwordInput = screen.getByPlaceholderText('Digite sua senha aqui');
       
       await user.type(nameInput, 'João Silva');
       await user.type(emailInput, 'joao@example.com');
       await user.type(passwordInput, 'senha123');
       
-      // Submete o formulário (usa o primeiro botão Cadastrar)
-      const submitButtons = screen.getAllByRole('button', { name: /cadastrar/i });
-      const submitButton = submitButtons[0];
+      // Submete o formulário - busca especificamente o botão submit do form
+      const form = screen.getByRole('form');
+      const submitButton = within(form).getByRole('button', { name: /cadastrar/i });
       await user.click(submitButton);
       
       // Verifica se a função foi chamada com os dados corretos
@@ -144,8 +137,7 @@ describe('LoginRegister component', () => {
     render(<LoginRegister signUpLoading={true} />);
     
     // Vai para modo sign up
-    const signUpButtons = screen.getAllByRole('button', { name: /cadastrar/i });
-    const overlaySignUpButton = signUpButtons[signUpButtons.length - 1];
+    const overlaySignUpButton = screen.getByRole('button', { name: /cadastrar/i });
     await user.click(overlaySignUpButton);
     
     await waitFor(() => {
@@ -156,17 +148,24 @@ describe('LoginRegister component', () => {
   });
 
   // CT8: Links de redes sociais estão presentes
-  it('CT8: renderiza links de redes sociais', () => {
+  it('CT8: renderiza links de redes sociais no modo sign up', async () => {
+    const user = userEvent.setup();
     render(<LoginRegister />);
     
-    // Verifica se os links de redes sociais estão presentes
-    const facebookLinks = screen.getAllByLabelText(/facebook/i);
-    const googleLinks = screen.getAllByLabelText(/google/i);
-    const linkedinLinks = screen.getAllByLabelText(/linkedin/i);
+    // Vai para modo sign up para ver as redes sociais
+    const overlaySignUpButton = screen.getByRole('button', { name: /cadastrar/i });
+    await user.click(overlaySignUpButton);
     
-    expect(facebookLinks.length).toBeGreaterThan(0);
-    expect(googleLinks.length).toBeGreaterThan(0);
-    expect(linkedinLinks.length).toBeGreaterThan(0);
+    await waitFor(() => {
+      // Verifica se os links de redes sociais estão presentes
+      const facebookLink = screen.getByLabelText(/facebook/i);
+      const googleLink = screen.getByLabelText(/google/i);
+      const linkedinLink = screen.getByLabelText(/linkedin/i);
+      
+      expect(facebookLink).toBeInTheDocument();
+      expect(googleLink).toBeInTheDocument();
+      expect(linkedinLink).toBeInTheDocument();
+    });
   });
 
   // CT9: Campos obrigatórios
@@ -175,27 +174,20 @@ describe('LoginRegister component', () => {
     render(<LoginRegister />);
     
     // Verifica campos de sign in
-    const emailInputs = screen.getAllByPlaceholderText('Email');
-    const passwordInputs = screen.getAllByPlaceholderText('Senha');
+    const emailInput = screen.getByPlaceholderText('Digite seu e-mail aqui');
+    const passwordInput = screen.getByPlaceholderText('Digite sua senha aqui');
     
-    const signInEmailInput = emailInputs[1];
-    const signInPasswordInput = passwordInputs[1];
-    
-    expect(signInEmailInput).toHaveAttribute('required');
-    expect(signInPasswordInput).toHaveAttribute('required');
+    expect(emailInput).toHaveAttribute('required');
+    expect(passwordInput).toHaveAttribute('required');
     
     // Vai para sign up e verifica campos
-    const signUpButtons = screen.getAllByRole('button', { name: /cadastrar/i });
-    const overlaySignUpButton = signUpButtons[signUpButtons.length - 1];
+    const overlaySignUpButton = screen.getByRole('button', { name: /cadastrar/i });
     await user.click(overlaySignUpButton);
     
     await waitFor(() => {
-      const nameInput = screen.getByPlaceholderText('Nome');
-      const signUpEmailInputs = screen.getAllByPlaceholderText('Email');
-      const signUpPasswordInputs = screen.getAllByPlaceholderText('Senha');
-      
-      const signUpEmailInput = signUpEmailInputs[0];
-      const signUpPasswordInput = signUpPasswordInputs[0];
+      const nameInput = screen.getByPlaceholderText('Digite seu nome aqui');
+      const signUpEmailInput = screen.getByPlaceholderText('Digite seu e-mail aqui');
+      const signUpPasswordInput = screen.getByPlaceholderText('Digite sua senha aqui');
       
       expect(nameInput).toHaveAttribute('required');
       expect(signUpEmailInput).toHaveAttribute('required');

@@ -2,6 +2,7 @@ import { cva } from 'class-variance-authority';
 
 export const containerStyles = cva(
     'relative overflow-hidden rounded-lg w-full max-w-4xl min-h-[480px] border-1 border-white/60 bg-white/10',
+    // 'relative overflow-hidden rounded-lg w-full max-w-4xl min-h-[480px] border-1 border-white/60',
     {
         variants: {
             mode: {
