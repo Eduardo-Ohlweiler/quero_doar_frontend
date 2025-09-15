@@ -2,10 +2,11 @@
 
 :root {
 	/* --color-primary: #00c48c; */
+  /* --color-secondary: #3aa8ff; */
+  /* --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%); */
 	--color-primary: #00564a;
-  --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%);
-	--view-height-minus-header: calc(100vh - 3.5rem);
-	--viewport-height-minus-header-full: calc(100vh - 3.5rem);
+  --color-secondary: #2a7ab0;
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
 	--viewport-height-minus-header-minimal: calc(100vh - 3.5rem);
 }
 

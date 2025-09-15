@@ -1,71 +1,82 @@
 import { useAuth } from "../context/AuthContext";
-import {useNavigate, useLocation} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
+import LoginRegister from "../components/LoginRegister/LoginRegister";
+import userService from "../services/user/userService";
 
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
-    const {login, loading } = useAuth();
+    const [signUpLoading, setSignUpLoading] = useState(false);
+    const { login, loading } = useAuth();
     const navigate = useNavigate();
     const from = useLocation().state?.from?.pathname || '/';
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleSignIn = async (formData) => {
         try {
-            await login({email: username, password: password});
+            await login({ email: formData.email, password: formData.password });
             navigate(from, { replace: true });
         } catch (error) {
             alert(error.message || "Erro ao fazer login");
             console.error("Erro ao fazer login:", error);
         }
-    }
+    };
 
-    const createLog = (event) => {
-        event.preventDefault();
-        navigate("/createuser");
-    }
+    const handleSignUp = async (formData) => {
+        // Validações básicas
+        if (!formData.name.trim() || !formData.email.trim() || !formData.password.trim()) {
+            alert("Por favor, preencha todos os campos");
+            return;
+        }
+
+        if (formData.password.length < 6) {
+            alert("A senha deve ter pelo menos 6 caracteres");
+            return;
+        }
+
+        // Validação básica de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            alert("Por favor, insira um email válido");
+            return;
+        }
+
+        try {
+            setSignUpLoading(true);
+            
+            // Criar o usuário
+            await userService.CreateUser({
+                name: formData.name.trim(),
+                email: formData.email.trim(),
+                password: formData.password
+            });
+
+            alert("Conta criada com sucesso! Agora você pode fazer login.");
+            
+        } catch (error) {
+            console.error("Erro ao criar conta:", error);
+            
+            // Tratamento de erros específicos
+            if (error.message.includes('409') || error.message.includes('already exists')) {
+                alert("Este email já está em uso. Tente fazer login ou use outro email.");
+            } else if (error.message.includes('400')) {
+                alert("Dados inválidos. Verifique os campos e tente novamente.");
+            } else {
+                alert(error.message || "Erro ao criar conta. Tente novamente.");
+            }
+        } finally {
+            setSignUpLoading(false);
+        }
+    };
 
     return (
-        <div className="flex items-center justify-center bg-emerald-700 p-4 h-[var(--view-height-minus-header)]">
-            <div className="grid grid-cols-2 md:grid-cols-2 bg-emerald-50 rounded-lg shadow-xl overflow-hidden max-w-4xl w-full">
-                <div className="flex flex-col items-center justify-center p-8 text-center bg-emerald-100 text-emerald-950">
-                    <h1 className="text-3xl font-bold mb-2">Quero Doar</h1>
-                    <h2 className="text-xl font-medium"> Faça o seu Login</h2>
-                </div>
-            
-                <div className="p-8">
-                    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-                        <label>User</label>
-                        <input type="text" 
-                            value={username}
-                            onChange={ (e) => setUsername(e.target.value)} 
-                            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-300"/>
-                        <label>Password</label>
-                        <input type="password"
-                            value={password} 
-                            onChange= { (e) => setPassword(e.target.value)} 
-                            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-300"/>
-                        <div className="flex flex-col md:flex-row md:space-x-4 space-y-a md:space-y-0 mt-4">
-                            <button type='submit'
-                                className="w-full md:w-auto flex-1 bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-200 transition-colors "
-                                disabled={loading}>
-                                Entrar
-                            </button>
-
-                            <button type="submit"
-                                onClick={createLog}
-                                className="w-full md:w-auto flex-1 bg-gray-400 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors ">
-                                
-                                Criar Conta
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
-           </div>    
+        <div className="h-[var(--viewport-height-minus-header-minimal)] bg-[var(--color-primary)]">
+            <LoginRegister 
+                onSignIn={handleSignIn}
+                onSignUp={handleSignUp}
+                signInLoading={loading}
+                signUpLoading={signUpLoading}
+            />
         </div>
-    )
-}
+    );
+};
 
 export default Login;
