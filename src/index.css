@@ -28,3 +28,26 @@
     transform: scale(1);
   }
 }
+
+
+/* TODO: Isso precisa ser melhorado para atender as variações de cores */
+
+/* sobrescreve autofill do Chrome/Edge */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important; /* cor do texto desejada */
+  -webkit-box-shadow: inset 0 0 0 1000px rgba(16, 106, 95, 0.18) !important; /* preenche o fundo com cor igual ao do input */
+  box-shadow: inset 0 0 0 1000px rgba(16, 106, 95, 0.18) !important;
+  background-clip: padding-box !important;
+  transition: background-color 5000s ease-in-out 0s; /* evita piscadas no autofill */
+}
+
+/* também garantir foco/hover/active */
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: inset 0 0 0 1000px rgba(16, 106, 95, 0.18) !important;
+  box-shadow: inset 0 0 0 1000px rgba(16, 106, 95, 0.18) !important;
+}

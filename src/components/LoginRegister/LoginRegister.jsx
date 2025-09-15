@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import Button from '../Button/Button';
 import Input from '../Input/Input';
+import { FaGoogle } from 'react-icons/fa6';
 import {
     containerStyles,
     formContainerStyles,
@@ -17,6 +18,8 @@ import {
     subtitleStyles,
     textStyles,
     linkStyles,
+    singleFormWrapperStyles,
+    singleFormGroupStyles,
 } from './LoginRegister.styles';
 
 export default function LoginRegister({
@@ -57,6 +60,7 @@ export default function LoginRegister({
     };
 
     const handleSignInSubmit = (e) => {
+        alert("Login\Entrar!");
         e.preventDefault();
         if (onSignIn) {
             onSignIn(signInForm);
@@ -64,6 +68,7 @@ export default function LoginRegister({
     };
 
     const handleSignUpSubmit = (e) => {
+        alert("Cadastro!");
         e.preventDefault();
         if (onSignUp) {
             onSignUp(signUpForm);
@@ -108,130 +113,159 @@ export default function LoginRegister({
                 )}
                 {...rest}
             >
-                {/* Sign Up Container */}
-                <div
-                    className={twMerge(
-                        clsx(
-                            formContainerStyles({ type: 'signUp', active: isSignUpMode }),
-                            isSignUpMode && 'transform translate-x-full opacity-100 z-[5]',
-                            isSignUpMode && 'animate-show'
-                        )
-                    )}
+                {/* Single form that contains two groups which morph between each other */}
+                <div 
+                    className={twMerge(clsx(formContainerStyles({ type: 'signIn', active: isSignUpMode })))}
                 >
-                    <form className={formStyles()} onSubmit={handleSignUpSubmit}>
-                        <h1 className={titleStyles()}>Criar Conta</h1>
-                        
-                        <div className={socialContainerStyles()}>
-                            <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Facebook">
-                                <i className="fab fa-facebook-f text-gray-600" />
-                            </a>
-                            <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Google">
-                                <i className="fab fa-google text-gray-600" />
-                            </a>
-                            <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com LinkedIn">
-                                <i className="fab fa-linkedin-in text-gray-600" />
-                            </a>
-                        </div>
-                        
-                        <span className={subtitleStyles()}>ou use seu email para registro</span>
-                        
-                        <div className="w-full space-y-3">
-                            <Input
-                                type="text"
-                                placeholder="Nome"
-                                value={signUpForm.name}
-                                onChange={handleSignUpInputChange('name')}
-                                required
-                                className="w-full"
-                            />
-                            <Input
-                                type="email"
-                                placeholder="Email"
-                                value={signUpForm.email}
-                                onChange={handleSignUpInputChange('email')}
-                                required
-                                className="w-full"
-                            />
-                            <Input
-                                type="password"
-                                placeholder="Senha"
-                                value={signUpForm.password}
-                                onChange={handleSignUpInputChange('password')}
-                                required
-                                className="w-full"
-                            />
-                        </div>
-                        
-                        <Button
-                            type="submit"
-                            appearance="primary"
-                            size="medium"
-                            loading={signUpLoading}
-                            className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
+                    <form
+                        // className={twMerge(clsx(formStyles(), singleFormWrapperStyles()))}
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            // submit according to current mode
+                            if (isSignUpMode) {
+                                handleSignUpSubmit(e);
+                            } else {
+                                handleSignInSubmit(e);
+                            }
+                        }}
+                    >
+                        {/* Sign In Group */}
+                        <div
+                            className={twMerge(
+                                clsx(
+                                    singleFormGroupStyles(),
+                                    // when switching to signUp, move signIn group left and fade
+                                    isSignUpMode && 'transform -translate-x-8 opacity-0 scale-95 pointer-events-none',
+                                    !isSignUpMode && 'transform translate-x-0 opacity-100 scale-100'
+                                )
+                            )}
                         >
-                            Cadastrar
-                        </Button>
-                    </form>
-                </div>
+                            <h1 className={titleStyles()}>Entrar</h1>
+                            {/* <div className={socialContainerStyles()}>
+                                <a href="#" className={socialLinkStyles()} aria-label="Entrar com Facebook">
+                                    <i className="fab fa-facebook-f text-gray-600" />
+                                </a>
+                                <a href="#" className={socialLinkStyles()} aria-label="Entrar com Google">
+                                    <i className="fab fa-google text-gray-600" />
+                                </a>
+                                <a href="#" className={socialLinkStyles()} aria-label="Entrar com LinkedIn">
+                                    <i className="fab fa-linkedin-in text-gray-600" />
+                                </a>
+                            </div> */}
 
-                {/* Sign In Container */}
-                <div
-                    className={twMerge(
-                        clsx(
-                            formContainerStyles({ type: 'signIn', active: isSignUpMode }),
-                            isSignUpMode && 'transform translate-x-full'
-                        )
-                    )}
-                >
-                    <form className={formStyles()} onSubmit={handleSignInSubmit}>
-                        <h1 className={titleStyles()}>Entrar</h1>
-                        
-                        <div className={socialContainerStyles()}>
-                            <a href="#" className={socialLinkStyles()} aria-label="Entrar com Facebook">
-                                <i className="fab fa-facebook-f text-gray-600" />
+                            <Button
+                                appearance="ghost"
+                                className="rounded-full m-2"
+                                type="button"
+                                onClick={() => alert(`${signInForm.email} ${signInForm.password}`)}
+                            >
+                                <FaGoogle />
+                            </Button>
+
+                            <span className={subtitleStyles()}>ou informe seus dados para entrar</span>
+
+                            <div className="w-full space-y-3">
+                                <Input
+                                    type="email"
+                                    label="E-mail"
+                                    placeholder="Digite seu e-mail aqui"
+                                    helperText="Informe seu e-mail utilizado no cadastro"
+                                    appearance="outlined-white"
+                                    value={signInForm.email}
+                                    onChange={handleSignInInputChange('email')}
+                                    required
+                                />
+                                <Input
+                                    type="password"
+                                    label="Senha"
+                                    placeholder="Digite sua senha aqui"
+                                    helperText="Informe sua senha"
+                                    appearance="outlined-white"
+                                    value={signInForm.password}
+                                    onChange={handleSignInInputChange('password')}
+                                    required
+                                />
+                            </div>
+
+                            <a href="#" className={linkStyles()}>
+                                Esqueceu sua senha?
                             </a>
-                            <a href="#" className={socialLinkStyles()} aria-label="Entrar com Google">
-                                <i className="fab fa-google text-gray-600" />
-                            </a>
-                            <a href="#" className={socialLinkStyles()} aria-label="Entrar com LinkedIn">
-                                <i className="fab fa-linkedin-in text-gray-600" />
-                            </a>
+
+                            <Button
+                                type="submit"
+                                appearance="ghost"
+                                size="medium"
+                                loading={signInLoading}
+                                className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
+                            >
+                                Entrar
+                            </Button>
                         </div>
-                        
-                        <span className={subtitleStyles()}>ou use sua conta</span>
-                        
-                        <div className="w-full space-y-3">
-                            <Input
-                                type="email"
-                                placeholder="Email"
-                                value={signInForm.email}
-                                onChange={handleSignInInputChange('email')}
-                                required
-                                className="w-full"
-                            />
-                            <Input
-                                type="password"
-                                placeholder="Senha"
-                                value={signInForm.password}
-                                onChange={handleSignInInputChange('password')}
-                                required
-                                className="w-full"
-                            />
-                        </div>
-                        
-                        <a href="#" className={linkStyles()}>
-                            Esqueceu sua senha?
-                        </a>
-                        
-                        <Button
-                            type="submit"
-                            appearance="primary"
-                            size="medium"
-                            loading={signInLoading}
-                            className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
+
+                        {/* Sign Up Group */}
+                        <div
+                            className={twMerge(
+                                clsx(
+                                    singleFormGroupStyles(),
+                                    // when in signUp mode bring group into view
+                                    isSignUpMode && 'transform translate-x-0 opacity-100 scale-100 z-[5]',
+                                    !isSignUpMode && 'transform translate-x-8 opacity-0 scale-95 pointer-events-none'
+                                )
+                            )}
                         >
-                            Entrar
-                        </Button>
+                            <h1 className={titleStyles()}>Criar Conta</h1>
+
+                            <div className={socialContainerStyles()}>
+                                <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Facebook">
+                                    <i className="fab fa-facebook-f text-gray-600" />
+                                </a>
+                                <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Google">
+                                    <i className="fab fa-google text-gray-600" />
+                                </a>
+                                <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com LinkedIn">
+                                    <i className="fab fa-linkedin-in text-gray-600" />
+                                </a>
+                            </div>
+
+                            <span className={subtitleStyles()}>ou use seu email para registro</span>
+
+                            <div className="w-full space-y-3">
+                                <Input
+                                    type="text"
+                                    placeholder="Nome"
+                                    value={signUpForm.name}
+                                    onChange={handleSignUpInputChange('name')}
+                                    required
+                                    className="w-full"
+                                />
+                                <Input
+                                    type="email"
+                                    placeholder="Email"
+                                    value={signUpForm.email}
+                                    onChange={handleSignUpInputChange('email')}
+                                    required
+                                    className="w-full"
+                                />
+                                <Input
+                                    type="password"
+                                    placeholder="Senha"
+                                    value={signUpForm.password}
+                                    onChange={handleSignUpInputChange('password')}
+                                    required
+                                    className="w-full"
+                                />
+                            </div>
+
+                            <Button
+                                type="submit"
+                                appearance="primary"
+                                size="medium"
+                                loading={signUpLoading}
+                                className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
+                            >
+                                Cadastrar
+                            </Button>
+                        </div>
                     </form>
                 </div>
 
@@ -284,7 +318,7 @@ export default function LoginRegister({
                                 )
                             )}
                         >
-                            <h1 className="font-bold text-2xl text-white mb-0">Olá, Amigo!</h1>
+                            <h1 className="font-bold text-2xl text-white mb-0">Olá!</h1>
                             <p className={textStyles()}>
                                 Insira seus dados pessoais e comece sua jornada conosco
                             </p>

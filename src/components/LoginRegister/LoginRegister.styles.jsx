@@ -48,7 +48,17 @@ export const formContainerStyles = cva(
 );
 
 export const formStyles = cva(
-    'bg-white/10 flex items-center justify-center flex-col px-12 h-full text-center'
+    // fundo quase opaco para evitar bleed visual durante morph
+    // 'flex items-center justify-center flex-col px-12 h-full text-center transition-colors duration-200'
+    ''
+);
+
+// Single form wrapper and group styles for morphing effect
+export const singleFormWrapperStyles = cva('relative w-full h-full overflow-hidden');
+
+export const singleFormGroupStyles = cva(
+    // 'absolute inset-0 flex items-center justify-center flex-col px-12 h-full text-center transition-all duration-600 ease-in-out'
+    'absolute inset-0 flex items-center justify-center flex-col px-12 h-full transition-all duration-600 ease-in-out'
 );
 
 export const overlayContainerStyles = cva(
@@ -123,11 +133,11 @@ export const socialLinkStyles = cva(
 );
 
 export const titleStyles = cva(
-    'font-bold text-2xl text-gray-800 mb-0'
+    'font-bold text-2xl text-white mb-0'
 );
 
 export const subtitleStyles = cva(
-    'text-sm text-gray-600 mb-5'
+    'text-sm text-white/90 mb-5'
 );
 
 export const textStyles = cva(
@@ -135,7 +145,7 @@ export const textStyles = cva(
 );
 
 export const linkStyles = cva(
-    'text-gray-700 text-sm no-underline my-4 hover:text-[var(--color-primary)] transition-colors duration-200'
+    'text-white/60 text-sm no-underline my-4 hover:text-white transition-colors duration-200'
 );
 
 // Animação personalizada para o show
