@@ -1,19 +1,25 @@
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoginRegister from "../components/LoginRegister/LoginRegister";
 import userService from "../services/user/userService";
+import useFromTo from "../hooks/useFromTo";
 
 const Login = () => {
     const [signUpLoading, setSignUpLoading] = useState(false);
     const { login, loading } = useAuth();
     const navigate = useNavigate();
-    const from = useLocation().state?.from?.pathname || '/';
+    const { fromTo, goBack } = useFromTo();
 
     const handleSignIn = async (formData) => {
         try {
             await login({ email: formData.email, password: formData.password });
-            navigate(from, { replace: true });
+            
+            // navigate(from, { replace: true });
+            if(fromTo)
+                goBack();
+            else
+                navigate('/');
         } catch (error) {
             alert(error.message || "Erro ao fazer login");
             console.error("Erro ao fazer login:", error);
