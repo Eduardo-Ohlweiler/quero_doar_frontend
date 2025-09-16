@@ -4,21 +4,17 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import Button from '../Button/Button';
 import Input from '../Input/Input';
-import { FaGoogle } from 'react-icons/fa6';
+import { FaGoogle, FaApple, FaFacebook } from 'react-icons/fa6';
 import {
     containerStyles,
     formContainerStyles,
-    formStyles,
     overlayContainerStyles,
     overlayStyles,
     overlayPanelStyles,
-    socialContainerStyles,
-    socialLinkStyles,
     titleStyles,
     subtitleStyles,
     textStyles,
     linkStyles,
-    singleFormWrapperStyles,
     singleFormGroupStyles,
     FormVisibility
 } from './LoginRegister.styles';
@@ -32,38 +28,55 @@ export default function LoginRegister({
     ...rest
 }) {
     const [isSignUpMode, setIsSignUpMode] = useState(false);
+    const [isPasswordRecoveryMode, setIsPasswordRecoveryMode] = useState(false);
     
-    // Unified form state that adapts to current mode
-    const [formData, setFormData] = useState({
+    const [signUpFormData, setSignUpFormData] = useState({
         name: '',
         email: '',
         password: '',
     });
 
-    const handleInputChange = (field) => (e) => {
-        setFormData(prev => ({
+    const [signInFormData, setSignInFormData] = useState({
+        email: '',
+        password: '',
+    });
+
+    const handleSignUpInputChange = (field) => (e) => {
+        setSignUpFormData(prev => ({
             ...prev,
             [field]: e.target.value,
         }));
     };
 
-    const handleLoginFormSubmit = (e) => {
+    const handleSignInInputChange = (field) => (e) => {
+        setSignInFormData(prev => ({
+            ...prev,
+            [field]: e.target.value,
+        }));
+    };
+
+    const handleSignUpFormSubmit = (e) => {
         e.preventDefault();
         if (onSignIn) {
             onSignIn({
-                email: formData.email,
-                password: formData.password,
+                name: signUpFormData.name,
+                email: signUpFormData.email,
+                password: signUpFormData.password,
             });
         }
     };
 
-    const handleRegisterFormSubmit = (e) => {
+    const handlePasswordRecoverySubmit = (e) => {
         e.preventDefault();
-        if (onSignUp) {
-            onSignUp({
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
+        // Implement password recovery logic here
+    };
+
+    const handleSignInFormSubmit = (e) => {
+        e.preventDefault();
+        if (onSignIn) {
+            onSignIn({
+                email: signInFormData.email,
+                password: signInFormData.password,
             });
         }
     };
@@ -78,24 +91,6 @@ export default function LoginRegister({
 
     return (
         <div className="flex items-center justify-center min-h-screen p-4">
-            <style jsx>{`
-                @keyframes show {
-                    0%, 49.99% {
-                        opacity: 0;
-                        z-index: 1;
-                    }
-                    
-                    50%, 100% {
-                        opacity: 1;
-                        z-index: 5;
-                    }
-                }
-                
-                .animate-show {
-                    animation: show 0.6s;
-                }
-            `}</style>
-            
             <div
                 className={twMerge(
                     clsx(
@@ -106,29 +101,47 @@ export default function LoginRegister({
                 )}
                 {...rest}
             >
-                {/* Single unified form container */}
                 <div 
                     className={twMerge(clsx(formContainerStyles({ type: 'signIn', active: isSignUpMode })))}
                 >
 
+                    {/* Sign In Form */}
                     <form
-                        onSubmit={handleLoginFormSubmit}
+                        onSubmit={handleSignInFormSubmit}
                         role="login-form"
                         data-testid="login-form"
-                        className={FormVisibility({ visible: !isSignUpMode })}
+                        className={FormVisibility({ visible: (!isSignUpMode && !isPasswordRecoveryMode) })}
                     >
                         <div className={singleFormGroupStyles()} >
                             <h1 className={titleStyles()} >
                                 Entrar
                             </h1>
-                            <Button
-                                appearance="ghost"
-                                className="rounded-full m-2"
-                                type="button"
-                                onClick={() => alert(`${formData.email} ${formData.password}`)}
-                            >
-                                <FaGoogle />
-                            </Button>
+                            <div>
+                                <Button
+                                    appearance="ghost"
+                                    className="rounded-full m-2"
+                                    type="button"
+                                    title="Não implementado"
+                                >
+                                    <FaApple />
+                                </Button>
+                                <Button
+                                    appearance="ghost"
+                                    className="rounded-full m-2"
+                                    type="button"
+                                    title="Não implementado"
+                                >
+                                    <FaGoogle />
+                                </Button>
+                                <Button
+                                    appearance="ghost"
+                                    className="rounded-full m-2"
+                                    type="button"
+                                    title="Não implementado"
+                                >
+                                    <FaFacebook />
+                                </Button>
+                            </div>
                             <span className={subtitleStyles()}>
                                 ou informe seus dados para entrar
                             </span>
@@ -139,8 +152,8 @@ export default function LoginRegister({
                                     placeholder="Digite seu e-mail aqui"
                                     helperText="Informe seu e-mail utilizado no cadastro"
                                     appearance="outlined-white"
-                                    value={formData.email}
-                                    onChange={handleInputChange('email')}
+                                    value={signInFormData.email}
+                                    onChange={handleSignInInputChange('email')}
                                     required
                                 />
                                 <Input
@@ -149,12 +162,15 @@ export default function LoginRegister({
                                     placeholder="Digite sua senha aqui"
                                     helperText="Informe sua senha"
                                     appearance="outlined-white"
-                                    value={formData.password}
-                                    onChange={handleInputChange('password')}
+                                    value={signInFormData.password}
+                                    onChange={handleSignInInputChange('password')}
                                     required
                                 />
                             </div>
-                            <a href="#" className={linkStyles()}>
+                            <a 
+                                className={linkStyles()}
+                                onClick={() => setIsPasswordRecoveryMode(true)}
+                            >
                                     Esqueceu sua senha?
                             </a>
                             <Button
@@ -162,15 +178,16 @@ export default function LoginRegister({
                                 appearance="ghost"
                                 size="medium"
                                 loading={signInLoading}
-                                className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
+                                className="mt-4 w-40"
                             >
                                 Entrar
                             </Button>
                         </div>
                     </form>
 
+                    {/* Sign Up Form */}
                     <form
-                        onSubmit={handleRegisterFormSubmit}
+                        onSubmit={handleSignUpFormSubmit}
                         role="register-form"
                         data-testid="register-form"
                         className={FormVisibility({ visible: isSignUpMode })}
@@ -179,26 +196,43 @@ export default function LoginRegister({
                             <h1 className={titleStyles()}>
                                 Criar Conta
                             </h1>
-                            <Button
+                            <div>
+                                <Button
                                     appearance="ghost"
                                     className="rounded-full m-2"
                                     type="button"
-                                    onClick={() => alert(`${formData.email} ${formData.password}`)}
-                            >
+                                    title="Não implementado"
+                                >
+                                    <FaApple />
+                                </Button>
+                                <Button
+                                    appearance="ghost"
+                                    className="rounded-full m-2"
+                                    type="button"
+                                    title="Não implementado"
+                                >
                                     <FaGoogle />
-                            </Button>
+                                </Button>
+                                <Button
+                                    appearance="ghost"
+                                    className="rounded-full m-2"
+                                    type="button"
+                                    title="Não implementado"
+                                >
+                                    <FaFacebook />
+                                </Button>
+                            </div>
                             <span className={subtitleStyles()}>
                                 ou use seu email para registro
                             </span>
-
                             <div className="w-full space-y-3">
                                 <Input
                                     type="text"
                                     label="Nome"
                                     placeholder="Digite seu nome aqui"
                                     appearance="outlined-white"
-                                    value={formData.name}
-                                    onChange={handleInputChange('name')}
+                                    value={signUpFormData.name}
+                                    onChange={handleSignUpInputChange('name')}
                                     required
                                 />
                                 <Input
@@ -206,34 +240,76 @@ export default function LoginRegister({
                                     label="E-mail"
                                     placeholder="Digite seu e-mail aqui"
                                     appearance="outlined-white"
-                                    value={formData.email}
-                                    onChange={handleInputChange('email')}
+                                    value={signUpFormData.email}
+                                    onChange={handleSignUpInputChange('email')}
                                     required
                                 />
-                                
-                                {/* Password field - always visible */}
                                 <Input
                                     type="password"
                                     label="Senha"
                                     placeholder="Digite sua senha aqui"
                                     appearance="outlined-white"
-                                    value={formData.password}
-                                    onChange={handleInputChange('password')}
+                                    value={signUpFormData.password}
+                                    onChange={handleSignUpInputChange('password')}
                                     required
                                 />
                             </div>
-
                             <Button
                                 type="submit"
                                 appearance="ghost"
                                 size="medium"
                                 loading={signUpLoading}
-                                className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
+                                className="mt-6 w-40"
                             >
                                 Cadastrar
                             </Button>
                         </div>
                     </form>
+
+                    {/* Password Recovery Form */}
+                    <form
+                        onSubmit={handlePasswordRecoverySubmit}
+                        role="password-recovery-form"
+                        data-testid="password-recovery-form"
+                        className={FormVisibility({ visible: (isPasswordRecoveryMode && !isSignUpMode) })}
+                    >
+                        <div className={singleFormGroupStyles()} >
+                            <h1 className={clsx(titleStyles(), 'mb-8')} >
+                                Recuperar Senha
+                            </h1>
+                            <span className={subtitleStyles()}>
+                                Insira seu e-mail para receber instruções de recuperação
+                            </span>
+                            <div className="w-full space-y-3">
+                                <Input
+                                    type="email"
+                                    label="E-mail"
+                                    placeholder="Digite seu e-mail aqui"
+                                    appearance="outlined-white"
+                                    required
+                                />
+                            </div>
+                            <div className="flex gap-4 mt-6">
+                                <Button
+                                    type="button"
+                                    appearance="ghost"
+                                    size="medium"
+                                    onClick={() => setIsPasswordRecoveryMode(false)}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    appearance="secondary"
+                                    size="medium"
+                                >
+                                    Recuperar
+                                </Button>
+                            </div>
+                            
+                        </div>
+                    </form>
+
                 </div>
 
                 {/* Overlay Container */}
@@ -270,7 +346,7 @@ export default function LoginRegister({
                                 appearance="ghost"
                                 size="medium"
                                 onClick={toggleToSignIn}
-                                className="px-11 py-3 text-xs font-bold tracking-wide uppercase border-white text-white hover:bg-white/10"
+                                className="w-30"
                             >
                                 Entrar
                             </Button>
@@ -293,7 +369,7 @@ export default function LoginRegister({
                                 appearance="ghost"
                                 size="medium"
                                 onClick={toggleToSignUp}
-                                className="px-11 py-3 text-xs font-bold tracking-wide uppercase border-white text-white hover:bg-white/10"
+                                className="w-30"
                             >
                                 Cadastrar
                             </Button>
