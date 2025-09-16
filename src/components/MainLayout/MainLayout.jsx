@@ -1,6 +1,6 @@
 //TODO: ADICIONAR UM CONTEXT PARA GERENCIAR A PESQUISA NO HEADER 
 
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import { useAuth } from "../../context/AuthContext";
@@ -9,8 +9,9 @@ import { user as userMenuUser } from "../UserMenu/UserMenu";
 export default function MainLayout() {
     const navigate = useNavigate();
     const { isAuthenticated, user } = useAuth();
+    const origin = encodeURIComponent(useLocation().pathname + useLocation().search);
     const handleLogin = () => {
-        navigate('/login');
+        navigate('/login?fromTo=' + origin);
     }
 
     return (
