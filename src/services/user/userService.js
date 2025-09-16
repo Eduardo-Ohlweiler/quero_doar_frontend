@@ -45,6 +45,16 @@ class UserService {
 
         return imageBlob;
     }
+
+    async CreateUser(userData) {
+        if (!userData || !userData.name || !userData.email || !userData.password) {
+            return Promise.reject(new Error('Dados incompletos para criação de usuário'));
+        }
+        return apiService.post(
+            "/user",
+            { name: userData.name, email: userData.email, password: userData.password }
+        );
+    }
 }
 
 const userService = new UserService();
