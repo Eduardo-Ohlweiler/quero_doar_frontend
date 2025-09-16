@@ -149,6 +149,21 @@ export const linkStyles = cva(
     'text-white/60 text-sm no-underline my-4 hover:text-white transition-colors duration-200'
 );
 
+export const FormVisibility = cva(
+    'transition-opacity duration-500',
+    {
+        variants: {
+            visible: {
+                true: 'opacity-100 z-10',
+                false: 'opacity-0 z-[-10] pointer-events-none',
+            },
+        },
+        defaultVariants: {
+            visible: false,
+        },
+    }
+);
+
 // Animação personalizada para o show
 export const showAnimation = `
 @keyframes show {

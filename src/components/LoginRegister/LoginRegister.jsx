@@ -20,6 +20,7 @@ import {
     linkStyles,
     singleFormWrapperStyles,
     singleFormGroupStyles,
+    FormVisibility
 } from './LoginRegister.styles';
 
 export default function LoginRegister({
@@ -44,6 +45,14 @@ export default function LoginRegister({
             ...prev,
             [field]: e.target.value,
         }));
+    };
+
+    const handleLoginFormSubmit = (e) => {
+        e.preventDefault();
+    };
+
+    const handleRegisterFormSubmit = (e) => {
+        e.preventDefault();
     };
 
     const handleFormSubmit = (e) => {
@@ -111,70 +120,101 @@ export default function LoginRegister({
                 <div 
                     className={twMerge(clsx(formContainerStyles({ type: 'signIn', active: isSignUpMode })))}
                 >
+
                     <form
-                        onSubmit={handleFormSubmit}
-                        role="form"
+                        onSubmit={handleLoginFormSubmit}
+                        role="login-form"
+                        data-testid="login-form"
+                        className={FormVisibility({ visible: !isSignUpMode })}
                     >
-                        <div 
-                            className={singleFormGroupStyles()}
-                        >
-
-                            <h1 className={titleStyles()}>
-                                {isSignUpMode ? 'Criar Conta' : 'Entrar'}
+                        <div className={singleFormGroupStyles()} >
+                            <h1 className={titleStyles()} >
+                                Entrar
                             </h1>
+                            <Button
+                                appearance="ghost"
+                                className="rounded-full m-2"
+                                type="button"
+                                onClick={() => alert(`${formData.email} ${formData.password}`)}
+                            >
+                                <FaGoogle />
+                            </Button>
+                            <span className={subtitleStyles()}>
+                                ou informe seus dados para entrar
+                            </span>
+                            <div className="w-full space-y-3">
+                                <Input
+                                    type="email"
+                                    label="E-mail"
+                                    placeholder="Digite seu e-mail aqui"
+                                    helperText="Informe seu e-mail utilizado no cadastro"
+                                    appearance="outlined-white"
+                                    value={formData.email}
+                                    onChange={handleInputChange('email')}
+                                    required
+                                />
+                                <Input
+                                    type="password"
+                                    label="Senha"
+                                    placeholder="Digite sua senha aqui"
+                                    helperText="Informe sua senha"
+                                    appearance="outlined-white"
+                                    value={formData.password}
+                                    onChange={handleInputChange('password')}
+                                    required
+                                />
+                            </div>
+                            <a href="#" className={linkStyles()}>
+                                    Esqueceu sua senha?
+                            </a>
+                            <Button
+                                type="submit"
+                                appearance="ghost"
+                                size="medium"
+                                loading={signInLoading}
+                                className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
+                            >
+                                Entrar
+                            </Button>
+                        </div>
+                    </form>
 
-                            {/* Social login section - only show for sign up mode */}
-                            {isSignUpMode && (
-                                <div className={socialContainerStyles()}>
-                                    <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Facebook">
-                                        <i className="fab fa-facebook-f text-gray-600" />
-                                    </a>
-                                    <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com Google">
-                                        <i className="fab fa-google text-gray-600" />
-                                    </a>
-                                    <a href="#" className={socialLinkStyles()} aria-label="Cadastrar com LinkedIn">
-                                        <i className="fab fa-linkedin-in text-gray-600" />
-                                    </a>
-                                </div>
-                            )}
-
-                            {/* Google button for sign in mode */}
-                            {!isSignUpMode && (
-                                <Button
+                    <form
+                        onSubmit={handleRegisterFormSubmit}
+                        role="register-form"
+                        data-testid="register-form"
+                        className={FormVisibility({ visible: isSignUpMode })}
+                    >
+                        <div className={singleFormGroupStyles()} >
+                            <h1 className={titleStyles()}>
+                                Criar Conta
+                            </h1>
+                            <Button
                                     appearance="ghost"
                                     className="rounded-full m-2"
                                     type="button"
                                     onClick={() => alert(`${formData.email} ${formData.password}`)}
-                                >
+                            >
                                     <FaGoogle />
-                                </Button>
-                            )}
-
+                            </Button>
                             <span className={subtitleStyles()}>
-                                {isSignUpMode ? 'ou use seu email para registro' : 'ou informe seus dados para entrar'}
+                                ou use seu email para registro
                             </span>
 
                             <div className="w-full space-y-3">
-                                {/* Name field - only visible in sign up mode */}
-                                {isSignUpMode && (
-                                    <Input
-                                        type="text"
-                                        label="Nome"
-                                        placeholder="Digite seu nome aqui"
-                                        helperText="Informe seu nome completo"
-                                        appearance="outlined-white"
-                                        value={formData.name}
-                                        onChange={handleInputChange('name')}
-                                        required
-                                    />
-                                )}
-                                
-                                {/* Email field - always visible */}
+                                <Input
+                                    type="text"
+                                    label="Nome"
+                                    placeholder="Digite seu nome aqui"
+                                    appearance="outlined-white"
+                                    value={formData.name}
+                                    onChange={handleInputChange('name')}
+                                    required
+                                />
                                 <Input
                                     type="email"
                                     label="E-mail"
-                                    placeholder={isSignUpMode ? "Digite seu e-mail aqui" : "Digite seu e-mail aqui"}
-                                    helperText={isSignUpMode ? "Informe um e-mail válido" : "Informe seu e-mail utilizado no cadastro"}
+                                    placeholder="Digite seu e-mail aqui"
                                     appearance="outlined-white"
                                     value={formData.email}
                                     onChange={handleInputChange('email')}
@@ -186,7 +226,6 @@ export default function LoginRegister({
                                     type="password"
                                     label="Senha"
                                     placeholder="Digite sua senha aqui"
-                                    helperText={isSignUpMode ? "Crie uma senha segura" : "Informe sua senha"}
                                     appearance="outlined-white"
                                     value={formData.password}
                                     onChange={handleInputChange('password')}
@@ -194,21 +233,14 @@ export default function LoginRegister({
                                 />
                             </div>
 
-                            {/* Forgot password link - only visible in sign in mode */}
-                            {!isSignUpMode && (
-                                <a href="#" className={linkStyles()}>
-                                    Esqueceu sua senha?
-                                </a>
-                            )}
-
                             <Button
                                 type="submit"
-                                appearance={isSignUpMode ? "primary" : "ghost"}
+                                appearance="ghost"
                                 size="medium"
-                                loading={isSignUpMode ? signUpLoading : signInLoading}
+                                loading={signUpLoading}
                                 className="mt-4 px-11 py-3 text-xs font-bold tracking-wide uppercase"
                             >
-                                {isSignUpMode ? 'Cadastrar' : 'Entrar'}
+                                Cadastrar
                             </Button>
                         </div>
                     </form>
