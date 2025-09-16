@@ -16,6 +16,7 @@ const Header = ({
   showLoginButton,
   onLogin,
   className,
+  children,
 }) => {
   return (
     <header className={twMerge(clsx(headerStyles(), className))}>
@@ -41,6 +42,7 @@ const Header = ({
         {/* Right: fixed width area for actions (user menu or login) */}
         <div className="w-48 flex items-center justify-end">
           <div className="flex items-center gap-4">
+            {children}
             {isAuthenticated ? (
               <UserMenu user={user} appearance="secondary" />
             ) : (
@@ -65,6 +67,7 @@ Header.propTypes = {
   showLoginButton: PropTypes.bool,
   onLogin: PropTypes.func,
   className: PropTypes.string,
+  children: PropTypes.node,
 };
 
 Header.defaultProps = {
@@ -75,6 +78,7 @@ Header.defaultProps = {
   showLoginButton: true,
   onLogin: () => {},
   className: '',
+  children: null,
 };
 
 export default Header;
