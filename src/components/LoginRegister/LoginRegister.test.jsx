@@ -117,34 +117,44 @@ describe('LoginRegister component', () => {
     const mockOnSignUp = vi.fn();
     render(<LoginRegister onSignUp={mockOnSignUp} />);
     
-    // Vai para modo sign up
+    // Vai para modo sign up - primeiro aguarda o componente estar totalmente renderizado
+    await waitFor(() => {
+      const allCadastrarButtons = screen.getAllByRole('button', { name: /cadastrar/i });
+      expect(allCadastrarButtons.length).toBeGreaterThan(0);
+    });
+    
     const allCadastrarButtons = screen.getAllByRole('button', { name: /cadastrar/i });
     const overlaySignUpButton = allCadastrarButtons.find(btn => 
       btn.className.includes('border-white')
     );
+    
+    expect(overlaySignUpButton).toBeTruthy();
     await user.click(overlaySignUpButton);
     
-    await waitFor(async () => {
-      // Preenche os campos usando o formulário específico de registro
-      const registerForm = screen.getByTestId('register-form');
-      const nameInput = within(registerForm).getByPlaceholderText('Digite seu nome aqui');
-      const emailInput = within(registerForm).getByPlaceholderText('Digite seu e-mail aqui');
-      const passwordInput = within(registerForm).getByPlaceholderText('Digite sua senha aqui');
-      
-      await user.type(nameInput, 'João Silva');
-      await user.type(emailInput, 'joao@example.com');
-      await user.type(passwordInput, 'senha123');
-      
-      // Submete o formulário - busca especificamente o botão submit do form de registro
-      const submitButton = within(registerForm).getByRole('button', { name: /cadastrar/i });
-      await user.click(submitButton);
-      
-      // Verifica se a função foi chamada com os dados corretos
-      expect(mockOnSignUp).toHaveBeenCalledWith({
-        name: 'João Silva',
-        email: 'joao@example.com',
-        password: 'senha123',
-      });
+    // Aguarda a transição para sign up mode
+    await waitFor(() => {
+      expect(screen.getByText('Criar Conta')).toBeInTheDocument();
+    });
+    
+    // Preenche os campos usando o formulário específico de registro
+    const registerForm = screen.getByTestId('register-form');
+    const nameInput = within(registerForm).getByPlaceholderText('Digite seu nome aqui');
+    const emailInput = within(registerForm).getByPlaceholderText('Digite seu e-mail aqui');
+    const passwordInput = within(registerForm).getByPlaceholderText('Digite sua senha aqui');
+    
+    await user.type(nameInput, 'João Silva');
+    await user.type(emailInput, 'joao@example.com');
+    await user.type(passwordInput, 'senha123');
+    
+    // Submete o formulário - busca especificamente o botão submit do form de registro
+    const submitButton = within(registerForm).getByRole('button', { name: /cadastrar/i });
+    await user.click(submitButton);
+    
+    // Verifica se a função foi chamada com os dados corretos
+    expect(mockOnSignUp).toHaveBeenCalledWith({
+      name: 'João Silva',
+      email: 'joao@example.com',
+      password: 'senha123',
     });
   });
 
