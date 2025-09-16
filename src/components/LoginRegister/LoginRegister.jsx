@@ -49,32 +49,22 @@ export default function LoginRegister({
 
     const handleLoginFormSubmit = (e) => {
         e.preventDefault();
+        if (onSignIn) {
+            onSignIn({
+                email: formData.email,
+                password: formData.password,
+            });
+        }
     };
 
     const handleRegisterFormSubmit = (e) => {
         e.preventDefault();
-    };
-
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
-        
-        if (isSignUpMode) {
-            alert("Cadastro!");
-            if (onSignUp) {
-                onSignUp({
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                });
-            }
-        } else {
-            alert("Login\\Entrar!");
-            if (onSignIn) {
-                onSignIn({
-                    email: formData.email,
-                    password: formData.password,
-                });
-            }
+        if (onSignUp) {
+            onSignUp({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+            });
         }
     };
 
