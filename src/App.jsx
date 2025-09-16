@@ -13,6 +13,7 @@ import MinimalMainLayout from "./components/MinimalMainLayout/MinimalMainLayout"
 import MainLayout from "./components/MainLayout/MainLayout";
 import OverlayTest from "./pages/test/OverlayTest";
 import LevelUpOverlayTest from "./pages/test/LevelUpOverlayTest";
+import Profile from "./pages/Profile";
 
 
 function App() {
@@ -33,7 +34,12 @@ function App() {
           </Route>
           {/* Layout completo do header e do footer */}
           <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />          
+            <Route path="/" element={<Home />} />    
+
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+
           </Route>
 
           {/* <Route path="/createuser" element={<CreateUser />} /> */}
