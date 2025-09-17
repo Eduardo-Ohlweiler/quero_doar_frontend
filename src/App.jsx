@@ -14,6 +14,7 @@ import MainLayout from "./components/MainLayout/MainLayout";
 import OverlayTest from "./pages/test/OverlayTest";
 import LevelUpOverlayTest from "./pages/test/LevelUpOverlayTest";
 import Profile from "./pages/Profile";
+import Verify from "./pages/Verify";
 
 
 function App() {
@@ -25,13 +26,17 @@ function App() {
           {/* Layout mínimo do header e do footer */}
           <Route element={<MinimalMainLayout />}>
             <Route path="/login" element={<Login />} />
-            
+            <Route path="/verify" element={<Verify />} />
 
             {/* TESTES */}
             <Route path="/test/overlaytest" element={<OverlayTest />} />
             <Route path="/test/levelupoverlaytest" element={<LevelUpOverlayTest />} />
 
           </Route>
+
+
+
+
           {/* Layout completo do header e do footer */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />    
