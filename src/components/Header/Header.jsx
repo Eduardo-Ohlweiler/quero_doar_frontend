@@ -7,7 +7,6 @@ import SearchBar from '../SearchBar/SearchBar';
 import UserMenu from '../UserMenu/UserMenu';
 import Button from '../Button/Button';
 import { headerStyles } from './Header.styles';
-import { useNavigate } from 'react-router-dom';
 
 const Header = ({
   showSearchBar,
@@ -16,10 +15,10 @@ const Header = ({
   user,
   showLoginButton,
   onLogin,
+  onLogoClick,
   className,
   children,
 }) => {
-  const navigate = useNavigate();
   return (
     <header className={twMerge(clsx(headerStyles(), className))}>
       <div className="flex items-center justify-between w-full px-4 py-2">
@@ -29,7 +28,7 @@ const Header = ({
             className="cursor-pointer select-none" 
             role="button"
             title="Voltar para a página inicial"
-            onClick={() => navigate('/')} />
+            onClick={onLogoClick} />
         </div>
 
         {/* Center: flexible search area that keeps size regardless of auth state */}

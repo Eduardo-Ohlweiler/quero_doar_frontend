@@ -13,6 +13,9 @@ export default function MainLayout() {
     const handleLogin = () => {
         navigate('/login?fromTo=' + origin);
     }
+    const handleLogoClick = () => {
+        navigate('/');
+    }
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -23,6 +26,7 @@ export default function MainLayout() {
                 onLogin={handleLogin}
                 isAuthenticated={isAuthenticated}
                 user={userMenuUser.fromVUser(user)}
+                onLogoClick={handleLogoClick}
             />
             <main className={`flex-1`}>
                 <Outlet />
