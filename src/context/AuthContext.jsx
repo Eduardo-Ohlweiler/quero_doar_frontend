@@ -115,6 +115,31 @@ export const AuthProvider = ({ children }) => {
     };
 
     /**
+     * Cadastra um novo usuário
+     * @param {Object} userData - Dados do usuário {name, email, password}
+     */
+    const register = async (userData) => {
+        try {
+            await authService.register(userData);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
+     * Verifica o token de verificação de conta
+     * @param {string} token - Token de verificação
+     * @returns {Promise<void>}
+     */
+    const verifyAccountToken = async (token) => {
+        try {
+            await authService.validAccountVerificationToken(token);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
      * Atualiza os dados do usuário atual
      * @returns {Promise<Object|null>} Dados atualizados do usuário ou null
      */
