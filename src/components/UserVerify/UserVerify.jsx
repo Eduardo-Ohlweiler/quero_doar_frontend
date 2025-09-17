@@ -84,9 +84,10 @@ export default function UserVerify({
                     Token Inválido ou Expirado
                 </h1>
                 <p className={messageStyles()}>
-                    O token de verificação não é válido ou está expirado. 
-                    Solicite um novo email de verificação para ativar sua conta.
+                    O token de verificação não é válido ou está expirado. <br />
+                    Reenvie o e-mail de verificação.
                 </p>
+                
                 <div className={buttonContainerStyles()}>
                     <Button
                         appearance="ghost"
