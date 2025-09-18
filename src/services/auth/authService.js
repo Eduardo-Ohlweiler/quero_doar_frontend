@@ -10,7 +10,8 @@ const AUTH_TOKEN_STORAGE_KEY = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY || 'a
 const AUTH_REGISTER_USER_ROUTE = import.meta.env.VITE_POST_AUTH_USER_CREATE_ROUTE || '/auth/user/create';
 const AUTH_VERIFY_ACCOUNT_ROUTE = import.meta.env.VITE_POST_AUTH_VERIFY_ACCOUNT_ROUTE || '/auth/user/verification';
 const RESEND_VERIFICATION_ROUTE = import.meta.env.VITE_POST_AUTH_RESEND_VERIFICATION_ROUTE || '/auth/user/resend-verification';
-
+const AUTH_REQUEST_RESET_PASSWORD_ROUTE = import.meta.env.VITE_POST_AUTH_REQUEST_RESET_PASSWORD_ROUTE || '/api/auth/user/request-reset-password';
+const AUTH_RESET_PASSWORD_ROUTE = import.meta.env.VITE_POST_AUTH_RESET_PASSWORD_ROUTE || '/api/auth/user/reset-password';
 
 class AuthService {
     constructor() {
@@ -129,6 +130,28 @@ class AuthService {
 
         try {
             await apiService.post(RESEND_VERIFICATION_ROUTE, { email });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async requestPasswordReset(email) {
+        if (!email) {
+            throw new Error('Email é obrigatório');
+        }
+        try {
+            await apiService.post(AUTH_REQUEST_RESET_PASSWORD_ROUTE, { email });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resetPassword(token, newPassword) {
+        if (!token || !newPassword) {
+            throw new Error('Token e nova senha são obrigatórios');
+        }
+        try {
+            await apiService.post(AUTH_RESET_PASSWORD_ROUTE, { token, newPassword });
         } catch (error) {
             throw error;
         }

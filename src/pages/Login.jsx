@@ -2,13 +2,14 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoginRegister from "../components/LoginRegister/LoginRegister";
-import userService from "../services/user/userService";
 import useFromTo from "../hooks/useFromTo";
 
 const Login = () => {
     const [signUpLoading, setSignUpLoading] = useState(false);
     const [signUpSuccess, setSignUpSuccess] = useState(false);
-    const { login, loading, register } = useAuth();
+    const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
+    const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
+    const { login, loading, register, requestPasswordReset } = useAuth();
     const navigate = useNavigate();
     const { fromTo, goBack } = useFromTo();
 
@@ -74,6 +75,19 @@ const Login = () => {
         }
     };
 
+    const handlePasswordReset = async (email) => {
+        try {
+            setResetPasswordLoading(true);
+            await requestPasswordReset(email);
+            setResetPasswordSuccess(true);
+        } catch (error) {
+            console.error("Erro ao solicitar recuperação de senha:", error);
+            alert(error.message || "Erro ao solicitar recuperação de senha. Tente novamente.");
+        } finally {
+            setResetPasswordLoading(false);
+        }
+    };
+
     return (
         <div className="h-[var(--viewport-height-minus-header-minimal)] bg-[var(--color-primary)]">
             <LoginRegister 
@@ -83,6 +97,10 @@ const Login = () => {
                 signUpLoading={signUpLoading}
                 signUpSuccess={signUpSuccess}
                 setSignUpSuccess={setSignUpSuccess}
+                resetPasswordSuccess={resetPasswordSuccess}
+                setResetPasswordSuccess={setResetPasswordSuccess}
+                resetPasswordLoading={resetPasswordLoading}
+                onResetPassword={handlePasswordReset}
             />
         </div>
     );

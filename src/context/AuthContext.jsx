@@ -153,6 +153,33 @@ export const AuthProvider = ({ children }) => {
     };
 
     /**
+     * Envia a solicitação de redefinição de senha
+     * @param {string} email - Email do usuário
+     * @returns {Promise<void>}
+     */
+    const requestPasswordReset = async (email) => {
+        try {
+            await authService.requestPasswordReset(email);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
+     * Redefine a senha do usuário
+     * @param {string} token - Token de redefinição
+     * @param {string} newPassword - Nova senha
+     * @returns {Promise<void>}
+     */
+    const resetPassword = async (token, newPassword) => {
+        try {
+            await authService.resetPassword(token, newPassword);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
      * Atualiza os dados do usuário atual
      * @returns {Promise<Object|null>} Dados atualizados do usuário ou null
      */
@@ -193,7 +220,9 @@ export const AuthProvider = ({ children }) => {
         refreshUser,
         register,
         verifyAccountToken,
-        resendVerificationEmail        
+        resendVerificationEmail,
+        requestPasswordReset,
+        resetPassword,      
     };
 
     return (

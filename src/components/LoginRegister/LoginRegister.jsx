@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
@@ -27,11 +27,15 @@ export default function LoginRegister({
     className,
     signUpSuccess,
     setSignUpSuccess,
+    onResetPassword,
+    resetPasswordSuccess,
+    setResetPasswordSuccess,
+    resetPasswordLoading = false,
     ...rest
 }) {
     const [isSignUpMode, setIsSignUpMode] = useState(false);
     const [isPasswordRecoveryMode, setIsPasswordRecoveryMode] = useState(false);
-    
+    const [recoveryEmail, setRecoveryEmail] = useState('');
     const [signUpFormData, setSignUpFormData] = useState({
         name: '',
         email: '',
@@ -42,6 +46,11 @@ export default function LoginRegister({
         email: '',
         password: '',
     });
+
+    useEffect(() => {
+        // debug: confirmar se a prop está chegando
+        console.log('LoginRegister: resetPasswordSuccess ->', resetPasswordSuccess, 'isPasswordRecoveryMode ->', isPasswordRecoveryMode);
+    }, [resetPasswordSuccess, isPasswordRecoveryMode]);
 
     const handleSignUpInputChange = (field) => (e) => {
         setSignUpFormData(prev => ({
@@ -70,7 +79,10 @@ export default function LoginRegister({
 
     const handlePasswordRecoverySubmit = (e) => {
         e.preventDefault();
-        // Implement password recovery logic here
+        
+        if (onResetPassword) {
+            onResetPassword(recoveryEmail);
+        }
     };
 
     const handleSignInFormSubmit = (e) => {
@@ -112,7 +124,7 @@ export default function LoginRegister({
                         onSubmit={handleSignInFormSubmit}
                         role="login-form"
                         data-testid="login-form"
-                        className={FormVisibility({ visible: (!isSignUpMode && !isPasswordRecoveryMode) })}
+                        className={FormVisibility({ visible: (!isSignUpMode && !isPasswordRecoveryMode && !resetPasswordSuccess) })}
                     >
                         <div className={singleFormGroupStyles()} >
                             <h1 className={titleStyles()} >
@@ -186,7 +198,53 @@ export default function LoginRegister({
                             </Button>
                         </div>
                     </form>
-
+     
+                    {/* Password Recovery Form */}
+                    <form
+                        onSubmit={handlePasswordRecoverySubmit}
+                        role="password-recovery-form"
+                        data-testid="password-recovery-form"
+                        className={FormVisibility({ visible: (isPasswordRecoveryMode && !isSignUpMode && !resetPasswordSuccess) })}
+                    >
+                        <div className={singleFormGroupStyles()} >
+                            <h1 className={clsx(titleStyles(), 'mb-8')} >
+                                Recuperar Senha
+                            </h1>
+                            <span className={subtitleStyles()}>
+                                Insira seu e-mail para receber instruções de recuperação
+                            </span>
+                            <div className="w-full space-y-3">
+                                <Input
+                                    type="email"
+                                    label="E-mail"
+                                    placeholder="Digite seu e-mail aqui"
+                                    appearance="outlined-white"
+                                    value={recoveryEmail}
+                                    onChange={(e) => setRecoveryEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="flex gap-4 mt-6">
+                                <Button
+                                    type="button"
+                                    appearance="ghost"
+                                    size="medium"
+                                    onClick={() => setIsPasswordRecoveryMode(false)}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    appearance="secondary"
+                                    size="medium"
+                                    loading={resetPasswordLoading}
+                                >
+                                    Recuperar
+                                </Button>
+                            </div>
+                        </div>
+                    </form>
+         
                     {/* Sign Up Form */}
                     <form
                         onSubmit={handleSignUpFormSubmit}
@@ -268,78 +326,73 @@ export default function LoginRegister({
                         </div>
                     </form>
 
-                    {/* SignUp Success Message */}
-                    <div
-                        className={twMerge(clsx(
-                            FormVisibility({ visible: (signUpSuccess && isSignUpMode) }),
-                            'flex flex-col items-center justify-center px-12 py-16 h-full text-center'
-                        ))}
-                    >
+                    {
+                        isSignUpMode ? (
+                            // SignUp Success Message
+                            <div
+                                className={twMerge(clsx(
+                                    FormVisibility({ visible: (signUpSuccess && isSignUpMode) }),
+                                    'flex flex-col items-center justify-center px-12 py-16 h-full text-center'
+                                ))}
+                            >
 
-                        <h1 className={clsx(titleStyles(), 'text-green-400 mb-4')} >
-                            Conta Criada com Sucesso!
-                        </h1>
+                                <h1 className={clsx(titleStyles(), 'text-green-400 mb-4')} >
+                                    Conta Criada com Sucesso!
+                                </h1>
 
-                        <p className={clsx(textStyles(), 'text-white/90 mb-8 max-w-md')}>
-                            Sua conta foi criada com sucesso.
-                            Por favor, verifique seu e-mail para ativar sua conta antes de fazer login.
-                            Se não encontrar o e-mail, verifique sua caixa de spam.
-                        </p>
+                                <p className={clsx(textStyles(), 'text-white/90 mb-8 max-w-md')}>
+                                    Sua conta foi criada com sucesso.
+                                    Por favor, verifique seu e-mail para ativar sua conta antes de fazer login.
+                                    Se não encontrar o e-mail, verifique sua caixa de spam.
+                                </p>
 
-                        <Button
-                            type="button"
-                            appearance="secondary"
-                            size="medium"
-                            onClick={() => {
-                                setSignUpSuccess(false);
-                            }}
-                            className="w-48"
-                        >
-                            Voltar
-                        </Button>
-                    </div>
-                    {/* Password Recovery Form */}
-                    <form
-                        onSubmit={handlePasswordRecoverySubmit}
-                        role="password-recovery-form"
-                        data-testid="password-recovery-form"
-                        className={FormVisibility({ visible: (isPasswordRecoveryMode && !isSignUpMode) })}
-                    >
-                        <div className={singleFormGroupStyles()} >
-                            <h1 className={clsx(titleStyles(), 'mb-8')} >
-                                Recuperar Senha
-                            </h1>
-                            <span className={subtitleStyles()}>
-                                Insira seu e-mail para receber instruções de recuperação
-                            </span>
-                            <div className="w-full space-y-3">
-                                <Input
-                                    type="email"
-                                    label="E-mail"
-                                    placeholder="Digite seu e-mail aqui"
-                                    appearance="outlined-white"
-                                    required
-                                />
-                            </div>
-                            <div className="flex gap-4 mt-6">
                                 <Button
                                     type="button"
-                                    appearance="ghost"
-                                    size="medium"
-                                    onClick={() => setIsPasswordRecoveryMode(false)}
-                                >
-                                    Cancelar
-                                </Button>
-                                <Button
-                                    type="submit"
                                     appearance="secondary"
                                     size="medium"
+                                    onClick={() => {
+                                        setSignUpSuccess(false);
+                                    }}
+                                    className="w-48"
                                 >
-                                    Recuperar
+                                    Voltar
                                 </Button>
                             </div>
-                        </div>
-                    </form>
+                        ) : 
+                        (
+                            // Password Reset Success Message
+                            <div
+                                className={twMerge(clsx(
+                                    FormVisibility({ visible: (resetPasswordSuccess && !isSignUpMode) }),
+                                    'flex flex-col items-center justify-center px-12 py-16 h-full text-center'
+                                    
+                                ))}
+                                
+                            >
+                                <h1 className={clsx(titleStyles(), 'text-green-400 mb-4')} >
+                                    Solicitação enviada com sucesso!
+                                </h1>
+                                <p className={clsx(textStyles(), 'text-white/90 mb-8 max-w-md')}>
+                                    Verifique seu e-mail para instruções sobre como redefinir sua senha.
+                                </p>
+                                <Button
+                                    type="button"
+                                    appearance="secondary"
+                                    size="medium"
+                                    onClick={() => {
+                                        setResetPasswordSuccess(false);
+                                        setIsPasswordRecoveryMode(false);
+                                    }}
+                                    className="w-48"
+                                >
+                                    Voltar
+                                </Button>
+                            </div>
+                        )
+                    }
+
+
+
                 </div>
 
                 {/* Overlay Container */}

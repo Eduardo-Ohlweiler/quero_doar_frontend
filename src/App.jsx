@@ -15,6 +15,7 @@ import OverlayTest from "./pages/test/OverlayTest";
 import LevelUpOverlayTest from "./pages/test/LevelUpOverlayTest";
 import Profile from "./pages/Profile";
 import Verify from "./pages/Verify";
+import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route element={<MinimalMainLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/verify" element={<Verify />} />
+            <Route path="/password-recovery" element={<PasswordRecoveryPage />} />
 
             {/* TESTES */}
             <Route path="/test/overlaytest" element={<OverlayTest />} />
