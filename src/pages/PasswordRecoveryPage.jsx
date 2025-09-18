@@ -1,3 +1,5 @@
+//TODO: Deve aplicar as regras de senha aqui também, caso contrário o usuário pode por uma senha que vai ser invalida no momento do login
+
 import React, { useState, useEffect } from 'react';
 import PasswordRecovery from '../components/PasswordRecovery/PasswordRecovery';
 import { useNavigate, useSearchParams } from 'react-router-dom';

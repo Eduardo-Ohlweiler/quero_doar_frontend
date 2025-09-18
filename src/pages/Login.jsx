@@ -1,3 +1,5 @@
+// TODO: Melhorar tratamento de erros, casos de senha invalida, email invalido, usuário já existente etc.
+
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
