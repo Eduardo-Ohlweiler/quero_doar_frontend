@@ -1,9 +1,17 @@
+// TODO:2025-09-17:KSG Rever o nome auth, acredito que o ideal seria algo como IAM (Identity and Access Management) ou similar, tanto no frontend quanto no backend
+
 import apiService from '../apiService/apiService.js';
 import userService from '../user/userService.js';
 import LoginDTO from './dto/loginDto.js';
+import RegisterDTO from './dto/registerDTO.js';
 
 const AUTH_LOGIN_ROUTE = import.meta.env.VITE_POST_AUTH_LOGIN_ROUTE || '/auth/login';
 const AUTH_TOKEN_STORAGE_KEY = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY || 'authToken';
+const AUTH_REGISTER_USER_ROUTE = import.meta.env.VITE_POST_AUTH_USER_CREATE_ROUTE || '/auth/user/create';
+const AUTH_VERIFY_ACCOUNT_ROUTE = import.meta.env.VITE_POST_AUTH_VERIFY_ACCOUNT_ROUTE || '/auth/user/verification';
+const RESEND_VERIFICATION_ROUTE = import.meta.env.VITE_POST_AUTH_RESEND_VERIFICATION_ROUTE || '/auth/user/resend-verification';
+const AUTH_REQUEST_RESET_PASSWORD_ROUTE = import.meta.env.VITE_POST_AUTH_REQUEST_RESET_PASSWORD_ROUTE || '/api/auth/user/request-reset-password';
+const AUTH_RESET_PASSWORD_ROUTE = import.meta.env.VITE_POST_AUTH_RESET_PASSWORD_ROUTE || '/api/auth/user/reset-password';
 
 class AuthService {
     constructor() {
@@ -86,6 +94,65 @@ class AuthService {
             return user;
         } catch (error) {
             this.#clearToken();
+            throw error;
+        }
+    }
+
+    async register(userData) {
+        if (!userData || !userData.email || !userData.password || !userData.name) {
+            throw new Error('Nome, e-mail e senha são obrigatórios');
+        }
+
+        try {
+            const registerDto = new RegisterDTO(userData.name, userData.email, userData.password);
+            await apiService.post(AUTH_REGISTER_USER_ROUTE, registerDto);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async validAccountVerificationToken(token) {
+        if (!token) {
+            throw new Error('Token é obrigatório');
+        }
+
+        try {
+            await apiService.post(AUTH_VERIFY_ACCOUNT_ROUTE, { token });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resendVerificationEmail(email) {
+        if (!email) {
+            throw new Error('Email é obrigatório');
+        }
+
+        try {
+            await apiService.post(RESEND_VERIFICATION_ROUTE, { email });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async requestPasswordReset(email) {
+        if (!email) {
+            throw new Error('Email é obrigatório');
+        }
+        try {
+            await apiService.post(AUTH_REQUEST_RESET_PASSWORD_ROUTE, { email });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resetPassword(token, newPassword) {
+        if (!token || !newPassword) {
+            throw new Error('Token e nova senha são obrigatórios');
+        }
+        try {
+            await apiService.post(AUTH_RESET_PASSWORD_ROUTE, { token, newPassword });
+        } catch (error) {
             throw error;
         }
     }

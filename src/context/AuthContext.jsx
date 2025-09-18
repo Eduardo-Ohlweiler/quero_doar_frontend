@@ -115,6 +115,71 @@ export const AuthProvider = ({ children }) => {
     };
 
     /**
+     * Cadastra um novo usuário
+     * @param {Object} userData - Dados do usuário {name, email, password}
+     */
+    const register = async (userData) => {
+        try {
+            await authService.register(userData);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
+     * Verifica o token de verificação de conta
+     * @param {string} token - Token de verificação
+     * @returns {Promise<void>}
+     */
+    const verifyAccountToken = async (token) => {
+        try {
+            await authService.validAccountVerificationToken(token);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
+     * Reenvia o email de verificação
+     * @param {string} email - Email do usuário
+     * @returns {Promise<void>}
+     */
+    const resendVerificationEmail = async (email) => {
+        try {
+            await authService.resendVerificationEmail(email);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
+     * Envia a solicitação de redefinição de senha
+     * @param {string} email - Email do usuário
+     * @returns {Promise<void>}
+     */
+    const requestPasswordReset = async (email) => {
+        try {
+            await authService.requestPasswordReset(email);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
+     * Redefine a senha do usuário
+     * @param {string} token - Token de redefinição
+     * @param {string} newPassword - Nova senha
+     * @returns {Promise<void>}
+     */
+    const resetPassword = async (token, newPassword) => {
+        try {
+            await authService.resetPassword(token, newPassword);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
      * Atualiza os dados do usuário atual
      * @returns {Promise<Object|null>} Dados atualizados do usuário ou null
      */
@@ -152,7 +217,12 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
-        refreshUser
+        refreshUser,
+        register,
+        verifyAccountToken,
+        resendVerificationEmail,
+        requestPasswordReset,
+        resetPassword,      
     };
 
     return (

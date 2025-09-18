@@ -15,14 +15,20 @@ const Header = ({
   user,
   showLoginButton,
   onLogin,
+  onLogoClick,
   className,
+  children,
 }) => {
   return (
     <header className={twMerge(clsx(headerStyles(), className))}>
       <div className="flex items-center justify-between w-full px-4 py-2">
         {/* Left: fixed width area for logo to match actions width */}
         <div className="w-48 flex items-center justify-start">
-          <Logo />
+          <Logo 
+            className="cursor-pointer select-none" 
+            role="button"
+            title="Voltar para a página inicial"
+            onClick={onLogoClick} />
         </div>
 
         {/* Center: flexible search area that keeps size regardless of auth state */}
@@ -41,6 +47,7 @@ const Header = ({
         {/* Right: fixed width area for actions (user menu or login) */}
         <div className="w-48 flex items-center justify-end">
           <div className="flex items-center gap-4">
+            {children}
             {isAuthenticated ? (
               <UserMenu user={user} appearance="secondary" />
             ) : (
@@ -65,6 +72,7 @@ Header.propTypes = {
   showLoginButton: PropTypes.bool,
   onLogin: PropTypes.func,
   className: PropTypes.string,
+  children: PropTypes.node,
 };
 
 Header.defaultProps = {
@@ -75,6 +83,7 @@ Header.defaultProps = {
   showLoginButton: true,
   onLogin: () => {},
   className: '',
+  children: null,
 };
 
 export default Header;

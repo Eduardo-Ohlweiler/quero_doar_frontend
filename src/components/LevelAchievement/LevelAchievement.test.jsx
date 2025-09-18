@@ -43,12 +43,9 @@ describe("LevelAchievement component", () => {
       render(<LevelAchievement level={5} />);
       const achievement = screen.getByRole("alert");
       
-      // Verifica se o componente inicia com opacity baixa e depois fica visível
+      // Verifica se o componente tem a classe de animação fadeIn
       expect(achievement).toBeInTheDocument();
-      
-      await waitFor(() => {
-        expect(achievement).toHaveClass("opacity-100");
-      }, { timeout: 200 });
+      expect(achievement).toHaveClass("animate-[fadeIn_0.7s_ease-out]");
     });
 
     it("deve chamar callback onAnimationComplete quando show é true", async () => {

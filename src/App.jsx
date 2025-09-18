@@ -13,6 +13,9 @@ import MinimalMainLayout from "./components/MinimalMainLayout/MinimalMainLayout"
 import MainLayout from "./components/MainLayout/MainLayout";
 import OverlayTest from "./pages/test/OverlayTest";
 import LevelUpOverlayTest from "./pages/test/LevelUpOverlayTest";
+import Profile from "./pages/Profile";
+import Verify from "./pages/Verify";
+import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
 
 
 function App() {
@@ -24,16 +27,26 @@ function App() {
           {/* Layout mínimo do header e do footer */}
           <Route element={<MinimalMainLayout />}>
             <Route path="/login" element={<Login />} />
-            
+            <Route path="/verify" element={<Verify />} />
+            <Route path="/password-recovery" element={<PasswordRecoveryPage />} />
 
             {/* TESTES */}
             <Route path="/test/overlaytest" element={<OverlayTest />} />
             <Route path="/test/levelupoverlaytest" element={<LevelUpOverlayTest />} />
 
           </Route>
+
+
+
+
           {/* Layout completo do header e do footer */}
           <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />          
+            <Route path="/" element={<Home />} />    
+
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+
           </Route>
 
           {/* <Route path="/createuser" element={<CreateUser />} /> */}
