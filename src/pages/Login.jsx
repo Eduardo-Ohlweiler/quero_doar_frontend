@@ -7,15 +7,14 @@ import useFromTo from "../hooks/useFromTo";
 
 const Login = () => {
     const [signUpLoading, setSignUpLoading] = useState(false);
-    const { login, loading } = useAuth();
+    const [signUpSuccess, setSignUpSuccess] = useState(false);
+    const { login, loading, register } = useAuth();
     const navigate = useNavigate();
     const { fromTo, goBack } = useFromTo();
 
     const handleSignIn = async (formData) => {
         try {
             await login({ email: formData.email, password: formData.password });
-            
-            // navigate(from, { replace: true });
             if(fromTo)
                 goBack();
             else
@@ -49,13 +48,13 @@ const Login = () => {
             setSignUpLoading(true);
             
             // Criar o usuário
-            await userService.CreateUser({
+            await register({
                 name: formData.name.trim(),
                 email: formData.email.trim(),
                 password: formData.password
             });
 
-            alert("Conta criada com sucesso! Agora você pode fazer login.");
+            setSignUpSuccess(true);
             
         } catch (error) {
             console.error("Erro ao criar conta:", error);
@@ -65,6 +64,8 @@ const Login = () => {
                 alert("Este email já está em uso. Tente fazer login ou use outro email.");
             } else if (error.message.includes('400')) {
                 alert("Dados inválidos. Verifique os campos e tente novamente.");
+            } else if (error.response && error.response.data && error.response.data.message && error.response.data.message.includes('duplicar valor da chave viola a restrição de unicidade')) {
+                alert("Este email já está em uso. Tente fazer login, recuperar sua senha ou use outro email.");
             } else {
                 alert(error.message || "Erro ao criar conta. Tente novamente.");
             }
@@ -80,6 +81,8 @@ const Login = () => {
                 onSignUp={handleSignUp}
                 signInLoading={loading}
                 signUpLoading={signUpLoading}
+                signUpSuccess={signUpSuccess}
+                setSignUpSuccess={setSignUpSuccess}
             />
         </div>
     );

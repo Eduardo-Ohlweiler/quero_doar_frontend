@@ -25,6 +25,8 @@ export default function LoginRegister({
     signInLoading = false,
     signUpLoading = false,
     className,
+    signUpSuccess,
+    setSignUpSuccess,
     ...rest
 }) {
     const [isSignUpMode, setIsSignUpMode] = useState(false);
@@ -57,8 +59,8 @@ export default function LoginRegister({
 
     const handleSignUpFormSubmit = (e) => {
         e.preventDefault();
-        if (onSignIn) {
-            onSignIn({
+        if (onSignUp) {
+            onSignUp({
                 name: signUpFormData.name,
                 email: signUpFormData.email,
                 password: signUpFormData.password,
@@ -190,7 +192,7 @@ export default function LoginRegister({
                         onSubmit={handleSignUpFormSubmit}
                         role="register-form"
                         data-testid="register-form"
-                        className={FormVisibility({ visible: isSignUpMode })}
+                        className={FormVisibility({ visible: (isSignUpMode && !signUpSuccess) })}
                     >
                         <div className={singleFormGroupStyles()} >
                             <h1 className={titleStyles()}>
@@ -266,6 +268,36 @@ export default function LoginRegister({
                         </div>
                     </form>
 
+                    {/* SignUp Success Message */}
+                    <div
+                        className={twMerge(clsx(
+                            FormVisibility({ visible: (signUpSuccess && isSignUpMode) }),
+                            'flex flex-col items-center justify-center px-12 py-16 h-full text-center'
+                        ))}
+                    >
+
+                        <h1 className={clsx(titleStyles(), 'text-green-400 mb-4')} >
+                            Conta Criada com Sucesso!
+                        </h1>
+
+                        <p className={clsx(textStyles(), 'text-white/90 mb-8 max-w-md')}>
+                            Sua conta foi criada com sucesso.
+                            Por favor, verifique seu e-mail para ativar sua conta antes de fazer login.
+                            Se não encontrar o e-mail, verifique sua caixa de spam.
+                        </p>
+
+                        <Button
+                            type="button"
+                            appearance="secondary"
+                            size="medium"
+                            onClick={() => {
+                                setSignUpSuccess(false);
+                            }}
+                            className="w-48"
+                        >
+                            Voltar
+                        </Button>
+                    </div>
                     {/* Password Recovery Form */}
                     <form
                         onSubmit={handlePasswordRecoverySubmit}
@@ -306,10 +338,8 @@ export default function LoginRegister({
                                     Recuperar
                                 </Button>
                             </div>
-                            
                         </div>
                     </form>
-
                 </div>
 
                 {/* Overlay Container */}
