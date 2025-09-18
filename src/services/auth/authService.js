@@ -9,6 +9,8 @@ const AUTH_LOGIN_ROUTE = import.meta.env.VITE_POST_AUTH_LOGIN_ROUTE || '/auth/lo
 const AUTH_TOKEN_STORAGE_KEY = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY || 'authToken';
 const AUTH_REGISTER_USER_ROUTE = import.meta.env.VITE_POST_AUTH_USER_CREATE_ROUTE || '/auth/user/create';
 const AUTH_VERIFY_ACCOUNT_ROUTE = import.meta.env.VITE_POST_AUTH_VERIFY_ACCOUNT_ROUTE || '/auth/user/verification';
+const RESEND_VERIFICATION_ROUTE = import.meta.env.VITE_POST_AUTH_RESEND_VERIFICATION_ROUTE || '/auth/user/resend-verification';
+
 
 class AuthService {
     constructor() {
@@ -115,6 +117,18 @@ class AuthService {
 
         try {
             await apiService.post(AUTH_VERIFY_ACCOUNT_ROUTE, { token });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resendVerificationEmail(email) {
+        if (!email) {
+            throw new Error('Email é obrigatório');
+        }
+
+        try {
+            await apiService.post(RESEND_VERIFICATION_ROUTE, { email });
         } catch (error) {
             throw error;
         }

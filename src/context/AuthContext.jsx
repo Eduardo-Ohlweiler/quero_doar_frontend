@@ -140,6 +140,19 @@ export const AuthProvider = ({ children }) => {
     };
 
     /**
+     * Reenvia o email de verificação
+     * @param {string} email - Email do usuário
+     * @returns {Promise<void>}
+     */
+    const resendVerificationEmail = async (email) => {
+        try {
+            await authService.resendVerificationEmail(email);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    /**
      * Atualiza os dados do usuário atual
      * @returns {Promise<Object|null>} Dados atualizados do usuário ou null
      */
@@ -177,7 +190,10 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
-        refreshUser
+        refreshUser,
+        register,
+        verifyAccountToken,
+        resendVerificationEmail        
     };
 
     return (
