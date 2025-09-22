@@ -1,5 +1,4 @@
 import BaseDTO from "../../util/baseDTO";
-import UserMinimalDTO from "../user/dto/UserMinimalDTO";
 
 export default class UserMinimalWithLevelDTO extends BaseDTO {
     constructor() {
