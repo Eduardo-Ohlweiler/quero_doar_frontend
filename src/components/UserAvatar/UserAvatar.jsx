@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import {extractFirstAndLastName, getInitials} from '../../services/util/stringUtil';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { 
@@ -20,24 +21,9 @@ export default function UserAvatar({
     className,
     ...rest 
 }) {
-    // Suporta UserMinimalWithLevelDTO: { userId, name, photo, level }
-    // Extrai firstName/lastName a partir de `name` quando disponível
-    const rawName = user?.name || '';
-    const nameParts = rawName.trim() ? rawName.trim().split(/\s+/) : [];
-    const firstName = nameParts.length > 0 ? nameParts[0] : null;
-    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
-
-    const displayName = firstName && lastName ? `${firstName} ${lastName}` : (rawName || 'Usuário');
-
-    // Definir iniciais do avatar: se houver nome completo, pegue iniciais de first+last, se nome único pegue primeira letra
-    let avatarInitials = '';
-    if (firstName && lastName) {
-        avatarInitials = `${firstName[0]}${lastName[0]}`.toUpperCase();
-    } else if (firstName) {
-        avatarInitials = `${firstName[0]}`.toUpperCase();
-    } else {
-        avatarInitials = 'U';
-    }
+    const {firstName, lastName} = extractFirstAndLastName(user?.name || '');
+    const displayName = firstName && lastName ? `${firstName} ${lastName}` : (user?.name || 'Usuário');
+    const avatarInitials = getInitials(user?.name || '');
 
     // Renderizar apenas o nome (sem foto)
     if (display === 'name-only') {
