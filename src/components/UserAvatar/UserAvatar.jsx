@@ -20,15 +20,24 @@ export default function UserAvatar({
     className,
     ...rest 
 }) {
-    // Definir nome para exibição
-    const displayName = user?.firstName && user?.lastName 
-        ? `${user.firstName} ${user.lastName}`
-        : user?.name || 'Usuário';
+    // Suporta UserMinimalWithLevelDTO: { userId, name, photo, level }
+    // Extrai firstName/lastName a partir de `name` quando disponível
+    const rawName = user?.name || '';
+    const nameParts = rawName.trim() ? rawName.trim().split(/\s+/) : [];
+    const firstName = nameParts.length > 0 ? nameParts[0] : null;
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
 
-    // Definir iniciais do avatar
-    const avatarInitials = user?.firstName && user?.lastName 
-        ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-        : displayName.split(' ').map(name => name[0]).join('').toUpperCase().slice(0, 2);
+    const displayName = firstName && lastName ? `${firstName} ${lastName}` : (rawName || 'Usuário');
+
+    // Definir iniciais do avatar: se houver nome completo, pegue iniciais de first+last, se nome único pegue primeira letra
+    let avatarInitials = '';
+    if (firstName && lastName) {
+        avatarInitials = `${firstName[0]}${lastName[0]}`.toUpperCase();
+    } else if (firstName) {
+        avatarInitials = `${firstName[0]}`.toUpperCase();
+    } else {
+        avatarInitials = 'U';
+    }
 
     // Renderizar apenas o nome (sem foto)
     if (display === 'name-only') {
@@ -52,9 +61,9 @@ export default function UserAvatar({
             )}
             {/* Container do Avatar */}
             <div className={userAvatarStyles({ size, appearance, frame })}>
-                {user?.avatar ? (
+                {user?.photo ? (
                     <img 
-                        src={user.avatar} 
+                        src={user.photo} 
                         alt={`Avatar de ${displayName}`}
                         className={userAvatarImageStyles({ frame, hasLevel: showLevel && user?.level !== undefined })}
                     />
@@ -77,10 +86,9 @@ export default function UserAvatar({
 
 UserAvatar.propTypes = {
     user: PropTypes.shape({
-        firstName: PropTypes.string,
-        lastName: PropTypes.string,
+        userId: PropTypes.number,
         name: PropTypes.string,
-        avatar: PropTypes.string,
+        photo: PropTypes.string,
         level: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     }),
     size: PropTypes.oneOf(['small', 'medium', 'large', 'xlarge']),
