@@ -24,7 +24,7 @@ export default class BaseDTO {
 
     static isValid(obj, acceptNulls = true) {
         const schema = acceptNulls ? this.schemaWithNull() : this.schema;
-        return objectTypesMatch(schema, obj);
+        return objectTypesMatch(schema, obj, acceptNulls);
     }
 
     isValid(acceptNulls = true) {
@@ -40,31 +40,36 @@ export default class BaseDTO {
 
         // Conversão automática de datas, arrays de DTOs e DTOs aninhados
         const parsedObj = { ...obj };
-        for (const [key, types] of Object.entries(this.schema)) { // Usar schema original, não schemaWithNull
+        
+        for (const [key, types] of Object.entries(this.schema)) { // Sempre usar schema original
             const value = parsedObj[key];
             
-            if (!value) continue; // Pula valores null/undefined
+            // Pular apenas null/undefined, não false/0/""
+            if (value === null || value === undefined) continue;
+            
+            // Normalizar tipos para array
+            const typesArr = Array.isArray(types) ? types : [types];
             
             // Conversão de datas
-            if (types.includes('date') && typeof value === 'string') {
+            if (typesArr.includes('date') && typeof value === 'string') {
                 parsedObj[key] = new Date(value);
+                continue;
             }
             
             // Conversão de arrays tipados - verifica se o primeiro elemento é 'array'
-            else if (Array.isArray(types) && types.length === 2 && types[0] === 'array' && Array.isArray(value)) {
-                const elementType = types[1];
+            if (typesArr.length === 2 && typesArr[0] === 'array' && Array.isArray(value)) {
+                const elementType = typesArr[1];
                 if (typeof elementType === 'function' && elementType.fromJson) {
                     parsedObj[key] = value.map(item => elementType.fromJson(item, acceptNulls));
                 }
+                continue;
             }
             
             // Conversão de DTOs aninhados
-            else if (Array.isArray(types)) {
-                for (const type of types) {
-                    if (typeof type === 'function' && type.fromJson && typeof value === 'object' && !Array.isArray(value)) {
-                        parsedObj[key] = type.fromJson(value, acceptNulls);
-                        break;
-                    }
+            for (const type of typesArr) {
+                if (typeof type === 'function' && type.fromJson && typeof value === 'object' && !Array.isArray(value)) {
+                    parsedObj[key] = type.fromJson(value, acceptNulls);
+                    break;
                 }
             }
         }
