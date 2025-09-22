@@ -72,7 +72,42 @@ export default class StringUtil  {
 
         return segments.join('/');
     }
+
+    /**
+     * Primeiro e último nome a partir do nome completo
+     * @param {string} fullName - Nome completo
+     * @returns {{ firstName: string|null, lastName: string|null }}
+     */
+    static extractFirstAndLastName(fullName) {
+        if (typeof fullName !== 'string' || fullName.trim() === '') {
+            return { firstName: null, lastName: null };
+        }
+     
+        const nameParts = fullName.trim().split(/\s+/);
+        const firstName = nameParts[0] || null;
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
+
+        return { firstName, lastName };
+    }
+
+    /**
+     * Iniciais (primeira letra do primeiro e último nome, ou apenas do primeiro se nome único)
+     * @param {string} fullName - Nome completo
+     * @returns {string} Iniciais em maiúsculas (ex: "JS" ou "J" ou "U" se nome vazio)
+     */
+    static getInitials(fullName) {
+        const { firstName, lastName } = StringUtil.extractFirstAndLastName(fullName);
+        if (firstName && lastName) {
+            return (firstName[0] + lastName[0]).toUpperCase();
+        } else if (firstName) {
+            return firstName[0].toUpperCase();
+        } else {
+            return 'U'; // Usuário
+        }
+    }
 }
 
 export const buildLink = StringUtil.buildLink;
 export const resolveDonationImagePath = StringUtil.resolveDonationImagePath;
+export const extractFirstAndLastName = StringUtil.extractFirstAndLastName;
+export const getInitials = StringUtil.getInitials;
