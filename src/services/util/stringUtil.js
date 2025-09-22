@@ -1,3 +1,7 @@
+/**
+ * Utilitários para manipulação de strings.
+ * @module services/util/stringUtil
+ */
 export default class StringUtil  {
 
     /**
@@ -38,6 +42,37 @@ export default class StringUtil  {
         const finalUrl = basePath + queryString + fragment;
         return finalUrl;
     }
+
+    /**
+     * Resolve o caminho de uma imagem de doação, retornando parte do caminho resolvido com base no Id
+     * @param {number} donationId - ID da doação
+     * @param {number} separatorLength - Quantidade de dígitos por segmento (padrão 2)
+     * @returns {string} Caminho resolvido (ex: "0/1/2")
+     * @throws {Error} Se donationId não for um número não negativo
+     * @thriws {Error} Se separatorLength não for um número positivo 
+     * @example
+     * StringUtil.resolveSegmentsPathById(15486);
+     * retorna "00/00/01/54/86"
+     */
+    static resolveSegmentsPathById(donationId, separatorLength = 2) {
+        if (typeof donationId !== 'number' || Number.isNaN(donationId) || donationId < 0) {
+            throw new Error("donationId must be a non-negative number.");
+        }
+
+        if (typeof separatorLength !== 'number' || Number.isNaN(separatorLength) || separatorLength <= 0) {
+            throw new Error("separatorLength must be a positive number.");
+        }
+        
+        const idStr = String(donationId).padStart(10, '0');
+
+        const segments = [];
+        for (let i = 0; i < idStr.length; i += separatorLength) {
+            segments.push(idStr.substring(i, i + separatorLength));
+        }
+
+        return segments.join('/');
+    }
 }
 
 export const buildLink = StringUtil.buildLink;
+export const resolveDonationImagePath = StringUtil.resolveDonationImagePath;
