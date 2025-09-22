@@ -1,4 +1,4 @@
-import { objectTypesMatch } from '../../util/Validation';
+import { objectTypesMatch } from "./Validation";
 
 export default class BaseDTO {
     constructor() {
@@ -7,7 +7,7 @@ export default class BaseDTO {
         }
     }
 
-    static #schemaWithNull() {
+    static schemaWithNull() {
         if (!this.schema) {
             throw new Error(`A classe ${this.name} não declarou static schema`);
         }
@@ -22,29 +22,53 @@ export default class BaseDTO {
         );
     }
 
-    static isValid(obj) {
-        return objectTypesMatch(this.#schemaWithNull(), obj);
+    static isValid(obj, acceptNulls = true) {
+        const schema = acceptNulls ? this.schemaWithNull() : this.schema;
+        return objectTypesMatch(schema, obj);
     }
 
-    isValid() {
-        return this.constructor.isValid(this);
+    isValid(acceptNulls = true) {
+        return this.constructor.isValid(this, acceptNulls);
     }
 
-    static fromJson(json) {
+    static fromJson(json, acceptNulls = false) {
         const obj = (typeof json === 'string') ? JSON.parse(json) : json;
 
-        if (!this.isValid(obj)) {
+        if (!this.isValid(obj, acceptNulls)) {
             throw new Error(`JSON inválido para ${this.name}`);
         }
 
-        // Conversão automática de datas
+        // Conversão automática de datas, arrays de DTOs e DTOs aninhados
         const parsedObj = { ...obj };
-        for (const [key, types] of Object.entries(this.#schemaWithNull())) {
-            if (types.includes('date') && typeof parsedObj[key] === 'string') {
-                parsedObj[key] = new Date(parsedObj[key]);
+        for (const [key, types] of Object.entries(this.schema)) { // Usar schema original, não schemaWithNull
+            const value = parsedObj[key];
+            
+            if (!value) continue; // Pula valores null/undefined
+            
+            // Conversão de datas
+            if (types.includes('date') && typeof value === 'string') {
+                parsedObj[key] = new Date(value);
+            }
+            
+            // Conversão de arrays tipados - verifica se o primeiro elemento é 'array'
+            else if (Array.isArray(types) && types.length === 2 && types[0] === 'array' && Array.isArray(value)) {
+                const elementType = types[1];
+                if (typeof elementType === 'function' && elementType.fromJson) {
+                    parsedObj[key] = value.map(item => elementType.fromJson(item, acceptNulls));
+                }
+            }
+            
+            // Conversão de DTOs aninhados
+            else if (Array.isArray(types)) {
+                for (const type of types) {
+                    if (typeof type === 'function' && type.fromJson && typeof value === 'object' && !Array.isArray(value)) {
+                        parsedObj[key] = type.fromJson(value, acceptNulls);
+                        break;
+                    }
+                }
             }
         }
 
-        return new this(...Object.values(parsedObj));
+        return Object.assign(new this(), parsedObj);
     }
 }
