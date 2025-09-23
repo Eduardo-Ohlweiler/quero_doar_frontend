@@ -16,6 +16,11 @@ import {
 import UserAvatar from '../UserAvatar/UserAvatar';
 import Button from '../Button/Button';
 import { formatTimeAgo } from '../../services/util/dateUtil';
+import { buildLink, resolveSegmentsPathById } from '../../services/util/stringUtil';
+
+const BASE_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const PHOTO_PATH = import.meta.env.VITE_GET_MEDIA_DONATION_ROUTE || '/media/donation';
+const DEFAULT_PHOTO = import.meta.env.VITE_GET_MEDIA_DONATION_DEFAULT_PHOTO || 'default.webp';
 
 export default function DonationPreview({
     donation,
@@ -27,19 +32,18 @@ export default function DonationPreview({
     className,
     ...rest
 }) {
-    const {
-        id,
-        title = 'Título da doação',
-        description = 'Descrição da doação',
-        image,
-        city = 'Cidade',
-        createdAt,
-        user = {
-            firstName: 'Usuário',
-            lastName: '',
-            level: 1
+    // Access donation fields directly where needed (assume PreviewDonationDTO shape)
+
+    const resolveImagePath = () => {
+        const donationPhoto = donation?.photo;
+        if (donationPhoto === null || donationPhoto === undefined || donationPhoto === '') {
+            return buildLink([BASE_API_URL, PHOTO_PATH, DEFAULT_PHOTO]);
+        } else if (donationPhoto?.includes('http://') || donationPhoto?.includes('https://')) {
+            return donationPhoto;
+        } else {
+            return buildLink([BASE_API_URL, PHOTO_PATH, resolveSegmentsPathById(donation?.donationId), donationPhoto]);
         }
-    } = donation || {};
+    }
 
     // Configuração do botão principal baseado no tipo e modo
     const getActionButtonConfig = () => {
@@ -106,7 +110,7 @@ export default function DonationPreview({
                     handleCardClick(e);
                 }
             }}
-            aria-label={`${badgeConfig.text}: ${title} por ${user.firstName} ${user.lastName}`.trim()}
+            aria-label={`${badgeConfig.text}: ${donation?.title ?? 'Título da doação'} por ${donation?.userMinimal?.name ?? 'Usuário'}`.trim()}
             {...rest}
         >
             {/* Badge de tipo (Doação/Solicitação) */}
@@ -124,14 +128,9 @@ export default function DonationPreview({
             {/* Imagem */}
             <div className={donationPreviewImageStyles({ layout })}>
                 <img
-                    //TODO: Quando em produção deve incluir fallback
-                    // src={image || '/placeholder-donation.jpg'}
-                    src={image}
-                    alt={`Imagem de ${title}`}
+                    src={resolveImagePath()}
+                    alt={`Imagem de ${donation?.title ?? 'Título da doação'}`}
                     className="w-full h-full object-cover"
-                    // onError={(e) => {
-                    //     e.target.src = '/placeholder-donation.jpg';
-                    // }}
                 />
             </div>
 
@@ -140,13 +139,13 @@ export default function DonationPreview({
                 {/* Header com título */}
                 <div className={donationPreviewHeaderStyles({ layout })}>
                     <h3 className={donationPreviewTitleStyles({ layout })}>
-                        {title}
+                        {donation?.title ?? 'Título da doação'}
                     </h3>
                 </div>
 
                 {/* Descrição */}
                 <p className={donationPreviewDescriptionStyles({ layout })}>
-                    {description}
+                    {donation?.description ?? 'Descrição da doação'}
                 </p>
 
 
@@ -155,18 +154,18 @@ export default function DonationPreview({
                         <div className="flex flex-row justify-between">
                             <div className="flex items-center gap-1 text-gray-600 text-xs">
                                 <FaMapMarkerAlt className="w-3 h-3" />
-                                <span>{city}</span>
+                                <span>{donation?.location ?? 'Cidade'}</span>
                             </div>
-                            {createdAt && (
+                            {donation?.date && (
                                 <div className="flex items-center gap-1 text-gray-500 text-xs">
                                     <FaClock className="w-3 h-3" />
-                                    <span>{formatTimeAgo(createdAt)}</span>
+                                    <span>{formatTimeAgo(donation?.date)}</span>
                                 </div>
                             )}
                         </div>
                         <div className={donationPreviewUserSectionStyles({ layout })}>
                             <UserAvatar
-                                user={user}
+                                user={donation?.userMinimal ?? { userId: null, name: 'Usuário', photo: null }}
                                 appearance="secondary"
                                 size="small"
                                 display="photo-with-name"
@@ -187,7 +186,7 @@ export default function DonationPreview({
                 ) : (
                     <div className={donationPreviewUserSectionStyles({ layout })}>
                         <UserAvatar
-                            user={user}
+                                user={donation?.userMinimal ?? { userId: null, name: 'Usuário', photo: null }}
                             appearance="secondary"
                             size="small"
                             display="photo-with-name"
@@ -196,12 +195,12 @@ export default function DonationPreview({
                         />
                         <div className="flex items-center gap-1 text-gray-600 text-xs">
                             <FaMapMarkerAlt className="w-3 h-3" />
-                            <span>{city}</span>
+                                <span>{donation?.location ?? 'Cidade'}</span>
                         </div>
-                        {createdAt && (
+                            {donation?.date && (
                             <div className="flex items-center gap-1 text-gray-500 text-xs">
                                 <FaClock className="w-3 h-3" />
-                                <span>{formatTimeAgo(createdAt)}</span>
+                                    <span>{formatTimeAgo(donation?.date)}</span>
                             </div>
                         )}
                         <Button
@@ -221,16 +220,16 @@ export default function DonationPreview({
 
 DonationPreview.propTypes = {
     donation: PropTypes.shape({
-        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        donationId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         title: PropTypes.string,
         description: PropTypes.string,
-        image: PropTypes.string,
-        city: PropTypes.string,
-        createdAt: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-        user: PropTypes.shape({
-            firstName: PropTypes.string,
-            lastName: PropTypes.string,
-            avatar: PropTypes.string,
+        photo: PropTypes.string,
+        location: PropTypes.string,
+        date: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+        userMinimal: PropTypes.shape({
+            userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+            name: PropTypes.string,
+            photo: PropTypes.string,
             level: PropTypes.number
         })
     }),

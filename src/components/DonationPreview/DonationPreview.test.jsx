@@ -7,33 +7,33 @@ import DonationPreview from './DonationPreview';
 
 // Mock data para testes
 const mockUser = {
-    firstName: 'Maria',
-    lastName: 'Silva',
-    avatar: 'https://example.com/avatar.jpg',
+    userId: 1,
+    name: 'Maria Silva',
+    photo: 'https://example.com/avatar.jpg',
     level: 3
 };
 
 const mockDonation = {
-    id: '1',
+    donationId: '1',
     title: 'Roupas Infantis (2-4 anos)',
     description: 'Lote com 15 peças de roupas infantis em ótimo estado. Inclui camisetas, calças e vestidos.',
-    image: 'https://example.com/image.jpg',
-    city: 'Vila Madalena',
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-    user: mockUser
+    photo: 'https://example.com/image.jpg',
+    location: 'Vila Madalena',
+    date: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
+    userMinimal: mockUser
 };
 
 const mockRequest = {
-    id: '2',
+    donationId: '2',
     title: 'Mesa de Estudos com Cadeira',
     description: 'Mesa de estudos em madeira com cadeira. Ideal para estudantes.',
-    image: 'https://example.com/desk.jpg',
-    city: 'Pinheiros',
-    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
-    user: {
-        firstName: 'Carlos',
-        lastName: 'Oliveira',
-        avatar: 'https://example.com/avatar2.jpg',
+    photo: 'https://example.com/desk.jpg',
+    location: 'Pinheiros',
+    date: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
+    userMinimal: {
+        userId: 2,
+        name: 'Carlos Oliveira',
+        photo: 'https://example.com/avatar2.jpg',
         level: 5
     }
 };
@@ -336,13 +336,13 @@ describe('DonationPreview', () => {
     // Testes adicionais
     test('should handle minimal data gracefully', () => {
         const minimalDonation = {
-            id: '3',
+            donationId: '3',
             title: 'Item',
             description: 'Descrição',
-            city: 'São Paulo',
-            user: {
-                firstName: 'Usuário',
-                lastName: ''
+            location: 'São Paulo',
+            userMinimal: {
+                userId: null,
+                name: 'Usuário'
             }
         };
 
@@ -401,7 +401,7 @@ describe('DonationPreview', () => {
         ];
 
         testCases.forEach(({ date, expected }) => {
-            const testDonation = { ...mockDonation, createdAt: date };
+            const testDonation = { ...mockDonation, date };
             const { unmount } = render(
                 <DonationPreview
                     donation={testDonation}

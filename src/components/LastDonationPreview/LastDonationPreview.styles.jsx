@@ -18,7 +18,7 @@ export const lastDonationPreviewHeaderStyles = cva([
 ]);
 
 export const lastDonationPreviewTitleStyles = cva([
-    'text-2xl',
+    'text-3xl',
     'font-bold',
     'text-gray-900',
     'mb-2'
@@ -29,7 +29,7 @@ export const lastDonationPreviewLocationStyles = cva([
     'items-center',
     'justify-center',
     'gap-2',
-    'text-sm',
+    'text-lg',
     'text-gray-600',
     'font-medium'
 ]);
@@ -40,7 +40,8 @@ export const lastDonationPreviewGridStyles = cva([
     'sm:grid-cols-2',
     'lg:grid-cols-3',
     'gap-6',
-    'mb-8'
+    'mb-8',
+    'justify-items-center'
 ]);
 
 export const lastDonationPreviewButtonContainerStyles = cva([

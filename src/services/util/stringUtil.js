@@ -108,6 +108,6 @@ export default class StringUtil  {
 }
 
 export const buildLink = StringUtil.buildLink;
-export const resolveDonationImagePath = StringUtil.resolveDonationImagePath;
+export const resolveSegmentsPathById = StringUtil.resolveSegmentsPathById;
 export const extractFirstAndLastName = StringUtil.extractFirstAndLastName;
 export const getInitials = StringUtil.getInitials;
