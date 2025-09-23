@@ -164,7 +164,7 @@ export default function DonationPreview({
                         </div>
                         <div className={donationPreviewUserSectionStyles({ layout })}>
                             <UserAvatar
-                                user={donation?.userMinimal ?? { userId: null, name: 'Usuário', photo: null }}
+                                user={donation?.userMinimal}
                                 appearance="secondary"
                                 size="small"
                                 display="photo-with-name"

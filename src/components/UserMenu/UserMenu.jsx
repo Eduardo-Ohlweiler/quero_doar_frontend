@@ -11,6 +11,7 @@ import {
 } from './UserMenu.styles';
 import UserAvatar from '../UserAvatar/UserAvatar';
 import { useAuth } from '../../context/AuthContext';
+import { getInitials, extractFirstAndLastName } from '../../services/util/stringUtil';
 
 export class user {
     // Simples DTO local, agora apenas name/photo/isAdmin
@@ -104,8 +105,6 @@ export default function UserMenu({
         }
     };
 
-    const displayName = user?.name || 'Usuário';
-
     // Determinar configuração do UserAvatar baseado no showUserName
     const avatarDisplay = showUserName ? 'photo-with-name' : 'photo-only';
     
@@ -126,7 +125,7 @@ export default function UserMenu({
                 className={userMenuStyles({ size, appearance })}
                 aria-expanded={isOpen}
                 aria-haspopup="menu"
-                aria-label={`Menu de opções para ${displayName}`}
+                aria-label={`Menu de opções para ${user?.name.split(/\s+/)[0] || 'Usuário'}`}
                 data-testid="user-menu-trigger"
             >
                 <UserAvatar 

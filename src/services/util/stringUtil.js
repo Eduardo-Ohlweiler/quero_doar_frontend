@@ -76,18 +76,23 @@ export default class StringUtil  {
     /**
      * Primeiro e último nome a partir do nome completo
      * @param {string} fullName - Nome completo
-     * @returns {{ firstName: string|null, lastName: string|null }}
+     * @returns {string|null} Primeiro e último nome (ex: "João Silva") ou null se nome inválido
+     * @example
+     * StringUtil.extractFirstAndLastName("João Alberto da Silva");
+     * retorna "João Silva"
      */
     static extractFirstAndLastName(fullName) {
         if (typeof fullName !== 'string' || fullName.trim() === '') {
-            return { firstName: null, lastName: null };
+            return null;
         }
      
         const nameParts = fullName.trim().split(/\s+/);
-        const firstName = nameParts[0] || null;
-        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
 
-        return { firstName, lastName };
+        if (nameParts.length === 1) {
+            return nameParts[0];
+        } else {
+            return `${nameParts[0]} ${nameParts[nameParts.length - 1]}`;
+        }
     }
 
     /**
@@ -96,13 +101,16 @@ export default class StringUtil  {
      * @returns {string} Iniciais em maiúsculas (ex: "JS" ou "J" ou "U" se nome vazio)
      */
     static getInitials(fullName) {
-        const { firstName, lastName } = StringUtil.extractFirstAndLastName(fullName);
-        if (firstName && lastName) {
-            return (firstName[0] + lastName[0]).toUpperCase();
-        } else if (firstName) {
-            return firstName[0].toUpperCase();
+        if (typeof fullName !== 'string' || fullName.trim() === '') {
+            return null;
+        }
+
+        const nameParts = fullName.trim().split(/\s+/);
+
+        if (nameParts.length === 1) {
+            return nameParts[0].charAt(0).toUpperCase();
         } else {
-            return 'U'; // Usuário
+            return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
         }
     }
 }

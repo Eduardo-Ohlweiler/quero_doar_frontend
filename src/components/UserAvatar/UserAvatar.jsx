@@ -25,8 +25,7 @@ export default function UserAvatar({
     className,
     ...rest 
 }) {
-    const {firstName, lastName} = extractFirstAndLastName(user?.name || '');
-    const displayName = firstName && lastName ? `${firstName} ${lastName}` : (user?.name || 'Usuário');
+    const displayName = extractFirstAndLastName(user?.name || 'Usuário');
     const avatarInitials = getInitials(user?.name || '');
 
     const resolveImagePath = () => {
