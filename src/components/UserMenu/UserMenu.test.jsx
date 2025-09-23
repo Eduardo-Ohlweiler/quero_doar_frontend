@@ -18,21 +18,18 @@ import UserMenu from "./UserMenu";
 
 describe("UserMenu component", () => {
   const defaultUser = {
-    firstName: 'Maria',
-    lastName: 'Silva',
+    name: 'Maria Silva',
     isAdmin: false,
   };
 
   const adminUser = {
-    firstName: 'João',
-    lastName: 'Santos',
+    name: 'João Santos',
     isAdmin: true,
   };
 
   const userWithAvatar = {
-    firstName: 'Ana',
-    lastName: 'Costa',
-    avatar: 'https://example.com/avatar.jpg',
+    name: 'Ana Costa',
+    photo: 'https://example.com/avatar.jpg',
     isAdmin: false,
   };
 
@@ -183,8 +180,8 @@ describe("UserMenu component", () => {
   it("CT7: renderiza corretamente diferentes tipos de usuário", () => {
     // Usuário com avatar
     const { rerender } = render(<UserMenu user={userWithAvatar} {...mockCallbacks} />);
-    expect(screen.getByAltText("Avatar de Ana Costa")).toBeInTheDocument();
-    expect(screen.getByText("Ana Costa")).toBeInTheDocument();
+  expect(screen.getByAltText("Avatar de Ana Costa")).toBeInTheDocument();
+  expect(screen.getByText("Ana Costa")).toBeInTheDocument();
     
     // Usuário com nome único
     rerender(<UserMenu user={userWithSingleName} {...mockCallbacks} />);
