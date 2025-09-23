@@ -44,25 +44,6 @@ export default function LastDonationPreview({
     // Check if there are more items to load
     const hasMoreItems = listDonationPreviewDto.length > itemsToShow;
 
-    // Convert donation data to DonationPreview format
-    const convertDonationData = (donation) => {
-        return {
-            id: donation.donationId,
-            title: donation.title,
-            description: donation.description,
-            image: donation.photo,
-            city: donation.location,
-            createdAt: donation.date,
-            user: {
-                id: donation.userMinimal?.userId,
-                firstName: donation.userMinimal?.name?.split(' ')[0] || 'Usuário',
-                lastName: donation.userMinimal?.name?.split(' ').slice(1).join(' ') || '',
-                avatar: donation.userMinimal?.photo,
-                level: 1 // Default level since it's not provided in the API
-            }
-        };
-    };
-
     const handleLoadMore = () => {
         const newPage = currentPage + 1;
         setCurrentPage(newPage);
@@ -118,7 +99,7 @@ export default function LastDonationPreview({
                 {visibleDonations.map((donation) => (
                     <DonationPreview
                         key={donation.donationId}
-                        donation={convertDonationData(donation)}
+                        donation={donation}
                         layout="vertical"
                         isPublic={donation.isPublic}
                         isDonation={donation.isDonation}

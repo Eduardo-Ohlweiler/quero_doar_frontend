@@ -32,7 +32,6 @@ export default function DonationPreview({
     className,
     ...rest
 }) {
-    // Access donation fields directly where needed (assume PreviewDonationDTO shape)
 
     const resolveImagePath = () => {
         const donationPhoto = donation?.photo;
@@ -186,7 +185,7 @@ export default function DonationPreview({
                 ) : (
                     <div className={donationPreviewUserSectionStyles({ layout })}>
                         <UserAvatar
-                                user={donation?.userMinimal ?? { userId: null, name: 'Usuário', photo: null }}
+                            user={donation?.userMinimal ?? { userId: null, name: 'Usuário', photo: null }}
                             appearance="secondary"
                             size="small"
                             display="photo-with-name"
