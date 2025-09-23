@@ -7,7 +7,7 @@ import LastDonationPreview from './LastDonationPreview';
 vi.mock('../DonationPreview/DonationPreview', () => ({
   default: ({ donation, onClick, onActionClick, isDonation, isPublic }) => (
     <div 
-      data-testid={`donation-${donation.id}`}
+      data-testid={`donation-${donation.donationId}`}
       onClick={() => onClick?.(donation)}
     >
       <h3>{donation.title}</h3>
@@ -297,7 +297,7 @@ describe('LastDonationPreview', () => {
     });
   });
 
-  it('não deve mostrar o botão "Ver mais" quando todos os itens estão visíveis', () => {
+  it('deve sempre mostrar o botão "Ver mais" mesmo quando todos os itens estão visíveis', () => {
     render(
       <LastDonationPreview
         data={mockData}
@@ -312,8 +312,8 @@ describe('LastDonationPreview', () => {
     expect(screen.getByTestId('donation-1')).toBeInTheDocument();
     expect(screen.getByTestId('donation-7')).toBeInTheDocument();
     
-    // Não deve mostrar o botão "Ver mais"
-    expect(screen.queryByText('+ Ver mais doações')).not.toBeInTheDocument();
+    // Deve mostrar o botão "Ver mais" para navegar para todas as doações
+    expect(screen.getByText('+ Ver mais doações')).toBeInTheDocument();
   });
 
   it('deve chamar onDonationClick quando uma doação é clicada', () => {

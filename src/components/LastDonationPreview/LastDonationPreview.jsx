@@ -66,13 +66,13 @@ export default function LastDonationPreview({
 
     const handleDonationClick = (donation) => {
         // Find original donation data
-        const originalDonation = listDonationPreviewDto.find(d => d.donationId === donation.id);
+        const originalDonation = listDonationPreviewDto.find(d => d.donationId === donation.donationId);
         onDonationClick?.(originalDonation);
     };
 
     const handleDonationActionClick = (donation, action) => {
         // Find original donation data
-        const originalDonation = listDonationPreviewDto.find(d => d.donationId === donation.id);
+        const originalDonation = listDonationPreviewDto.find(d => d.donationId === donation.donationId);
         onDonationActionClick?.(originalDonation, action);
     };
 
@@ -81,7 +81,7 @@ export default function LastDonationPreview({
     }
 
     return (
-        <div
+        <section
             className={twMerge(clsx(
                 lastDonationPreviewContainerStyles(),
                 className
@@ -128,7 +128,7 @@ export default function LastDonationPreview({
                 </Button>
             </div>
 
-        </div>
+        </section>
     );
 }
 

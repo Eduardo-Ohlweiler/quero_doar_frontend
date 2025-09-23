@@ -196,7 +196,7 @@ describe("UserMenu component", () => {
     const trigger = screen.getByTestId("user-menu-trigger");
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(trigger).toHaveAttribute("aria-haspopup", "menu");
-    expect(trigger).toHaveAttribute("aria-label", "Menu de opções para Maria Silva");
+    expect(trigger).toHaveAttribute("aria-label", "Menu de opções para Maria");
   });
 
   //CT9: Testar fechamento do menu ao selecionar uma opção
