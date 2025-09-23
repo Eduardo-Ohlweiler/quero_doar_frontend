@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import {extractFirstAndLastName, getInitials} from '../../services/util/stringUtil';
+import { extractFirstAndLastName, getInitials, buildLink } from '../../services/util/stringUtil';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { 
@@ -10,6 +10,10 @@ import {
     userAvatarNameStyles,
     userAvatarContainerStyles
 } from './UserAvatar.styles';
+
+const BASE_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const PHOTO_PATH = import.meta.env.VITE_GET_MEDIA_USER_ROUTE || '/media/user';
+const DEFAULT_PHOTO = import.meta.env.VITE_GET_MEDIA_USER_DEFAULT_PHOTO || 'default.webp';
 
 export default function UserAvatar({ 
     user,
@@ -24,6 +28,16 @@ export default function UserAvatar({
     const {firstName, lastName} = extractFirstAndLastName(user?.name || '');
     const displayName = firstName && lastName ? `${firstName} ${lastName}` : (user?.name || 'Usuário');
     const avatarInitials = getInitials(user?.name || '');
+
+    const resolveImagePath = () => {
+        if (user?.photo === null || user?.photo === undefined || user?.photo === '') {
+            return buildLink([BASE_API_URL, PHOTO_PATH, DEFAULT_PHOTO]);
+        } else if (user?.photo?.includes('http://') || user?.photo?.includes('https://')) {
+            return user.photo;
+        } else {
+            return buildLink([BASE_API_URL, PHOTO_PATH, user.photo]);
+        }
+    }
 
     // Renderizar apenas o nome (sem foto)
     if (display === 'name-only') {
@@ -49,7 +63,7 @@ export default function UserAvatar({
             <div className={userAvatarStyles({ size, appearance, frame })}>
                 {user?.photo ? (
                     <img 
-                        src={user.photo} 
+                        src={resolveImagePath()} 
                         alt={`Avatar de ${displayName}`}
                         className={userAvatarImageStyles({ frame, hasLevel: showLevel && user?.level !== undefined })}
                     />
