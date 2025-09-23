@@ -105,10 +105,9 @@ export default function TopCategory({
 TopCategory.propTypes = {
     categories: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-            title: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
-            icon: PropTypes.node.isRequired,
+            donationId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+            name: PropTypes.string.isRequired,
+            donationAvailable: PropTypes.number.isRequired,
         })
     ),
     onCategoryClick: PropTypes.func,
