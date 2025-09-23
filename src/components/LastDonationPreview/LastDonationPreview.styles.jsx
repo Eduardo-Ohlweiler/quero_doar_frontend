@@ -2,13 +2,14 @@ import { cva } from 'class-variance-authority';
 
 export const lastDonationPreviewContainerStyles = cva([
     'w-full',
-    'space-y-6',
-    'p-6',
-    'bg-white',
-    'rounded-lg',
-    'shadow-sm',
-    'border',
-    'border-gray-100'
+    // 'space-y-6',
+    // 'p-0',
+    // 'bg-white',
+    'bg-transparent',
+    // 'rounded-lg',
+    // 'shadow-sm',
+    // 'border',
+    // 'border-gray-100'
 ]);
 
 export const lastDonationPreviewHeaderStyles = cva([

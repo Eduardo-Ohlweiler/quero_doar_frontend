@@ -20,6 +20,7 @@ export default function LastDonationPreview({
     onDonationClick,
     onDonationActionClick,
     onLoadMore,
+    onNavigateToAllDonations,
     className,
     ...rest
 }) {
@@ -56,6 +57,12 @@ export default function LastDonationPreview({
             newItemsToShow: newPage * itemsPerPage
         });
     };
+
+    const handleNavigateToAllDonations = () => {
+        if (onNavigateToAllDonations) {
+            onNavigateToAllDonations();
+        }
+    }
 
     const handleDonationClick = (donation) => {
         // Find original donation data
@@ -110,18 +117,17 @@ export default function LastDonationPreview({
             </div>
 
             {/* Load More Button */}
-            {hasMoreItems && (
-                <div className={lastDonationPreviewButtonContainerStyles()}>
-                    <Button
-                        appearance="secondary"
-                        size="medium"
-                        onClick={handleLoadMore}
-                        className="px-8"
-                    >
-                        + Ver mais doações
-                    </Button>
-                </div>
-            )}
+            <div className={lastDonationPreviewButtonContainerStyles()}>
+                <Button
+                    appearance="primary"
+                    size="medium"
+                    onClick={hasMoreItems ? handleLoadMore : handleNavigateToAllDonations}
+                    className="px-8"
+                >
+                    + Ver mais doações
+                </Button>
+            </div>
+
         </div>
     );
 }

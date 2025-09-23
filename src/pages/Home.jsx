@@ -21,8 +21,7 @@ export default function Home (){
     }, []);
 
     return (
-        <div className="bg-gradient-primary h-1000 p-4">
-            <div className="h-20"/>
+        <div className="bg-slate-100 p-16">
             <LastDonationPreview
                 data={lastDonations}
                 itemsPerPage={6}
