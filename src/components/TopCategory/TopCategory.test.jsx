@@ -8,12 +8,12 @@ import { FaTshirt, FaBook, FaTv, FaCouch, FaBaby } from 'react-icons/fa';
 
 // Dados de teste
 const mockCategories = [
-    { id: 1, title: 'Roupas', count: 247, icon: <FaTshirt /> },
-    { id: 2, title: 'Livros', count: 89, icon: <FaBook /> },
-    { id: 3, title: 'Eletrônicos', count: 156, icon: <FaTv /> },
-    { id: 4, title: 'Móveis', count: 73, icon: <FaCouch /> },
-    { id: 5, title: 'Infantil', count: 134, icon: <FaBaby /> },
-    { id: 6, title: 'Extra', count: 50, icon: <FaTshirt /> }, // Para testar limite
+    { donationId: 1, name: 'Roupas', donationAvailable: 247 },
+    { donationId: 2, name: 'Livros e Material Escolar', donationAvailable: 200 },
+    { donationId: 3, name: 'Eletrônicos', donationAvailable: 156 },
+    { donationId: 4, name: 'Móveis', donationAvailable: 73 },
+    { donationId: 5, name: 'Itens para Bebês', donationAvailable: 134 },
+    { donationId: 6, name: 'Extra', donationAvailable: 50 }, // Para testar limite
 ];
 
 describe('TopCategory component', () => {
@@ -34,10 +34,10 @@ describe('TopCategory component', () => {
         render(<TopCategory categories={mockCategories.slice(0, 3)} />);
 
         expect(screen.getByText('Roupas')).toBeInTheDocument();
-        expect(screen.getByText('Livros')).toBeInTheDocument();
+        expect(screen.getByText('Livros e Material Escolar')).toBeInTheDocument();
         expect(screen.getByText('Eletrônicos')).toBeInTheDocument();
         expect(screen.getByText('247 itens disponíveis')).toBeInTheDocument();
-        expect(screen.getByText('89 itens disponíveis')).toBeInTheDocument();
+        expect(screen.getByText('200 itens disponíveis')).toBeInTheDocument();
     });
 
     // TC3: Limite máximo de categorias (top 5)
@@ -51,7 +51,7 @@ describe('TopCategory component', () => {
 
         // Deve mostrar apenas as primeiras 3
         expect(screen.getByText('Roupas')).toBeInTheDocument();
-        expect(screen.getByText('Livros')).toBeInTheDocument();
+        expect(screen.getByText('Livros e Material Escolar')).toBeInTheDocument();
         expect(screen.getByText('Eletrônicos')).toBeInTheDocument();
         
         // Não deve mostrar a 4ª categoria
@@ -64,10 +64,10 @@ describe('TopCategory component', () => {
 
         // Deve mostrar as primeiras 5
         expect(screen.getByText('Roupas')).toBeInTheDocument();
-        expect(screen.getByText('Livros')).toBeInTheDocument();
+        expect(screen.getByText('Livros e Material Escolar')).toBeInTheDocument();
         expect(screen.getByText('Eletrônicos')).toBeInTheDocument();
         expect(screen.getByText('Móveis')).toBeInTheDocument();
-        expect(screen.getByText('Infantil')).toBeInTheDocument();
+        expect(screen.getByText('Itens para Bebês')).toBeInTheDocument();
         
         // Não deve mostrar a 6ª categoria
         expect(screen.queryByText('Extra')).not.toBeInTheDocument();
@@ -105,7 +105,7 @@ describe('TopCategory component', () => {
         );
 
         const roupasCard = screen.getByRole('button', { name: /categoria roupas/i });
-        const livrosCard = screen.getByRole('button', { name: /categoria livros/i });
+        const livrosCard = screen.getByRole('button', { name: /categoria livros e material escolar/i });
 
         await user.click(roupasCard);
         await user.click(livrosCard);
@@ -181,8 +181,8 @@ describe('TopCategory component', () => {
     // TC12: Categorias com IDs diferentes
     it('TC12: handles categories with different id types', () => {
         const categoriesWithStringIds = [
-            { id: 'cat-1', title: 'Categoria 1', count: 10, icon: <FaTshirt /> },
-            { id: 'cat-2', title: 'Categoria 2', count: 20, icon: <FaBook /> },
+            { donationId: 'cat-1', name: 'Categoria 1', donationAvailable: 10 },
+            { donationId: 'cat-2', name: 'Categoria 2', donationAvailable: 20 },
         ];
 
         render(<TopCategory categories={categoriesWithStringIds} />);
@@ -191,11 +191,11 @@ describe('TopCategory component', () => {
         expect(screen.getByText('Categoria 2')).toBeInTheDocument();
     });
 
-    // TC13: Categorias sem ID (usando title como key)
+    // TC13: Categorias sem ID (usando name como key)
     it('TC13: handles categories without id', () => {
         const categoriesWithoutIds = [
-            { title: 'Sem ID 1', count: 10, icon: <FaTshirt /> },
-            { title: 'Sem ID 2', count: 20, icon: <FaBook /> },
+            { name: 'Sem ID 1', donationAvailable: 10 },
+            { name: 'Sem ID 2', donationAvailable: 20 },
         ];
 
         render(<TopCategory categories={categoriesWithoutIds} />);

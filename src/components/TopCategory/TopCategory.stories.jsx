@@ -31,14 +31,14 @@ export default {
 
 // Dados de exemplo para as stories
 const mockCategories = [
-  { id: 1, title: 'Roupas', count: 247, icon: <FaTshirt /> },
-  { id: 2, title: 'Móveis', count: 89, icon: <FaCouch /> },
-  { id: 3, title: 'Livros', count: 156, icon: <FaBook /> },
-  { id: 4, title: 'Eletrônicos', count: 43, icon: <FaTv /> },
-  { id: 5, title: 'Infantil', count: 198, icon: <FaBaby /> },
-  { id: 6, title: 'Utensílios', count: 73, icon: <FaUtensils /> },
-  { id: 7, title: 'Jogos', count: 42, icon: <FaGamepad /> },
-  { id: 8, title: 'Música', count: 67, icon: <FaMusic /> },
+  { donationId: 1, name: 'Roupas', donationAvailable: 247 },
+  { donationId: 2, name: 'Móveis', donationAvailable: 89 },
+  { donationId: 3, name: 'Livros e Material Escolar', donationAvailable: 156 },
+  { donationId: 4, name: 'Eletrônicos', donationAvailable: 43 },
+  { donationId: 5, name: 'Itens para Bebês', donationAvailable: 198 },
+  { donationId: 6, name: 'Utensílios Domésticos', donationAvailable: 73 },
+  { donationId: 7, name: 'Brinquedos', donationAvailable: 42 },
+  { donationId: 8, name: 'Alimentos', donationAvailable: 67 },
 ];
 
 export const Default = {
