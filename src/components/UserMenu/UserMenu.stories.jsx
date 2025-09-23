@@ -44,23 +44,20 @@ export default {
 
 // Usuários de exemplo
 const defaultUser = {
-  firstName: 'Maria',
-  lastName: 'Silva',
-  avatar: null,
+  name: 'Maria Silva',
+  photo: null,
   isAdmin: false,
 };
 
 const adminUser = {
-  firstName: 'João',
-  lastName: 'Santos',
-  avatar: null,
+  name: 'João Santos',
+  photo: null,
   isAdmin: true,
 };
 
 const userWithAvatar = {
-  firstName: 'Ana',
-  lastName: 'Costa',
-  avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b5e5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
+  name: 'Ana Costa',
+  photo: 'https://images.unsplash.com/photo-1494790108755-2616b612b5e5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
   isAdmin: false,
 };
 

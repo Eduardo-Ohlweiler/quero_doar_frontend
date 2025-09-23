@@ -10,28 +10,21 @@ import {
     userMenuIconStyles 
 } from './UserMenu.styles';
 import UserAvatar from '../UserAvatar/UserAvatar';
-import { buildLink } from '../../services/util/stringUtil';
 import { useAuth } from '../../context/AuthContext';
-
-const BASE_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
-const AVATAR_PATH = import.meta.env.VITE_GET_MEDIA_USER_ROUTE || '/media/user';
-const DEFAULT_AVATAR = import.meta.env.VITE_GET_MEDIA_USER_DEFAULT_PHOTO || 'default.webp';
+import { getInitials, extractFirstAndLastName } from '../../services/util/stringUtil';
 
 export class user {
-    constructor(firstName, lastName, avatar, isAdmin = false) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.avatar = avatar;
+    // Simples DTO local, agora apenas name/photo/isAdmin
+    constructor(name, photo = null, isAdmin = false) {
+        this.name = name;
+        this.photo = photo;
         this.isAdmin = isAdmin;
     }
 
     static fromVUser(vUser) {
         if (!vUser) return null;
-        const names = vUser.name ? vUser.name.split(' ') : [];
-        const firstName = names.length > 0 ? names[0] : '';
-        const lastName = names.length > 1 ? names[names.length - 1] : '';
-        const avatar = vUser.photo ? buildLink([BASE_API_URL, AVATAR_PATH, vUser.photo]) : buildLink([BASE_API_URL, AVATAR_PATH, DEFAULT_AVATAR]);
-        return new user(firstName, lastName, avatar, vUser.role === 'ADMIN');
+        // Não resolvemos a URL aqui; UserAvatar fará a montagem quando necessário
+        return new user(vUser.name || '', vUser.photo || null, vUser.role === 'ADMIN');
     }
 }
 
@@ -112,10 +105,6 @@ export default function UserMenu({
         }
     };
 
-    const displayName = user?.firstName && user?.lastName 
-        ? `${user.firstName} ${user.lastName}`
-        : user?.name || 'Usuário';
-
     // Determinar configuração do UserAvatar baseado no showUserName
     const avatarDisplay = showUserName ? 'photo-with-name' : 'photo-only';
     
@@ -136,7 +125,7 @@ export default function UserMenu({
                 className={userMenuStyles({ size, appearance })}
                 aria-expanded={isOpen}
                 aria-haspopup="menu"
-                aria-label={`Menu de opções para ${displayName}`}
+                aria-label={`Menu de opções para ${user?.name.split(/\s+/)[0] || 'Usuário'}`}
                 data-testid="user-menu-trigger"
             >
                 <UserAvatar 
@@ -235,10 +224,8 @@ export default function UserMenu({
 
 UserMenu.propTypes = {
     user: PropTypes.shape({
-        firstName: PropTypes.string,
-        lastName: PropTypes.string,
         name: PropTypes.string,
-        avatar: PropTypes.string,
+        photo: PropTypes.string,
         isAdmin: PropTypes.bool,
     }).isRequired,
     size: PropTypes.oneOf(['small', 'medium', 'large']),

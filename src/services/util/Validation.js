@@ -22,9 +22,17 @@ class Validation {
 
     // Example usage:
     // Validation.isType('hello', 'string'); // true
-    static isType(value, type) {
+    // Validation.isType([{id: 1}], ['array', SomeDTO]); // validates array of SomeDTO
+    static isType(value, type, acceptNulls = true) {
         if (Array.isArray(type)) {
-            return type.some(t => Validation.isType(value, t));
+            // Verifica se é um array tipado (primeiro elemento é 'array' e segundo é o tipo dos elementos)
+            if (type.length === 2 && type[0] === 'array') {
+                if (!Array.isArray(value)) return false;
+                const elementType = type[1];
+                return value.every(item => Validation.isType(item, elementType, acceptNulls));
+            }
+            // Comportamento original para múltiplos tipos aceitos
+            return type.some(t => Validation.isType(value, t, acceptNulls));
         }
 
         if (typeof type === 'string') {
@@ -35,7 +43,9 @@ class Validation {
                 case 'array': return Array.isArray(value);
                 case 'object': return value !== null && typeof value === 'object' && !Array.isArray(value);
                 case 'function': return typeof value === 'function';
-                case 'date': return value instanceof Date && !isNaN(value.valueOf());
+                case 'date': 
+                    // Aceita Date objects OU strings que podem ser convertidas para Date
+                    return (value instanceof Date && !isNaN(value.valueOf())) || typeof value === 'string';
                 case 'null': return value === null;
                 case 'undefined': return value === undefined;
                 case 'nan': return Number.isNaN(value);
@@ -51,6 +61,12 @@ class Validation {
             if (type === Array) return Array.isArray(value);
             if (type === Object) return value !== null && typeof value === 'object' && !Array.isArray(value);
             if (type === Date) return value instanceof Date && !isNaN(value.valueOf());
+            
+            // Verifica se o valor é uma instância válida do DTO (propaga acceptNulls)
+            if (value && typeof value === 'object' && typeof type.isValid === 'function') {
+                return type.isValid(value, acceptNulls);
+            }
+            
             return value instanceof type;
         }
 
@@ -61,7 +77,7 @@ class Validation {
     // const schema = { name: 'string', age: 'number', isActive: ['boolean', 'null'] };
     // const obj = { name: 'John', age: 30, isActive: true };
     // Validation.objectTypesMatch(schema, obj); // true
-    static objectTypesMatch(schema, obj) {
+    static objectTypesMatch(schema, obj, acceptNulls = true) {
         if (!schema || typeof schema !== 'object') throw new Error('Schema inválido');
         if (!obj || typeof obj !== 'object') {
             console.error('Objeto inválido para validação');
@@ -71,12 +87,31 @@ class Validation {
 
         return Object.keys(schema).every((key) => {
             const expected = schema[key];
+            
+            // Se a chave não existe no objeto
             if (!Object.prototype.hasOwnProperty.call(obj, key)) {
+                // Com acceptNulls=true e schema aceita null, trate como null
+                if (acceptNulls) {
+                    const typesArr = Array.isArray(expected) ? expected : [expected];
+                    if (typesArr.includes('null')) {
+                        return true; // Campo ausente é válido quando null é aceito
+                    }
+                }
                 console.error(`Chave ausente: ${key}`);
                 console.error(obj);
                 return false;
             }
-            return Validation.isType(obj[key], expected);
+            
+            const isValid = Validation.isType(obj[key], expected, acceptNulls);
+            if (!isValid) {
+                console.error(`Validação falhou para chave "${key}":`, {
+                    expected,
+                    received: obj[key],
+                    receivedType: typeof obj[key],
+                    acceptNulls
+                });
+            }
+            return isValid;
         });
     }
 }

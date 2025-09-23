@@ -1,3 +1,7 @@
+/**
+ * Utilitários para manipulação de strings.
+ * @module services/util/stringUtil
+ */
 export default class StringUtil  {
 
     /**
@@ -38,6 +42,80 @@ export default class StringUtil  {
         const finalUrl = basePath + queryString + fragment;
         return finalUrl;
     }
+
+    /**
+     * Resolve o caminho de uma imagem de doação, retornando parte do caminho resolvido com base no Id
+     * @param {number} donationId - ID da doação
+     * @param {number} separatorLength - Quantidade de dígitos por segmento (padrão 2)
+     * @returns {string} Caminho resolvido (ex: "0/1/2")
+     * @throws {Error} Se donationId não for um número não negativo
+     * @thriws {Error} Se separatorLength não for um número positivo 
+     * @example
+     * StringUtil.resolveSegmentsPathById(15486);
+     * retorna "00/00/01/54/86"
+     */
+    static resolveSegmentsPathById(donationId, separatorLength = 2) {
+        if (typeof donationId !== 'number' || Number.isNaN(donationId) || donationId < 0) {
+            throw new Error("donationId must be a non-negative number.");
+        }
+
+        if (typeof separatorLength !== 'number' || Number.isNaN(separatorLength) || separatorLength <= 0) {
+            throw new Error("separatorLength must be a positive number.");
+        }
+        
+        const idStr = String(donationId).padStart(10, '0');
+
+        const segments = [];
+        for (let i = 0; i < idStr.length; i += separatorLength) {
+            segments.push(idStr.substring(i, i + separatorLength));
+        }
+
+        return segments.join('/');
+    }
+
+    /**
+     * Primeiro e último nome a partir do nome completo
+     * @param {string} fullName - Nome completo
+     * @returns {string|null} Primeiro e último nome (ex: "João Silva") ou null se nome inválido
+     * @example
+     * StringUtil.extractFirstAndLastName("João Alberto da Silva");
+     * retorna "João Silva"
+     */
+    static extractFirstAndLastName(fullName) {
+        if (typeof fullName !== 'string' || fullName.trim() === '') {
+            return null;
+        }
+     
+        const nameParts = fullName.trim().split(/\s+/);
+
+        if (nameParts.length === 1) {
+            return nameParts[0];
+        } else {
+            return `${nameParts[0]} ${nameParts[nameParts.length - 1]}`;
+        }
+    }
+
+    /**
+     * Iniciais (primeira letra do primeiro e último nome, ou apenas do primeiro se nome único)
+     * @param {string} fullName - Nome completo
+     * @returns {string} Iniciais em maiúsculas (ex: "JS" ou "J" ou "U" se nome vazio)
+     */
+    static getInitials(fullName) {
+        if (typeof fullName !== 'string' || fullName.trim() === '') {
+            return null;
+        }
+
+        const nameParts = fullName.trim().split(/\s+/);
+
+        if (nameParts.length === 1) {
+            return nameParts[0].charAt(0).toUpperCase();
+        } else {
+            return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+        }
+    }
 }
 
 export const buildLink = StringUtil.buildLink;
+export const resolveSegmentsPathById = StringUtil.resolveSegmentsPathById;
+export const extractFirstAndLastName = StringUtil.extractFirstAndLastName;
+export const getInitials = StringUtil.getInitials;

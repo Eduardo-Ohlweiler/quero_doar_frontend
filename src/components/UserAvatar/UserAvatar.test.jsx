@@ -5,17 +5,18 @@ import UserAvatar from "./UserAvatar";
 
 describe("UserAvatar component", () => {
   const defaultUser = {
-    firstName: 'Maria',
-    lastName: 'Silva',
+    userId: 1,
+    name: 'Maria Silva',
   };
 
   const userWithAvatar = {
-    firstName: 'Ana',
-    lastName: 'Costa',
-    avatar: 'https://example.com/avatar.jpg',
+    userId: 2,
+    name: 'Ana Costa',
+    photo: 'https://example.com/avatar.jpg',
   };
 
   const userWithSingleName = {
+    userId: 3,
     name: 'Carlos',
   };
 
@@ -29,7 +30,7 @@ describe("UserAvatar component", () => {
       xlarge: 'w-14 h-14 text-lg',
     };
 
-    sizes.forEach((size) => {
+      sizes.forEach((size) => {
       cleanup();
       render(<UserAvatar user={defaultUser} size={size} />);
       const avatar = screen.getByText("MS").parentElement;

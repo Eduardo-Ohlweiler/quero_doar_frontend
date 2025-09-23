@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { extractFirstAndLastName, getInitials, buildLink } from '../../services/util/stringUtil';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { 
@@ -10,6 +11,10 @@ import {
     userAvatarContainerStyles
 } from './UserAvatar.styles';
 
+const BASE_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const PHOTO_PATH = import.meta.env.VITE_GET_MEDIA_USER_ROUTE || '/media/user';
+const DEFAULT_PHOTO = import.meta.env.VITE_GET_MEDIA_USER_DEFAULT_PHOTO || 'default.webp';
+
 export default function UserAvatar({ 
     user,
     size = 'medium',
@@ -20,15 +25,18 @@ export default function UserAvatar({
     className,
     ...rest 
 }) {
-    // Definir nome para exibição
-    const displayName = user?.firstName && user?.lastName 
-        ? `${user.firstName} ${user.lastName}`
-        : user?.name || 'Usuário';
+    const displayName = extractFirstAndLastName(user?.name || 'Usuário');
+    const avatarInitials = getInitials(user?.name || '');
 
-    // Definir iniciais do avatar
-    const avatarInitials = user?.firstName && user?.lastName 
-        ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-        : displayName.split(' ').map(name => name[0]).join('').toUpperCase().slice(0, 2);
+    const resolveImagePath = () => {
+        if (user?.photo === null || user?.photo === undefined || user?.photo === '') {
+            return buildLink([BASE_API_URL, PHOTO_PATH, DEFAULT_PHOTO]);
+        } else if (user?.photo?.includes('http://') || user?.photo?.includes('https://')) {
+            return user.photo;
+        } else {
+            return buildLink([BASE_API_URL, PHOTO_PATH, user.photo]);
+        }
+    }
 
     // Renderizar apenas o nome (sem foto)
     if (display === 'name-only') {
@@ -52,9 +60,9 @@ export default function UserAvatar({
             )}
             {/* Container do Avatar */}
             <div className={userAvatarStyles({ size, appearance, frame })}>
-                {user?.avatar ? (
+                {user?.photo ? (
                     <img 
-                        src={user.avatar} 
+                        src={resolveImagePath()} 
                         alt={`Avatar de ${displayName}`}
                         className={userAvatarImageStyles({ frame, hasLevel: showLevel && user?.level !== undefined })}
                     />
@@ -77,10 +85,9 @@ export default function UserAvatar({
 
 UserAvatar.propTypes = {
     user: PropTypes.shape({
-        firstName: PropTypes.string,
-        lastName: PropTypes.string,
+        userId: PropTypes.number,
         name: PropTypes.string,
-        avatar: PropTypes.string,
+        photo: PropTypes.string,
         level: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     }),
     size: PropTypes.oneOf(['small', 'medium', 'large', 'xlarge']),

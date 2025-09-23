@@ -7,7 +7,7 @@ export const donationPreviewStyles = cva(
     {
         variants: {
             layout: {
-                vertical: 'flex flex-col w-full max-w-sm h-[380px]', // altura reduzida
+                vertical: 'flex flex-col w-full h-[380px]', // altura reduzida
                 horizontal: 'flex flex-row w-full h-32 sm:h-36'
             }
         },
