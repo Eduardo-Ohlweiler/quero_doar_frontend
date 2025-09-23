@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority';
 
 export const topCategoryStyles = cva(
     // Container principal com fundo transparente e espaçamento
-    'w-full bg-transparent py-8 px-4'
+    'bg-transparent'
 );
 
 export const topCategoryHeaderStyles = cva(
@@ -17,7 +17,8 @@ export const topCategoryTitleStyles = cva(
 
 export const topCategorySubtitleStyles = cva(
     // Subtítulo descritivo
-    'text-gray-600 text-sm md:text-base'
+    // 'text-gray-600 text-lg md:text-base'
+    'text-gray-600 text-lg font-medium'
 );
 
 export const topCategoryGridStyles = cva(

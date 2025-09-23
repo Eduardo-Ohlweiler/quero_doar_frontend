@@ -81,7 +81,7 @@ export default function LastDonationPreview({
     }
 
     return (
-        <div
+        <section
             className={twMerge(clsx(
                 lastDonationPreviewContainerStyles(),
                 className
@@ -128,7 +128,7 @@ export default function LastDonationPreview({
                 </Button>
             </div>
 
-        </div>
+        </section>
     );
 }
 
