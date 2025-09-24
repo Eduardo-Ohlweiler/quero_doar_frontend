@@ -368,9 +368,10 @@ describe('TopExperienceUser component', () => {
       />
     );
 
-    // Verifica se a classe pt-6 está presente (padding menor sem badge)
-    const cardElement = container.querySelector('[class*="pt-6"]');
-    expect(cardElement).toBeInTheDocument();
+  // Quando não há badge, o componente não deve renderizar ícones de colocação (apenas o ícone de localização deve existir)
+  const svgs = container.querySelectorAll('svg');
+  // Deve haver apenas 1 svg (ícone de localização). Essa verificação é mais resiliente que checar classes específicas
+  expect(svgs.length).toBe(1);
   });
 
   // TC21: Aria-label correto sem rank

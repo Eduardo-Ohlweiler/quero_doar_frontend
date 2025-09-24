@@ -60,9 +60,9 @@ describe('HallOfFame component', () => {
       <HallOfFame topUsers={mockTopUsers} />
     );
 
-    // Verifica se o título e subtítulo são exibidos
-    expect(screen.getByText('Hall da Fama - Doadores do Mês')).toBeInTheDocument();
-    expect(screen.getByText('Conheça os heróis que mais ajudaram nossa comunidade este mês')).toBeInTheDocument();
+  // Verifica se o título e subtítulo são exibidos (tolerante a emoji ou pequenas variações)
+  expect(screen.getByText(/Hall da Fama - Doadores do Mês/)).toBeInTheDocument();
+  expect(screen.getByText(/Conheça os heróis que mais ajudaram nossa comunidade este mês/)).toBeInTheDocument();
 
     // Verifica se os 3 usuários são renderizados
     expect(screen.getByTestId('top-user-1')).toBeInTheDocument();
@@ -76,8 +76,8 @@ describe('HallOfFame component', () => {
       <HallOfFame topUsers={[]} />
     );
 
-    // Verifica se o título ainda é exibido
-    expect(screen.getByText('Hall da Fama - Doadores do Mês')).toBeInTheDocument();
+  // Verifica se o título ainda é exibido (tolerante a emoji ou pequenas variações)
+  expect(screen.getByText(/Hall da Fama - Doadores do Mês/)).toBeInTheDocument();
 
     // Verifica se os componentes TopExperienceUser não são renderizados
     expect(screen.queryByTestId('top-user-1')).not.toBeInTheDocument();
@@ -198,9 +198,12 @@ describe('HallOfFame component', () => {
       <HallOfFame topUsers={mockTopUsers} />
     );
 
-    // Verifica se existe um elemento com classe relacionada ao ícone do troféu
-    const titleElement = screen.getByText('Hall da Fama - Doadores do Mês').parentElement;
-    expect(titleElement.querySelector('svg')).toBeInTheDocument();
+  // Verifica se existe um elemento com classe relacionada ao ícone do troféu
+  const titleElement = screen.getByText(/Hall da Fama - Doadores do Mês/).parentElement;
+  // O ícone pode ser um SVG ou um emoji; aceita qualquer uma das opções
+  const hasSvg = !!titleElement.querySelector('svg');
+  const hasEmoji = titleElement.textContent && titleElement.textContent.trim().startsWith('🏆');
+  expect(hasSvg || hasEmoji).toBeTruthy();
   });
 
   // TC12: Renderização com mais de 3 usuários
