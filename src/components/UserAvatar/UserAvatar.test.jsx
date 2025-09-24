@@ -22,12 +22,14 @@ describe("UserAvatar component", () => {
 
   //CT1: Renderização com diferentes tamanhos
   it("CT1: aplica classes corretas para cada tamanho", () => {
-    const sizes = ["small", "medium", "large", "xlarge"];
+    const sizes = ["small", "medium", "large", "xlarge", "xxlarge", "xxxlarge"];
     const sizeClassMap = {
       small: 'w-8 h-8 text-xs',
       medium: 'w-10 h-10 text-sm',
       large: 'w-12 h-12 text-base',
       xlarge: 'w-14 h-14 text-lg',
+      xxlarge: 'w-16 h-16 text-xl',
+      xxxlarge: 'w-20 h-20 text-2xl',
     };
 
       sizes.forEach((size) => {

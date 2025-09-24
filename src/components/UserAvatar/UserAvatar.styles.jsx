@@ -9,6 +9,8 @@ export const userAvatarStyles = cva(
                 medium: 'w-10 h-10 text-sm',
                 large: 'w-12 h-12 text-base',
                 xlarge: 'w-14 h-14 text-lg',
+                xxlarge: 'w-16 h-16 text-xl',
+                xxxlarge: 'w-20 h-20 text-2xl',
             },
             appearance: {
                 primary: 'bg-[var(--color-primary)]/80',
@@ -80,6 +82,8 @@ export const userAvatarInitialsStyles = cva(
                 medium: 'text-sm',
                 large: 'text-base',
                 xlarge: 'text-lg',
+                xxlarge: 'text-xl',
+                xxxlarge: 'text-2xl',
             },
             appearance: {
                 primary: 'text-white',
@@ -102,6 +106,8 @@ export const userAvatarLevelStyles = cva(
                 medium: '-bottom-[-9px] -left-[-20px] w-9.5 h-3 text-[8px]',
                 large: '-bottom-[-8px] -left-[-20px] w-11.5 h-4 text-[10px]',
                 xlarge: '-bottom-[-6px] -left-[-20px] w-13.5 h-5 text-xs',
+                xxlarge: '-bottom-[-4px] -left-[-20px] w-15.5 h-6 text-sm',
+                xxxlarge: '-bottom-[-2px] -left-[-20px] w-16 h-6 text-sm',
             },
             appearance: {
                 primary: 'bg-[var(--color-primary)]/80 border-white/40 text-white',
@@ -125,6 +131,8 @@ export const userAvatarNameStyles = cva(
                 medium: 'text-base ml-1.5',
                 large: 'text-lg ml-2',
                 xlarge: 'text-2xl ml-2.5',
+                xxlarge: 'text-3xl ml-3',
+                xxxlarge: 'text-4xl ml-4',
             },
             appearance: {
                 primary: 'text-white',
