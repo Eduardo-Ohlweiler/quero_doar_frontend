@@ -91,7 +91,7 @@ export const topExperienceUserRankBadgeStyles = cva([
 export const topExperienceUserCardStyles = cva([
     'relative',
     'p-6',
-    'pt-2',
+    // 'pt-2',
     'rounded-3xl',
     'backdrop-blur-sm',
     'border',
@@ -99,6 +99,11 @@ export const topExperienceUserCardStyles = cva([
     'overflow-hidden',
     'h-60',
     'w-60',
+    'flex',
+    'flex-col',
+    'items-center',
+    'justify-between',
+    // 'shadow-md',
 ], {
     variants: {
         variant: {
@@ -190,19 +195,19 @@ export const topExperienceUserLocationStyles = cva([
     variants: {
         variant: {
             first: [
-                'text-sm',
-                'md:text-base',
+                // 'text-sm',
+                // 'md:text-base',
             ],
             second: [
-                'text-sm',
-                'md:text-base',
+                // 'text-sm',
+                // 'md:text-base',
             ],
             third: [
-                'text-sm',
-                'md:text-base',
+                // 'text-sm',
+                // 'md:text-base',
             ],
             default: [
-                'text-xs',
+                // 'text-xs',
             ],
         },
     },

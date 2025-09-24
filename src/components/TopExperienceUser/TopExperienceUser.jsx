@@ -92,8 +92,9 @@ export default function TopExperienceUser({
 
             {/* Card Content */}
             <div className={twMerge(clsx(
-                topExperienceUserCardStyles({ variant }),
-                !hasRank && 'pt-6' // Less padding when no badge
+                topExperienceUserCardStyles({ variant })
+                // topExperienceUserCardStyles({ variant }),
+                // !hasRank && 'pt-6' // Less padding when no badge
             ))}>
                 {/* User Avatar with Level */}
                 <div className="flex justify-center">
