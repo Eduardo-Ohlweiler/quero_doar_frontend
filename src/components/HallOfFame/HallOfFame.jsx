@@ -35,7 +35,7 @@ export default function HallOfFame({
   };
 
   return (
-    <div
+    <section
       className={twMerge(clsx(
         hallOfFameStyles(),
         className
@@ -90,7 +90,7 @@ export default function HallOfFame({
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
 
