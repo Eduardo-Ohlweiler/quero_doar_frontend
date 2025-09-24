@@ -8,10 +8,10 @@ export const topExperienceUserStyles = cva([
     'duration-250',
     'ease-out',
     'hover:scale-101',
-    'focus:outline-none',
-    'focus:ring-1',
-    'focus:ring-[var(--color-primary)]/50',
-    'focus:ring-offset-2',
+    // 'focus:outline-none',
+    // 'focus:ring-1',
+    // 'focus:ring-[var(--color-primary)]/50',
+    // 'focus:ring-offset-2',
     // 'w-full',
     // 'max-w-xs',
     // 'mx-auto',
@@ -33,7 +33,7 @@ export const topExperienceUserStyles = cva([
 export const topExperienceUserRankBadgeStyles = cva([
     'absolute',
     'top-0',
-    'left-1/4',
+    'left-1/6',
     'transform',
     '-translate-x-1/2',
     '-translate-y-1/2',
@@ -41,11 +41,12 @@ export const topExperienceUserRankBadgeStyles = cva([
     'flex',
     'flex-col',
     'items-center',
-    'gap-0',
+    'justify-center',
+    // 'gap-0',
     // 'px-4',
     // 'py-2',
-    'h-12',
-    'w-12',
+    'h-13',
+    'w-13',
     'rounded-full',
     'text-gray-900',
     'font-bold',
@@ -61,12 +62,13 @@ export const topExperienceUserRankBadgeStyles = cva([
                 'to-yellow-600/90',
                 'border',
                 'border-yellow-600/60',
-                // 'shadow-yellow-200',
             ],
             second: [
                 'bg-gradient-to-r',
-                'from-gray-400',
-                'to-gray-600',
+                'from-gray-400/90',
+                'to-gray-600/90',
+                'border',
+                'border-gray-600/60',
                 'shadow-gray-200',
             ],
             third: [
@@ -92,7 +94,7 @@ export const topExperienceUserRankBadgeStyles = cva([
 export const topExperienceUserCardStyles = cva([
     'relative',
     'p-6',
-    'pt-8',
+    'pt-2',
     'rounded-3xl',
     'backdrop-blur-sm',
     'border',
@@ -104,29 +106,21 @@ export const topExperienceUserCardStyles = cva([
     variants: {
         variant: {
             first: [
-                // 'bg-gradient-to-br',
-                // 'from-yellow-50/95',
-                // 'to-yellow-100/90',
-                // 'border-yellow-400/50',
                 'bg-yellow-200/20',
                 'border-yellow-600/60',
 
             ],
             second: [
-                'bg-gradient-to-br',
-                'from-gray-50/95',
-                'to-gray-100/90', 
-                'border-gray-400/50',
+                'bg-gray-200/20', 
+                'border-gray-400/60',
             ],
             third: [
-                'bg-gradient-to-br',
-                'from-amber-50/95',
-                'to-amber-100/90',
-                'border-amber-400/50',
+                'bg-amber-600/20',
+                'border-amber-400/60',
             ],
             default: [
                 'bg-white/20',
-                'shadow-md',
+                'border-gray-400/60',
             ],
         },
     },
@@ -137,8 +131,8 @@ export const topExperienceUserCardStyles = cva([
 
 // Conteúdo do card
 export const topExperienceUserContentStyles = cva([
-    'relative',
-    'z-10',
+    // 'relative',
+    // 'z-10',
     'text-center',
 ], {
     variants: {
@@ -258,15 +252,15 @@ export const topExperienceUserStatValueStyles = cva([
         variant: {
             first: [
                 'text-2xl',
-                'md:text-3xl',
+                // 'md:text-3xl',
             ],
             second: [
                 'text-2xl',
-                'md:text-3xl',
+                // 'md:text-3xl',
             ],
             third: [
                 'text-2xl',
-                'md:text-3xl',
+                // 'md:text-3xl',
             ],
             default: [
                 'text-xl',
@@ -281,25 +275,25 @@ export const topExperienceUserStatValueStyles = cva([
 // Label das estatísticas
 export const topExperienceUserStatLabelStyles = cva([
     'text-gray-600',
-    'text-xs',
+    // 'text-xs',
     'font-medium',
     'uppercase',
     'tracking-wider',
-    'mt-1',
+    // 'mt-1',
 ], {
     variants: {
         variant: {
             first: [
                 'text-xs',
-                'md:text-sm',
+                // 'md:text-sm',
             ],
             second: [
                 'text-xs',
-                'md:text-sm',
+                // 'md:text-sm',
             ],
             third: [
                 'text-xs',
-                'md:text-sm',
+                // 'md:text-sm',
             ],
             default: [
                 'text-xs',

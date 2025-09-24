@@ -106,7 +106,7 @@ export default function TopExperienceUser({
                                 level: 'nível ' + user?.level
                             }}
                             // size={variant === 'default' ? 'medium' : 'large'}
-                            size="xlarge"
+                            size="xxxlarge"
                             display="photo-only"
                             showLevel={true}
                             frame={true}
@@ -118,7 +118,7 @@ export default function TopExperienceUser({
                 
 
                 {/* User Info */}
-                <div className={topExperienceUserContentStyles({ variant })}>
+                <div className="text-center">
                     <h3 className={topExperienceUserNameStyles({ variant })}>
                         {user?.name}
                     </h3>
