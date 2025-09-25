@@ -233,4 +233,66 @@ describe('HallOfFame component', () => {
     // O quarto usuário não deve ser renderizado
     expect(screen.queryByText('Carlos Lima')).not.toBeInTheDocument();
   });
+
+  // TC13: Estado de carregamento com skeleton
+  it('TC13: shows skeleton loading state when isLoading is true', () => {
+    render(
+      <HallOfFame 
+        topUsers={[]} 
+        isLoading={true}
+        data-testid="hall-of-fame-loading"
+      />
+    );
+
+    // Verifica se o título ainda é mostrado
+    expect(screen.getByText(/Hall da Fama - Doadores do Mês/)).toBeInTheDocument();
+    expect(screen.getByText(/Conheça os heróis que mais ajudaram nossa comunidade este mês/)).toBeInTheDocument();
+
+    // Verifica se os skeletons estão presentes (através das classes de animação)
+    const skeletonElements = screen.getAllByText('', { hidden: true });
+    const hasSkeletonAnimation = skeletonElements.some(el => 
+      el.className && el.className.includes('animate-pulse')
+    );
+    expect(hasSkeletonAnimation).toBeTruthy();
+  });
+
+  // TC14: Não mostra skeleton quando isLoading é false
+  it('TC14: does not show skeleton when isLoading is false', () => {
+    render(
+      <HallOfFame 
+        topUsers={mockTopUsers} 
+        isLoading={false}
+      />
+    );
+
+    // Verifica se os usuários reais são mostrados
+    expect(screen.getByTestId('top-user-1')).toBeInTheDocument();
+    expect(screen.getByTestId('top-user-2')).toBeInTheDocument();
+    expect(screen.getByTestId('top-user-3')).toBeInTheDocument();
+
+    // Verifica se não há skeletons
+    expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
+  });
+
+  // TC15: Skeleton funciona mesmo com dados de usuários presentes
+  it('TC15: shows skeleton even when topUsers data is present if isLoading is true', () => {
+    render(
+      <HallOfFame 
+        topUsers={mockTopUsers} 
+        isLoading={true}
+      />
+    );
+
+    // Verifica que os usuários reais NÃO são mostrados
+    expect(screen.queryByTestId('top-user-1')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('top-user-2')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('top-user-3')).not.toBeInTheDocument();
+
+    // Verifica que o skeleton está presente
+    const skeletonElements = screen.getAllByText('', { hidden: true });
+    const hasSkeletonAnimation = skeletonElements.some(el => 
+      el.className && el.className.includes('animate-pulse')
+    );
+    expect(hasSkeletonAnimation).toBeTruthy();
+  });
 });
