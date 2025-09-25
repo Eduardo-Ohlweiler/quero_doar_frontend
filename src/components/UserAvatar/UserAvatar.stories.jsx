@@ -23,7 +23,7 @@ export default {
     },
     size: {
       control: { type: 'select' },
-      options: ['small', 'medium', 'large', 'xlarge'],
+      options: ['small', 'medium', 'large', 'xlarge', 'xxlarge', 'xxxlarge'],
     },
     appearance: {
       control: { type: 'select' },
@@ -99,6 +99,16 @@ export const Sizes = () => (
       <div className="flex flex-col items-center gap-2">
         <span className="text-white text-sm">XLarge</span>
         <UserAvatar user={defaultUser} size="xlarge" />
+      </div>
+      
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-white text-sm">XXLarge</span>
+        <UserAvatar user={defaultUser} size="xxlarge" />
+      </div>
+      
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-white text-sm">XXXLarge</span>
+        <UserAvatar user={defaultUser} size="xxxlarge" />
       </div>
     </div>
   </div>
@@ -194,6 +204,46 @@ export const WithLevel = () => (
       <div className="flex flex-col items-center gap-2">
         <span className="text-white text-sm">Nível 25 com Frame</span>
         <UserAvatar user={userWithAvatar} showLevel={true} frame={true} />
+      </div>
+    </div>
+  </div>
+);
+
+export const LargeSizesWithLevel = () => (
+  <div className="flex flex-col gap-6 items-center p-8">
+    <div className="text-white text-lg font-semibold mb-4">
+      Tamanhos Grandes com Indicador de Nível
+    </div>
+    
+    <div className="flex items-center gap-8">
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-white text-sm">XLarge - Nível 15</span>
+        <UserAvatar 
+          user={{...userWithAvatar, level: 15}} 
+          size="xlarge" 
+          showLevel={true} 
+          frame={true}
+        />
+      </div>
+      
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-white text-sm">XXLarge - Nível 42</span>
+        <UserAvatar 
+          user={{...userWithAvatar, level: 42}} 
+          size="xxlarge" 
+          showLevel={true} 
+          frame={true}
+        />
+      </div>
+      
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-white text-sm">XXXLarge - Nível 99</span>
+        <UserAvatar 
+          user={{...userWithAvatar, level: 99}} 
+          size="xxxlarge" 
+          showLevel={true} 
+          frame={true}
+        />
       </div>
     </div>
   </div>

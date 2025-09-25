@@ -1,6 +1,7 @@
 import { buildLink } from "../util/stringUtil.js";
 import apiService from "../apiService/apiService.js";
 import VUser from "./view/vUser.js";
+import VUserExperienceLastMonth from "./dto/VUserExperienceLastMonth.js";
 
 //routes import
 const GET_USER_VIEW_SEARCH_ROUTE = import.meta.env.VITE_GET_USER_VIEW_SEARCH_ROUTE || "/user/view/search";
@@ -8,6 +9,7 @@ const GET_USER_VIEW_SEARCH_USERID_PARAM = import.meta.env.VITE_GET_USER_VIEW_SEA
 const GET_USER_VIEW_SEARCH_EMAIL_PARAM = import.meta.env.VITE_GET_USER_VIEW_SEARCH_EMAIL_PARAM || "email";
 const GET_MEDIA_USER_ROUTE = import.meta.env.VITE_GET_MEDIA_USER_ROUTE || "/media/user/";
 const GET_MEDIA_USER_DEFAULT_PHOTO = import.meta.env.VITE_GET_MEDIA_USER_DEFAULT_PHOTO || "default.webp";
+const GET_USER_PUBLIC_HALL_OF_FAME_ROUTE = import.meta.env.VITE_GET_USER_PUBLIC_HALL_OF_FAME_ROUTE || "/api/user/public/hall-of-fame";
 
 class UserService {
 
@@ -31,6 +33,9 @@ class UserService {
         return VUser.fromJson(vuser);
     }
 
+    /**
+     * @obsolete Fotos do usuário agora são publicas e podem ser acessadas diretamente pela URL
+     */
     async GetUserPhoto(filename) {
         if (!filename) {
             filename = GET_MEDIA_USER_DEFAULT_PHOTO;
@@ -54,6 +59,21 @@ class UserService {
             "/user",
             { name: userData.name, email: userData.email, password: userData.password }
         );
+    }
+
+    /**
+     * Busca os usuários com mais experiência no último mês.
+     */
+    async GetHallOfFame(top = 3) {
+        if (top <= 0) {
+            return Promise.reject(new Error('O número de usuários deve ser maior que zero'));
+        }
+        let users = await apiService.get(
+            buildLink(
+                [GET_USER_PUBLIC_HALL_OF_FAME_ROUTE, top.toString()]
+            )
+        );
+        return users.map(user => VUserExperienceLastMonth.fromJson(user));
     }
 }
 

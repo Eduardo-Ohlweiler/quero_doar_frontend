@@ -1,11 +1,17 @@
 @import "tailwindcss";
 
 :root {
+  /* Cores originais do projeto de referencia visual.
+  Cor primaria trocada por questão de acessibilidade.
+  Demais cores trocadas por questão de harmonia com a nova cor primaria. */
+
 	/* --color-primary: #00c48c; */
   /* --color-secondary: #3aa8ff; */
+  /* --color-highlight: #ffd54f; */
   /* --gradient-primary: linear-gradient(135deg, #00c48c 0%, #3aa8ff 100%); */
 	--color-primary: #00564a;
   --color-secondary: #2a7ab0;
+  --color-highlight: #e8b33b;
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
 	--viewport-height-minus-header-minimal: calc(100vh - 3.5rem);
 }

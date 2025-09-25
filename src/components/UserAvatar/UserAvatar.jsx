@@ -90,7 +90,7 @@ UserAvatar.propTypes = {
         photo: PropTypes.string,
         level: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     }),
-    size: PropTypes.oneOf(['small', 'medium', 'large', 'xlarge']),
+    size: PropTypes.oneOf(['small', 'medium', 'large', 'xlarge', 'xxlarge', 'xxxlarge']),
     appearance: PropTypes.oneOf(['primary', 'secondary', 'ghost']),
     frame: PropTypes.bool,
     display: PropTypes.oneOf(['photo-only', 'photo-with-name', 'name-only']),
