@@ -1,4 +1,5 @@
 import HallOfFame from './HallOfFame';
+import { useState, useEffect } from 'react';
 
 export default {
   title: 'Components/HallOfFame',
@@ -15,6 +16,10 @@ export default {
     topUsers: {
       description: 'Array com os dados dos top 3 usuários do mês',
       control: { type: 'object' }
+    },
+    isLoading: {
+      description: 'Indica se os dados estão sendo carregados',
+      control: { type: 'boolean' }
     },
     onUserClick: {
       description: 'Callback executado quando um usuário é clicado',
@@ -60,7 +65,22 @@ const mockTopUsers = [
 
 export const Default = {
   args: {
-    topUsers: mockTopUsers
+    topUsers: mockTopUsers,
+    isLoading: false
+  }
+};
+
+export const Loading = {
+  args: {
+    topUsers: [],
+    isLoading: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Estado de carregamento do Hall of Fame com skeletons.'
+      }
+    }
   }
 };
 
@@ -212,4 +232,60 @@ export const Interactive = {
       }
     }
   }
+};
+
+// Story interativa com simulação de carregamento
+export const LoadingSimulation = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    // Simula carregamento de 3 segundos
+    const timer = setTimeout(() => {
+      setUsers(mockTopUsers);
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleReload = () => {
+    setIsLoading(true);
+    setUsers([]);
+    
+    setTimeout(() => {
+      setUsers(mockTopUsers);
+      setIsLoading(false);
+    }, 3000);
+  };
+
+  return (
+    <div>
+      <div className="mb-4">
+        <button
+          onClick={handleReload}
+          className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-80 transition-opacity"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Carregando...' : 'Simular Carregamento'}
+        </button>
+      </div>
+      
+      <HallOfFame 
+        topUsers={users}
+        isLoading={isLoading}
+        onUserClick={(user) => console.log('User clicked:', user)}
+      />
+      
+      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+        <h3 className="font-medium text-gray-900 mb-2">💡 Como funciona</h3>
+        <ul className="text-sm text-gray-700 space-y-1">
+          <li>• Durante o carregamento: Exibe skeletons animados</li>
+          <li>• Após carregar: Mostra os dados reais dos usuários</li>
+          <li>• Transição suave entre estados</li>
+          <li>• Mantém a estrutura visual consistente</li>
+        </ul>
+      </div>
+    </div>
+  );
 };

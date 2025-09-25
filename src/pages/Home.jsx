@@ -14,13 +14,17 @@ export default function Home (){
     const [lastDonations, setLastDonations] = useState(null);
     const [categories, setCategories] = useState([]);
     const [topUsers, setTopUsers] = useState([]);
+    const [isLoadingTopUsers, setIsLoadingTopUsers] = useState(true);
 
     const fetchTopUsers = async () => {
         try {
+            setIsLoadingTopUsers(true);
             const users = await userService.GetHallOfFame(3);
             setTopUsers(users);
         } catch (error) {
             console.error("Error fetching top users:", error);
+        } finally {
+            setIsLoadingTopUsers(false);
         }
     };
 
@@ -72,6 +76,7 @@ export default function Home (){
             <div className="bg-slate-100 p-16 space-y-16 mt-80">
                 <HallOfFame
                     topUsers={topUsers}
+                    isLoading={isLoadingTopUsers}
                     onUserClick={(userId) => console.log("Clicked user:", userId)}
                 />
                 <div className="max-w-screen-xl mx-auto">
