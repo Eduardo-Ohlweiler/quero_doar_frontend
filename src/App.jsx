@@ -16,6 +16,7 @@ import LevelUpOverlayTest from "./pages/test/LevelUpOverlayTest";
 import Profile from "./pages/Profile";
 import Verify from "./pages/Verify";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
+import Search from "./pages/Search";
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
           {/* Layout completo do header e do footer */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />    
+            <Route path="/search" element={<Search />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />
