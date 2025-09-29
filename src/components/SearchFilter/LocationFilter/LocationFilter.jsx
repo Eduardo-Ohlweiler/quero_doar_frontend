@@ -75,9 +75,9 @@ export default function LocationFilter({
     } else {
       // Remover estado e todas as suas cidades
       newSelectedStates = newSelectedStates.filter(id => id !== stateId);
-      const state = availableStates.find(s => s.id === stateId);
+      const state = availableStates.find(s => s.stateId === stateId);
       if (state && state.cities) {
-        const stateCityIds = state.cities.map(city => city.id);
+        const stateCityIds = state.cities.map(city => city.cityId);
         newSelectedCities = newSelectedCities.filter(cityId => !stateCityIds.includes(cityId));
       }
     }
@@ -133,9 +133,9 @@ export default function LocationFilter({
   const removeSelectedState = (stateId) => {
     const newStates = selectedStates.filter(id => id !== stateId);
     // Remover também todas as cidades desse estado
-    const state = availableStates.find(s => s.id === stateId);
+    const state = availableStates.find(s => s.stateId === stateId);
     if (state && state.cities) {
-      const stateCityIds = state.cities.map(city => city.id);
+      const stateCityIds = state.cities.map(city => city.cityId);
       const newCities = selectedCities.filter(id => !stateCityIds.includes(id));
       onCitiesChange?.(newCities);
     }
@@ -144,7 +144,7 @@ export default function LocationFilter({
 
   // Selecionar/deselecionar todos os estados
   const handleSelectAllStates = () => {
-    const allStateIds = availableStates.map(state => state.id);
+    const allStateIds = availableStates.map(state => state.stateId);
     const areAllSelected = allStateIds.every(id => selectedStates.includes(id));
     
     if (areAllSelected) {
@@ -156,7 +156,7 @@ export default function LocationFilter({
       onStatesChange?.(allStateIds);
       // Buscar cidades para todos estados
       allStateIds.forEach(stateId => {
-        if (!availableStates.find(s => s.id === stateId)?.cities) {
+        if (!availableStates.find(s => s.stateId === stateId)?.cities) {
           onFetchCities?.(stateId);
         }
       });
@@ -165,10 +165,10 @@ export default function LocationFilter({
 
   // Selecionar/deselecionar todas as cidades de um estado
   const handleSelectAllCitiesForState = (stateId) => {
-    const state = availableStates.find(s => s.id === stateId);
+    const state = availableStates.find(s => s.stateId === stateId);
     if (!state || !state.cities) return;
 
-    const stateCityIds = state.cities.map(city => city.id);
+    const stateCityIds = state.cities.map(city => city.cityId);
     const areAllSelected = stateCityIds.every(cityId => selectedCities.includes(cityId));
 
     let newSelectedCities = [...selectedCities];
@@ -189,10 +189,10 @@ export default function LocationFilter({
   };
 
   const handleSelectAllCities = (stateId) => {
-    const state = availableStates.find(s => s.id === stateId);
+    const state = availableStates.find(s => s.stateId === stateId);
     if (!state || !state.cities) return;
 
-    const stateCityIds = state.cities.map(city => city.id);
+    const stateCityIds = state.cities.map(city => city.cityId);
     const areAllSelected = stateCityIds.every(cityId => selectedCities.includes(cityId));
 
     let newSelectedCities = [...selectedCities];
@@ -216,7 +216,7 @@ export default function LocationFilter({
   const allAvailableCities = useMemo(() => {
     const cities = [];
     selectedStates.forEach(stateId => {
-      const state = availableStates.find(s => s.id === stateId);
+      const state = availableStates.find(s => s.stateId === stateId);
       if (state && state.cities) {
         state.cities.forEach(city => {
           cities.push({
@@ -241,17 +241,17 @@ export default function LocationFilter({
 
   // Obter estados selecionados com nomes para as tags
   const selectedStatesWithNames = useMemo(() => {
-    return availableStates.filter(state => selectedStates.includes(state.id));
+    return availableStates.filter(state => selectedStates.includes(state.stateId));
   }, [availableStates, selectedStates]);
 
   // Obter cidades selecionadas com nomes completos para as tags
   const selectedCitiesWithNames = useMemo(() => {
     const cities = [];
     selectedStates.forEach(stateId => {
-      const state = availableStates.find(s => s.id === stateId);
+      const state = availableStates.find(s => s.stateId === stateId);
       if (state && state.cities) {
         state.cities.forEach(city => {
-          if (selectedCities.includes(city.id)) {
+          if (selectedCities.includes(city.cityId)) {
             cities.push({
               ...city,
               stateId,
@@ -269,7 +269,7 @@ export default function LocationFilter({
   const citiesByState = useMemo(() => {
     const groups = [];
     selectedStates.forEach(stateId => {
-      const state = availableStates.find(s => s.id === stateId);
+      const state = availableStates.find(s => s.stateId === stateId);
       if (!state || !state.cities) return;
 
       const filteredCities = state.cities.filter(city => {
@@ -280,7 +280,7 @@ export default function LocationFilter({
 
       if (filteredCities.length > 0) {
         groups.push({
-          stateId: state.id,
+          stateId: state.stateId,
           stateName: state.name,
           cities: filteredCities.map(city => ({
             ...city,
@@ -297,7 +297,7 @@ export default function LocationFilter({
     const result = [];
 
     selectedStates.forEach(stateId => {
-      const state = availableStates.find(s => s.id === stateId);
+      const state = availableStates.find(s => s.stateId === stateId);
       if (!state || !state.cities) return;
 
       const filteredCities = state.cities.filter(city =>
@@ -393,7 +393,7 @@ export default function LocationFilter({
                       <label className="flex items-center gap-2 p-2 text-sm font-medium text-gray-900 cursor-pointer hover:bg-gray-50 rounded">
                         <input
                           type="checkbox"
-                          checked={availableStates.length > 0 && availableStates.every(state => selectedStates.includes(state.id))}
+                          checked={availableStates.length > 0 && availableStates.every(state => selectedStates.includes(state.stateId))}
                           onChange={handleSelectAllStates}
                           className="w-4 h-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)] focus:ring-2"
                         />
@@ -407,13 +407,13 @@ export default function LocationFilter({
                     {/* Estados individuais */}
                     {filteredStatesForDropdown.map((state) => (
                       <label
-                        key={state.id}
+                        key={state.stateId}
                         className={locationFilterOptionStyles()}
                       >
                         <input
                           type="checkbox"
-                          checked={selectedStates.includes(state.id)}
-                          onChange={(e) => handleStateChange(state.id, e.target.checked)}
+                          checked={selectedStates.includes(state.stateId)}
+                          onChange={(e) => handleStateChange(state.stateId, e.target.checked)}
                           className="w-4 h-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)] focus:ring-2"
                         />
                         <span className="text-sm text-gray-700">
@@ -460,12 +460,12 @@ export default function LocationFilter({
               ) : (
                 selectedStatesWithNames.map((state) => (
                   <span
-                    key={`state-tag-${state.id}`}
+                    key={`state-tag-${state.stateId}`}
                     className={locationFilterTagStyles()}
                   >
                     {state.name}
                     <button
-                      onClick={() => removeSelectedState(state.id)}
+                      onClick={() => removeSelectedState(state.stateId)}
                       className="ml-1 hover:text-red-600 transition-colors"
                       aria-label={`Remover ${state.name}`}
                     >
@@ -546,7 +546,7 @@ export default function LocationFilter({
                 <div className="max-h-64 overflow-y-auto">
                   {citiesByState.length > 0 ? (
                     citiesByState.map((stateGroup) => {
-                      const stateCityIds = stateGroup.cities.map(city => city.id);
+                      const stateCityIds = stateGroup.cities.map(city => city.cityId);
                       const selectedStateCities = stateCityIds.filter(cityId => selectedCities.includes(cityId));
                       const areAllSelected = stateCityIds.length > 0 && selectedStateCities.length === stateCityIds.length;
                       const areSomeSelected = selectedStateCities.length > 0 && selectedStateCities.length < stateCityIds.length;
@@ -581,13 +581,13 @@ export default function LocationFilter({
                           <div className="pl-2">
                             {stateGroup.cities.map((city) => (
                               <label
-                                key={`${stateGroup.stateId}-${city.id}`}
+                                key={`${stateGroup.stateId}-${city.cityId}`}
                                 className={locationFilterOptionStyles()}
                               >
                                 <input
                                   type="checkbox"
-                                  checked={selectedCities.includes(city.id)}
-                                  onChange={(e) => handleCityChange(city.id, e.target.checked)}
+                                  checked={selectedCities.includes(city.cityId)}
+                                  onChange={(e) => handleCityChange(city.cityId, e.target.checked)}
                                   className="w-4 h-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)] focus:ring-2"
                                 />
                                 <span className="text-sm text-gray-600">
@@ -627,7 +627,7 @@ export default function LocationFilter({
                   
                   selectedCitiesWithNames.forEach(city => {
                     if (!stateGroups.has(city.stateId)) {
-                      const state = availableStates.find(s => s.id === city.stateId);
+                      const state = availableStates.find(s => s.stateId === city.stateId);
                       stateGroups.set(city.stateId, {
                         stateName: state?.name || '',
                         totalCities: state?.cities?.length || 0,
@@ -654,7 +654,7 @@ export default function LocationFilter({
                           <button
                             onClick={() => {
                               // Remover todas as cidades do estado
-                              const stateCityIds = group.selectedCities.map(city => city.id);
+                              const stateCityIds = group.selectedCities.map(city => city.cityId);
                               const newCities = selectedCities.filter(cityId => !stateCityIds.includes(cityId));
                               onCitiesChange?.(newCities);
                             }}
@@ -670,12 +670,12 @@ export default function LocationFilter({
                       group.selectedCities.forEach(city => {
                         tags.push(
                           <span
-                            key={`tag-${city.stateId}-${city.id}`}
+                            key={`tag-${city.stateId}-${city.cityId}`}
                             className={locationFilterTagStyles()}
                           >
                             {city.displayName}
                             <button
-                              onClick={() => removeSelectedCity(city.id)}
+                              onClick={() => removeSelectedCity(city.cityId)}
                               className="ml-1 hover:text-red-600 transition-colors"
                               aria-label={`Remover ${city.displayName}`}
                             >
@@ -706,15 +706,15 @@ export default function LocationFilter({
 
 LocationFilter.propTypes = {
   availableStates: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    stateId: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     cities: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      cityId: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired
     }))
   })),
-  selectedStates: PropTypes.arrayOf(PropTypes.string),
-  selectedCities: PropTypes.arrayOf(PropTypes.string),
+  selectedStates: PropTypes.arrayOf(PropTypes.number),
+  selectedCities: PropTypes.arrayOf(PropTypes.number),
   onStatesChange: PropTypes.func,
   onCitiesChange: PropTypes.func,
   onFetchCities: PropTypes.func,

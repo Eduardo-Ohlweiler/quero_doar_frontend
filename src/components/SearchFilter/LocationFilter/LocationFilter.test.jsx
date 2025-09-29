@@ -6,21 +6,21 @@ import LocationFilter from './LocationFilter';
 describe('LocationFilter', () => {
   const mockStates = [
     {
-      id: 'rj',
+      stateId: 1,
       name: 'Rio de Janeiro',
       cities: [
-        { id: 'rj-1', name: 'Rio de Janeiro' },
-        { id: 'rj-2', name: 'Niterói' },
-        { id: 'rj-3', name: 'Petrópolis' }
+        { cityId: 1, name: 'Rio de Janeiro' },
+        { cityId: 2, name: 'Niterói' },
+        { cityId: 3, name: 'Petrópolis' }
       ]
     },
     {
-      id: 'sp',
+      stateId: 2,
       name: 'São Paulo',
       cities: [
-        { id: 'sp-1', name: 'São Paulo' },
-        { id: 'sp-2', name: 'Campinas' },
-        { id: 'sp-3', name: 'Santos' }
+        { cityId: 4, name: 'São Paulo' },
+        { cityId: 5, name: 'Campinas' },
+        { cityId: 6, name: 'Santos' }
       ]
     }
   ];
@@ -46,7 +46,7 @@ describe('LocationFilter', () => {
   });
 
   it('should show cities section when states are selected', () => {
-    render(<LocationFilter {...defaultProps} selectedStates={['rj']} />);
+    render(<LocationFilter {...defaultProps} selectedStates={[1]} />);
     
     expect(screen.getByText('Cidades (0 selecionadas)')).toBeInTheDocument();
   });
@@ -73,7 +73,7 @@ describe('LocationFilter', () => {
   });
 
   it('should show state counter in header', () => {
-    render(<LocationFilter {...defaultProps} selectedStates={['rj', 'sp']} />);
+    render(<LocationFilter {...defaultProps} selectedStates={[1, 2]} />);
     
     expect(screen.getByText('Estados (2 selecionados)')).toBeInTheDocument();
   });
@@ -82,8 +82,8 @@ describe('LocationFilter', () => {
     render(
       <LocationFilter 
         {...defaultProps} 
-        selectedStates={['rj']} 
-        selectedCities={['rj-1', 'rj-2']} 
+        selectedStates={[1]} 
+        selectedCities={[1, 2]} 
       />
     );
     
@@ -109,8 +109,8 @@ describe('LocationFilter', () => {
   it('should display counters correctly with selections', () => {
     const props = {
       ...defaultProps,
-      selectedStates: ['rj', 'sp'],
-      selectedCities: ['rj-1', 'rj-2']
+      selectedStates: [1, 2],
+      selectedCities: [1, 2]
     };
     
     render(<LocationFilter {...props} />);
@@ -120,7 +120,7 @@ describe('LocationFilter', () => {
   });
 
   it('should show tags for selected states', () => {
-    render(<LocationFilter {...defaultProps} selectedStates={['rj']} />);
+    render(<LocationFilter {...defaultProps} selectedStates={[1]} />);
     
     expect(screen.getByText('Estados selecionados:')).toBeInTheDocument();
     expect(screen.getByText('Rio de Janeiro')).toBeInTheDocument();
@@ -129,8 +129,8 @@ describe('LocationFilter', () => {
   it('should show tags for selected cities', () => {
     const props = {
       ...defaultProps,
-      selectedStates: ['rj'],
-      selectedCities: ['rj-1']
+      selectedStates: [1],
+      selectedCities: [1]
     };
     
     render(<LocationFilter {...props} />);
@@ -142,7 +142,7 @@ describe('LocationFilter', () => {
   it('should handle city dropdown interaction', async () => {
     const props = {
       ...defaultProps,
-      selectedStates: ['rj']
+      selectedStates: [1]
     };
     
     render(<LocationFilter {...props} />);

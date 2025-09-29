@@ -17,46 +17,46 @@ export default {
 // Mock data
 const mockStates = [
   {
-    id: 'rj',
+    stateId: 1,
     name: 'Rio de Janeiro',
     cities: [
-      { id: 'rj-1', name: 'Rio de Janeiro' },
-      { id: 'rj-2', name: 'Niterói' },
-      { id: 'rj-3', name: 'Petrópolis' },
-      { id: 'rj-4', name: 'Volta Redonda' },
-      { id: 'rj-5', name: 'Nova Iguaçu' },
-      { id: 'rj-6', name: 'Belford Roxo' },
-      { id: 'rj-7', name: 'São Gonçalo' },
-      { id: 'rj-8', name: 'Duque de Caxias' },
-      { id: 'rj-9', name: 'Nova Friburgo' },
-      { id: 'rj-10', name: 'Macaé' }
+      { cityId: 1, name: 'Rio de Janeiro' },
+      { cityId: 2, name: 'Niterói' },
+      { cityId: 3, name: 'Petrópolis' },
+      { cityId: 4, name: 'Volta Redonda' },
+      { cityId: 5, name: 'Nova Iguaçu' },
+      { cityId: 6, name: 'Belford Roxo' },
+      { cityId: 7, name: 'São Gonçalo' },
+      { cityId: 8, name: 'Duque de Caxias' },
+      { cityId: 9, name: 'Nova Friburgo' },
+      { cityId: 10, name: 'Macaé' }
     ]
   },
   {
-    id: 'sp',
+    stateId: 2,
     name: 'São Paulo',
     cities: [
-      { id: 'sp-1', name: 'São Paulo' },
-      { id: 'sp-2', name: 'Campinas' },
-      { id: 'sp-3', name: 'Santos' },
-      { id: 'sp-4', name: 'São José dos Campos' },
-      { id: 'sp-5', name: 'Ribeirão Preto' },
-      { id: 'sp-6', name: 'Sorocaba' },
-      { id: 'sp-7', name: 'São Bernardo do Campo' },
-      { id: 'sp-8', name: 'Santo André' },
-      { id: 'sp-9', name: 'Osasco' },
-      { id: 'sp-10', name: 'Guarulhos' }
+      { cityId: 11, name: 'São Paulo' },
+      { cityId: 12, name: 'Campinas' },
+      { cityId: 13, name: 'Santos' },
+      { cityId: 14, name: 'São José dos Campos' },
+      { cityId: 15, name: 'Ribeirão Preto' },
+      { cityId: 16, name: 'Sorocaba' },
+      { cityId: 17, name: 'São Bernardo do Campo' },
+      { cityId: 18, name: 'Santo André' },
+      { cityId: 19, name: 'Osasco' },
+      { cityId: 20, name: 'Guarulhos' }
     ]
   },
   {
-    id: 'mg',
+    stateId: 3,
     name: 'Minas Gerais',
     cities: [
-      { id: 'mg-1', name: 'Belo Horizonte' },
-      { id: 'mg-2', name: 'Uberlândia' },
-      { id: 'mg-3', name: 'Contagem' },
-      { id: 'mg-4', name: 'Juiz de Fora' },
-      { id: 'mg-5', name: 'Montes Claros' }
+      { cityId: 21, name: 'Belo Horizonte' },
+      { cityId: 22, name: 'Uberlândia' },
+      { cityId: 23, name: 'Contagem' },
+      { cityId: 24, name: 'Juiz de Fora' },
+      { cityId: 25, name: 'Montes Claros' }
     ]
   }
 ];
@@ -70,7 +70,7 @@ const Template = (args) => {
     // Simular async fetch
     await new Promise(resolve => setTimeout(resolve, 500));
     console.log('Fetching cities for state:', stateId);
-    return mockStates.find(state => state.id === stateId)?.cities || [];
+    return mockStates.find(state => state.stateId === stateId)?.cities || [];
   };
 
   return (
@@ -95,21 +95,21 @@ Default.args = {};
 // With selected states
 export const WithSelectedStates = Template.bind({});
 WithSelectedStates.args = {
-  selectedStates: ['rj']
+  selectedStates: [1]
 };
 
 // With selected cities
 export const WithSelectedCities = Template.bind({});
 WithSelectedCities.args = {
-  selectedStates: ['rj', 'sp'],
-  selectedCities: ['rj-1', 'rj-2', 'sp-1']
+  selectedStates: [1, 2],
+  selectedCities: [1, 2, 11]
 };
 
 // Multiple states with many cities
 export const MultipleCities = Template.bind({});
 MultipleCities.args = {
-  selectedStates: ['rj', 'sp'],
-  selectedCities: ['rj-1', 'rj-2', 'rj-3', 'sp-1', 'sp-2', 'sp-3', 'sp-4']
+  selectedStates: [1, 2],
+  selectedCities: [1, 2, 3, 11, 12, 13, 14]
 };
 
 // Empty state
@@ -121,32 +121,32 @@ NoStates.args = {
 // Loading state simulation
 export const LoadingCities = Template.bind({});
 LoadingCities.args = {
-  selectedStates: ['rj'],
+  selectedStates: [1],
   selectedCities: []
 };
 
 // Large dataset (simulating many cities like Rio de Janeiro's 92 municipalities)
 const largeDataset = [
   {
-    id: 'rj',
+    stateId: 1,
     name: 'Rio de Janeiro',
     cities: Array.from({ length: 92 }, (_, i) => ({
-      id: `rj-${i + 1}`,
+      cityId: i + 1,
       name: `Cidade ${i + 1} - RJ`
     }))
   },
   {
-    id: 'sp', 
+    stateId: 2, 
     name: 'São Paulo',
     cities: Array.from({ length: 645 }, (_, i) => ({
-      id: `sp-${i + 1}`,
+      cityId: i + 93,
       name: `Cidade ${i + 1} - SP`
     }))
   }
 ];
 
 export const LargeDataset = (args) => {
-  const [selectedStates, setSelectedStates] = useState(['rj']);
+  const [selectedStates, setSelectedStates] = useState([1]);
   const [selectedCities, setSelectedCities] = useState([]);
 
   return (
@@ -168,8 +168,8 @@ LargeDataset.args = {};
 // Playground
 export const Playground = Template.bind({});
 Playground.args = {
-  selectedStates: ['rj'],
-  selectedCities: ['rj-1']
+  selectedStates: [1],
+  selectedCities: [1]
 };
 
 // Interface consistente - demonstra comboboxes para ambos
@@ -187,8 +187,8 @@ ConsistentInterface.parameters = {
 // Select All - demonstra funcionalidades de seleção em lote
 export const SelectAllFeatures = {
   render: (args) => {
-    const [selectedStates, setSelectedStates] = useState(['sp']);
-    const [selectedCities, setSelectedCities] = useState(['sp-1', 'sp-2', 'sp-3', 'sp-4', 'sp-5', 'sp-6', 'sp-7', 'sp-8', 'sp-9', 'sp-10']); // Todas as cidades de SP
+    const [selectedStates, setSelectedStates] = useState([2]);
+    const [selectedCities, setSelectedCities] = useState([11, 12, 13, 14, 15, 16, 17, 18, 19, 20]); // Todas as cidades de SP
 
     return (
       <div className="max-w-sm space-y-4">
@@ -227,12 +227,12 @@ export const SelectAllFeatures = {
 // Estado Completo - demonstra tag otimizada para estado com todas cidades
 export const StateWithAllCities = {
   render: (args) => {
-    const [selectedStates, setSelectedStates] = useState(['sp', 'rj']);
+    const [selectedStates, setSelectedStates] = useState([2, 1]);
     const [selectedCities, setSelectedCities] = useState([
       // Todas as cidades de SP (10 cidades)
-      'sp-1', 'sp-2', 'sp-3', 'sp-4', 'sp-5', 'sp-6', 'sp-7', 'sp-8', 'sp-9', 'sp-10',
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
       // Apenas algumas cidades do RJ
-      'rj-1', 'rj-2'
+      1, 2
     ]);
 
     return (
@@ -261,7 +261,7 @@ export const StateWithAllCities = {
 // Todos Estados - demonstra tag otimizada para todos estados
 export const AllStatesSelected = {
   render: (args) => {
-    const [selectedStates, setSelectedStates] = useState(['rj', 'sp', 'mg']);
+    const [selectedStates, setSelectedStates] = useState([1, 2, 3]);
     const [selectedCities, setSelectedCities] = useState([]);
 
     return (
