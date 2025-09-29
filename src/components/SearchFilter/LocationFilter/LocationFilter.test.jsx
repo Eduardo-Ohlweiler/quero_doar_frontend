@@ -54,7 +54,7 @@ describe('LocationFilter', () => {
   it('should toggle dropdown when clicking the button', async () => {
     render(<LocationFilter {...defaultProps} />);
     
-    const stateButton = screen.getByText('Estados (0 selecionados)');
+    const stateButton = screen.getByText('Selecione os estados...');
     
     // Should be closed initially
     expect(screen.queryByText('Rio de Janeiro')).not.toBeInTheDocument();
@@ -93,7 +93,7 @@ describe('LocationFilter', () => {
   it('should render with Select All functionality', async () => {
     render(<LocationFilter {...defaultProps} />);
     
-    const stateButton = screen.getByText('Estados (0 selecionados)');
+    const stateButton = screen.getByText('Selecione os estados...');
     fireEvent.click(stateButton);
     
     await waitFor(() => {
@@ -147,7 +147,7 @@ describe('LocationFilter', () => {
     
     render(<LocationFilter {...props} />);
     
-    const cityButton = screen.getByText('Cidades (0 selecionadas)');
+    const cityButton = screen.getByText('Selecione as cidades...');
     
     // Initially closed
     expect(screen.queryByPlaceholderText('Buscar cidades...')).not.toBeInTheDocument();

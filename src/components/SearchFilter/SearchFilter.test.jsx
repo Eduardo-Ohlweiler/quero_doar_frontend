@@ -140,60 +140,57 @@ describe('SearchFilter', () => {
   });
 
   // TC5: Seleção de categorias principais
-  it.skip('TC5: handles main category selection', async () => {
+  it('TC5: handles main category selection', async () => {
     const user = userEvent.setup();
     const onCategoriesChange = vi.fn();
     
-    // Teste simples para verificar se as categorias estão sendo renderizadas
-    const simpleProps = {
-      ...defaultProps,
-      categories: [{
-        id: 'clothes',
-        name: 'Roupas',
-        count: 47,
-        subcategories: []
-      }]
-    };
-    
-    render(<SearchFilter {...simpleProps} onCategoriesChange={onCategoriesChange} />);
-    
-    // Debug: verificar se as categorias estão sendo passadas
-    expect(simpleProps.categories).toHaveLength(1);
-    expect(simpleProps.categories[0].name).toBe('Roupas');
+    // Usar as categorias padrão que sabemos que existem
+    render(<SearchFilter {...defaultProps} onCategoriesChange={onCategoriesChange} />);
     
     // Verificar se a seção de categoria existe
     expect(screen.getByText('Categoria')).toBeInTheDocument();
     
-    // Como as seções estão expandidas por padrão, podemos encontrar diretamente o checkbox
-    const clothesCheckbox = screen.getByLabelText('Roupas (47)');
-    await user.click(clothesCheckbox);
+    // Procurar pelo texto 'Roupas' que sabemos que existe no mockCategories
+    expect(screen.getByText('Roupas')).toBeInTheDocument();
     
-    // Para categoria sem subcategorias, deve selecionar apenas a categoria principal
-    expect(onCategoriesChange).toHaveBeenCalledWith(['clothes']);
+    // Encontrar o checkbox por texto e clicar
+    const roupasText = screen.getByText('Roupas');
+    const checkboxContainer = roupasText.closest('label');
+    const checkbox = checkboxContainer.querySelector('input[type="checkbox"]');
+    
+    await user.click(checkbox);
+    
+    // Verificar se onCategoriesChange foi chamado com a categoria e subcategorias
+    // Quando uma categoria principal é selecionada, as subcategorias também são selecionadas
+    expect(onCategoriesChange).toHaveBeenCalledWith(['clothes', 'shirts', 'pants']);
   });
 
   // TC6: Expansão de subcategorias
-  it.skip('TC6: expands subcategories when clicking toggle', async () => {
+  it('TC6: expands subcategories when clicking toggle', async () => {
     const user = userEvent.setup();
     render(<SearchFilter {...defaultProps} />);
     
-    // Inicialmente subcategorias não estão visíveis
+    // Inicialmente subcategorias não estão visíveis (expandedCategories começa vazio)
     expect(screen.queryByText('Camisetas')).not.toBeInTheDocument();
     
-    // Encontra o container da categoria Roupas
-    const roupasLabel = screen.getByText('Roupas (47)');
-    const categoryContainer = roupasLabel.closest('label');
-    const toggleButton = categoryContainer.querySelector('button');
+    // Encontrar o botão de toggle usando uma estratégia mais direta
+    // Procurar por todos os botões e encontrar o que está relacionado à categoria
+    const toggleButtons = screen.getAllByRole('button');
+    const categoryToggleButton = toggleButtons.find(button => {
+      const svg = button.querySelector('svg');
+      return svg && button.closest('div').textContent.includes('Roupas');
+    });
     
-    if (toggleButton) {
-      await user.click(toggleButton);
-      
-      // Agora subcategorias devem estar visíveis
-      await waitFor(() => {
-        expect(screen.getByText('Camisetas (20)')).toBeInTheDocument();
-        expect(screen.getByText('Calças (15)')).toBeInTheDocument();
-      });
-    }
+    expect(categoryToggleButton).toBeInTheDocument();
+    
+    // Clicar no botão de toggle
+    await user.click(categoryToggleButton);
+    
+    // Agora subcategorias devem estar visíveis
+    await waitFor(() => {
+      expect(screen.getByText('Camisetas')).toBeInTheDocument();
+      expect(screen.getByText('Calças')).toBeInTheDocument();
+    });
   });
 
   // TC7: Seleção de distância
