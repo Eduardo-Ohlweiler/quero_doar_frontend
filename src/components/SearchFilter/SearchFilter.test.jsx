@@ -19,40 +19,38 @@ vi.mock('./LocationFilter/LocationFilter', () => ({
 // Dados mock
 const mockCategories = [
   {
-    id: 'clothes',
+    categoryId: 1,
     name: 'Roupas',
-    count: 47,
     subcategories: [
-      { id: 'shirts', name: 'Camisetas', count: 20 },
-      { id: 'pants', name: 'Calças', count: 15 }
+      { subcategoryId: 101, name: 'Camisetas' },
+      { subcategoryId: 102, name: 'Calças' }
     ]
   },
   {
-    id: 'books',
+    categoryId: 2,
     name: 'Livros',
-    count: 89,
     subcategories: [
-      { id: 'fiction', name: 'Ficção', count: 30 },
-      { id: 'technical', name: 'Técnicos', count: 25 }
+      { subcategoryId: 201, name: 'Ficção' },
+      { subcategoryId: 202, name: 'Técnicos' }
     ]
   }
 ];
 
 const mockStates = [
   {
-    id: 'SP',
+    stateId: 1,
     name: 'São Paulo',
     cities: [
-      { id: 'sao-paulo', name: 'São Paulo' },
-      { id: 'campinas', name: 'Campinas' }
+      { cityId: 1, name: 'São Paulo' },
+      { cityId: 2, name: 'Campinas' }
     ]
   },
   {
-    id: 'RJ',
+    stateId: 2,
     name: 'Rio de Janeiro',
     cities: [
-      { id: 'rio-de-janeiro', name: 'Rio de Janeiro' },
-      { id: 'niteroi', name: 'Niterói' }
+      { cityId: 3, name: 'Rio de Janeiro' },
+      { cityId: 4, name: 'Niterói' }
     ]
   }
 ];
@@ -162,7 +160,7 @@ describe('SearchFilter', () => {
     
     // Verificar se onCategoriesChange foi chamado com a categoria e subcategorias
     // Quando uma categoria principal é selecionada, as subcategorias também são selecionadas
-    expect(onCategoriesChange).toHaveBeenCalledWith(['clothes', 'shirts', 'pants']);
+    expect(onCategoriesChange).toHaveBeenCalledWith([1, 101, 102]);
   });
 
   // TC6: Expansão de subcategorias
@@ -247,9 +245,9 @@ describe('SearchFilter', () => {
       ...defaultProps,
       donationTypes: ['giver'],
       accessTypes: ['public'],
-      selectedStates: ['SP'],
-      selectedCities: ['sao-paulo'],
-      selectedCategories: ['clothes'],
+      selectedStates: [1],
+      selectedCities: [1],
+      selectedCategories: [1],
       selectedDistance: '5km',
       itemStates: ['new']
     };

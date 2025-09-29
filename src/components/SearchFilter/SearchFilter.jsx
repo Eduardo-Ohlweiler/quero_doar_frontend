@@ -141,7 +141,7 @@ export default function SearchFilter({
   };
 
   const handleCategoryChange = (categoryId, isSelected) => {
-    const category = categories.find(cat => cat.id === categoryId);
+    const category = categories.find(cat => cat.categoryId === categoryId);
     if (!category) return;
 
     let newSelectedCategories = [...selectedCategories];
@@ -153,8 +153,8 @@ export default function SearchFilter({
       }
       if (category.subcategories) {
         category.subcategories.forEach(sub => {
-          if (!newSelectedCategories.includes(sub.id)) {
-            newSelectedCategories.push(sub.id);
+          if (!newSelectedCategories.includes(sub.subcategoryId)) {
+            newSelectedCategories.push(sub.subcategoryId);
           }
         });
       }
@@ -163,7 +163,7 @@ export default function SearchFilter({
       newSelectedCategories = newSelectedCategories.filter(id => id !== categoryId);
       if (category.subcategories) {
         category.subcategories.forEach(sub => {
-          newSelectedCategories = newSelectedCategories.filter(id => id !== sub.id);
+          newSelectedCategories = newSelectedCategories.filter(id => id !== sub.subcategoryId);
         });
       }
     }
@@ -182,14 +182,14 @@ export default function SearchFilter({
       newSelectedCategories = newSelectedCategories.filter(id => id !== subcategoryId);
       // Remover categoria principal se todas as subcategorias foram desmarcadas
       const parentCategory = categories.find(cat => 
-        cat.subcategories && cat.subcategories.some(sub => sub.id === subcategoryId)
+        cat.subcategories && cat.subcategories.some(sub => sub.subcategoryId === subcategoryId)
       );
       if (parentCategory && parentCategory.subcategories) {
         const remainingSubcategories = parentCategory.subcategories.filter(sub =>
-          newSelectedCategories.includes(sub.id)
+          newSelectedCategories.includes(sub.subcategoryId)
         );
         if (remainingSubcategories.length === 0) {
-          newSelectedCategories = newSelectedCategories.filter(id => id !== parentCategory.id);
+          newSelectedCategories = newSelectedCategories.filter(id => id !== parentCategory.categoryId);
         }
       }
     }
@@ -323,30 +323,29 @@ export default function SearchFilter({
           <div className={searchFilterSectionContentStyles()}>
             <div className={searchFilterCheckboxGroupStyles()}>
               {categories.map((category) => {
-                const isMainCategorySelected = selectedCategories.includes(category.id);
+                const isMainCategorySelected = selectedCategories.includes(category.categoryId);
                 const selectedSubcategoriesCount = category.subcategories 
-                  ? category.subcategories.filter(sub => selectedCategories.includes(sub.id)).length 
+                  ? category.subcategories.filter(sub => selectedCategories.includes(sub.subcategoryId)).length 
                   : 0;
 
                 return (
-                  <div key={category.id} className="space-y-1">
+                  <div key={category.categoryId} className="space-y-1">
                     {/* Categoria Principal */}
                     <div className="flex items-center gap-2">
                       <div className="flex-1">
                         <Checkbox
                           label={category.name}
-                          count={category.count > 0 ? category.count : undefined}
                           checked={isMainCategorySelected}
-                          onChange={(checked) => handleCategoryChange(category.id, checked)}
+                          onChange={(checked) => handleCategoryChange(category.categoryId, checked)}
                           size="medium"
                         />
                       </div>
                       {category.subcategories && category.subcategories.length > 0 && (
                         <button
-                          onClick={() => toggleCategory(category.id)}
+                          onClick={() => toggleCategory(category.categoryId)}
                           className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                         >
-                          {expandedCategories[category.id] ? (
+                          {expandedCategories[category.categoryId] ? (
                             <FaChevronUp className="w-3 h-3" />
                           ) : (
                             <FaChevronDown className="w-3 h-3" />
@@ -358,15 +357,14 @@ export default function SearchFilter({
                     {/* Subcategorias */}
                     {category.subcategories && 
                      category.subcategories.length > 0 && 
-                     expandedCategories[category.id] && (
+                     expandedCategories[category.categoryId] && (
                       <div className="ml-4 space-y-1">
                         {category.subcategories.map((subcategory) => (
                           <Checkbox
-                            key={subcategory.id}
+                            key={subcategory.subcategoryId}
                             label={subcategory.name}
-                            count={subcategory.count > 0 ? subcategory.count : undefined}
-                            checked={selectedCategories.includes(subcategory.id)}
-                            onChange={(checked) => handleSubcategoryChange(subcategory.id, checked)}
+                            checked={selectedCategories.includes(subcategory.subcategoryId)}
+                            onChange={(checked) => handleSubcategoryChange(subcategory.subcategoryId, checked)}
                             size="medium"
                           />
                         ))}
@@ -454,16 +452,14 @@ SearchFilter.propTypes = {
   
   // Filtro por categoria
   categories: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    categoryId: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    count: PropTypes.number,
     subcategories: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      count: PropTypes.number
+      subcategoryId: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired
     }))
   })),
-  selectedCategories: PropTypes.arrayOf(PropTypes.string),
+  selectedCategories: PropTypes.arrayOf(PropTypes.number),
   onCategoriesChange: PropTypes.func,
   
   // Filtro por distância

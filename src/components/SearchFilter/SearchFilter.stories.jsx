@@ -86,56 +86,51 @@ const mockStates = [
 
 const mockCategories = [
   {
-    id: 'clothes',
+    categoryId: 1,
     name: 'Roupas',
-    count: 47,
     subcategories: [
-      { id: 'shirts', name: 'Camisetas', count: 20 },
-      { id: 'pants', name: 'Calças', count: 15 },
-      { id: 'dresses', name: 'Vestidos', count: 8 },
-      { id: 'shoes', name: 'Sapatos', count: 4 }
+      { subcategoryId: 101, name: 'Camisetas' },
+      { subcategoryId: 102, name: 'Calças' },
+      { subcategoryId: 103, name: 'Vestidos' },
+      { subcategoryId: 104, name: 'Sapatos' }
     ]
   },
   {
-    id: 'furniture',
+    categoryId: 2,
     name: 'Móveis',
-    count: 23,
     subcategories: [
-      { id: 'chairs', name: 'Cadeiras', count: 10 },
-      { id: 'tables', name: 'Mesas', count: 8 },
-      { id: 'sofas', name: 'Sofás', count: 5 }
+      { subcategoryId: 201, name: 'Cadeiras' },
+      { subcategoryId: 202, name: 'Mesas' },
+      { subcategoryId: 203, name: 'Sofás' }
     ]
   },
   {
-    id: 'books',
+    categoryId: 3,
     name: 'Livros',
-    count: 89,
     subcategories: [
-      { id: 'fiction', name: 'Ficção', count: 30 },
-      { id: 'technical', name: 'Técnicos', count: 25 },
-      { id: 'educational', name: 'Educacionais', count: 20 },
-      { id: 'children', name: 'Infantis', count: 14 }
+      { subcategoryId: 301, name: 'Ficção' },
+      { subcategoryId: 302, name: 'Técnicos' },
+      { subcategoryId: 303, name: 'Educacionais' },
+      { subcategoryId: 304, name: 'Infantis' }
     ]
   },
   {
-    id: 'electronics',
+    categoryId: 4,
     name: 'Eletrônicos',
-    count: 15,
     subcategories: [
-      { id: 'phones', name: 'Celulares', count: 8 },
-      { id: 'computers', name: 'Computadores', count: 4 },
-      { id: 'tvs', name: 'TVs', count: 3 }
+      { subcategoryId: 401, name: 'Celulares' },
+      { subcategoryId: 402, name: 'Computadores' },
+      { subcategoryId: 403, name: 'TVs' }
     ]
   },
   {
-    id: 'toys',
+    categoryId: 5,
     name: 'Brinquedos',
-    count: 73,
     subcategories: [
-      { id: 'dolls', name: 'Bonecas', count: 25 },
-      { id: 'cars', name: 'Carrinhos', count: 20 },
-      { id: 'games', name: 'Jogos', count: 18 },
-      { id: 'puzzles', name: 'Quebra-cabeças', count: 10 }
+      { subcategoryId: 501, name: 'Bonecas' },
+      { subcategoryId: 502, name: 'Carrinhos' },
+      { subcategoryId: 503, name: 'Jogos' },
+      { subcategoryId: 504, name: 'Quebra-cabeças' }
     ]
   }
 ];
@@ -164,7 +159,7 @@ export const WithSelections = {
     selectedStates: ['SP', 'RJ'],
     selectedCities: ['sao-paulo', 'campinas', 'rio-de-janeiro'],
     categories: mockCategories,
-    selectedCategories: ['clothes', 'shirts', 'pants'],
+    selectedCategories: [1, 101, 102],
     selectedDistance: '5km',
     itemStates: ['new', 'like_new']
   }
@@ -289,22 +284,20 @@ export const WithManyOptions = {
     categories: [
       ...mockCategories,
       {
-        id: 'sports',
+        categoryId: 6,
         name: 'Esportes',
-        count: 35,
         subcategories: [
-          { id: 'balls', name: 'Bolas', count: 15 },
-          { id: 'bikes', name: 'Bicicletas', count: 10 },
-          { id: 'equipment', name: 'Equipamentos', count: 10 }
+          { subcategoryId: 601, name: 'Bolas' },
+          { subcategoryId: 602, name: 'Bicicletas' },
+          { subcategoryId: 603, name: 'Equipamentos' }
         ]
       },
       {
-        id: 'kitchen',
+        categoryId: 7,
         name: 'Cozinha',
-        count: 28,
         subcategories: [
-          { id: 'appliances', name: 'Eletrodomésticos', count: 12 },
-          { id: 'utensils', name: 'Utensílios', count: 16 }
+          { subcategoryId: 701, name: 'Eletrodomésticos' },
+          { subcategoryId: 702, name: 'Utensílios' }
         ]
       }
     ],
