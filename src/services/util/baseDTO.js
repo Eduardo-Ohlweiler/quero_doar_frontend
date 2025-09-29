@@ -17,6 +17,9 @@ export default class BaseDTO {
                 if (!arr.includes('null')) {
                     arr.push('null');
                 }
+                if (!arr.includes('undefined')) {
+                    arr.push('undefined');
+                }
                 return [key, arr];
             })
         );

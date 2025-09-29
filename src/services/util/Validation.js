@@ -26,15 +26,18 @@ class Validation {
     static isType(value, type, acceptNulls = true) {
         if (Array.isArray(type)) {
             // Verifica se é um array tipado (primeiro elemento é 'array')
-            if (type.length >= 2 && type[0] === 'array') {
+            if (type.includes('array')) {
                 // Se o valor não é um array, verifica se é um dos tipos alternativos (null, undefined, etc.)
                 if (!Array.isArray(value)) {
-                    const alternativeTypes = type.slice(1).filter(t => t !== type[1]); // Remove o tipo principal do elemento
+                    const alternativeTypes = type.filter(t => t !== 'array'); // Todos os tipos exceto 'array'
                     return alternativeTypes.length > 0 && alternativeTypes.some(t => Validation.isType(value, t, acceptNulls));
                 }
-                // Se é um array, valida cada elemento com os tipos válidos
-                const elementTypes = type.length === 2 ? type[1] : type.slice(1);
-                return value.every(item => Validation.isType(item, elementTypes, acceptNulls));
+                // Se é um array, valida os elementos se há tipos específicos para os elementos
+                const elementTypes = type.filter(t => t !== 'array'); // Tipos dos elementos
+                if (elementTypes.length > 0) {
+                    return value.every(item => Validation.isType(item, elementTypes, acceptNulls));
+                }
+                return true; // Array sem validação específica de elementos
             }
             // Comportamento original para múltiplos tipos aceitos
             return type.some(t => Validation.isType(value, t, acceptNulls));
@@ -95,13 +98,18 @@ class Validation {
             
             // Se a chave não existe no objeto
             if (!Object.prototype.hasOwnProperty.call(obj, key)) {
-                // Com acceptNulls=true e schema aceita null, trate como null
-                if (acceptNulls) {
-                    const typesArr = Array.isArray(expected) ? expected : [expected];
-                    if (typesArr.includes('null')) {
-                        return true; // Campo ausente é válido quando null é aceito
-                    }
+                const typesArr = Array.isArray(expected) ? expected : [expected];
+                
+                // Campo ausente é válido quando 'undefined' está no schema
+                if (typesArr.includes('undefined')) {
+                    return true;
                 }
+                
+                // Com acceptNulls=true e schema aceita null, trate como null
+                if (acceptNulls && typesArr.includes('null')) {
+                    return true; // Campo ausente é válido quando null é aceito
+                }
+                
                 console.error(`Chave ausente: ${key}`);
                 console.error(obj);
                 return false;
