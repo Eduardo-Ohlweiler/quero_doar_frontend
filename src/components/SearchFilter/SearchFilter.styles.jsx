@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority';
 
 // Container principal do filtro
 export const searchFilterStyles = cva(
-  'bg-white rounded-2xl border border-gray-200 shadow-sm p-6 w-full max-w-sm space-y-6'
+  'bg-white rounded-lg border border-gray-200 shadow-sm p-6 w-full max-w-sm space-y-6'
 );
 
 // Header do filtro
