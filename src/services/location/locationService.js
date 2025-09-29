@@ -7,7 +7,7 @@ const GET_LOCATION_PUBLIC_STATE_CITIES_MINIMAL_ROUTE = import.meta.env.VITE_GET_
 
 class LocationService {
   // Busca a lista de estados com informações mínimas
-  static async getStatesMinimal() {
+  async getStatesMinimal() {
     try {
       const data = await apiService.get(GET_LOCATION_PUBLIC_STATE_MINIMAL_ROUTE);
       return data.map(stateData => StateMinimalDTO.fromJson(stateData));
@@ -15,10 +15,10 @@ class LocationService {
       console.error("Erro ao buscar estados:", error);
       throw error;
     }
-    }
+  }
 
     // Busca a lista de cidades para um estado específico com informações mínimas
-    static async getCitiesByStateMinimal(stateId) {
+    async getCitiesByStateMinimal(stateId) {
         try {
             const route = GET_LOCATION_PUBLIC_STATE_CITIES_MINIMAL_ROUTE.replace('{stateId}', stateId);
             const data = await apiService.get(route);
