@@ -53,6 +53,10 @@ export const checkboxInputStyles = cva([
             true: 'bg-[var(--color-primary)] border-[var(--color-primary)] after:content-["✓"] after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-white after:font-bold after:text-xs',
             false: 'bg-white'
         },
+        indeterminate: {
+            true: '!bg-[var(--color-primary)] !border-[var(--color-primary)] after:!content-["−"] after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-white after:font-bold after:text-xs',
+            false: ''
+        },
         disabled: {
             true: 'cursor-not-allowed bg-gray-100 border-gray-200',
             false: ''
@@ -61,6 +65,7 @@ export const checkboxInputStyles = cva([
     defaultVariants: {
         size: 'medium',
         checked: false,
+        indeterminate: false,
         disabled: false
     }
 });

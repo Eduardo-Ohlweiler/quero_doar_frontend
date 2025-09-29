@@ -174,23 +174,33 @@ export default function SearchFilter({
   const handleSubcategoryChange = (subcategoryId, isSelected) => {
     let newSelectedCategories = [...selectedCategories];
 
+    // Encontrar a categoria pai
+    const parentCategory = categories.find(cat => 
+      cat.subcategories && cat.subcategories.some(sub => sub.subcategoryId === subcategoryId)
+    );
+
     if (isSelected) {
       if (!newSelectedCategories.includes(subcategoryId)) {
         newSelectedCategories.push(subcategoryId);
       }
-    } else {
-      newSelectedCategories = newSelectedCategories.filter(id => id !== subcategoryId);
-      // Remover categoria principal se todas as subcategorias foram desmarcadas
-      const parentCategory = categories.find(cat => 
-        cat.subcategories && cat.subcategories.some(sub => sub.subcategoryId === subcategoryId)
-      );
+      
+      // Se todas as subcategorias estão agora selecionadas, adicionar a categoria principal
       if (parentCategory && parentCategory.subcategories) {
-        const remainingSubcategories = parentCategory.subcategories.filter(sub =>
+        const allSubcategoriesSelected = parentCategory.subcategories.every(sub =>
           newSelectedCategories.includes(sub.subcategoryId)
         );
-        if (remainingSubcategories.length === 0) {
-          newSelectedCategories = newSelectedCategories.filter(id => id !== parentCategory.categoryId);
+        
+        if (allSubcategoriesSelected && !newSelectedCategories.includes(parentCategory.categoryId)) {
+          newSelectedCategories.push(parentCategory.categoryId);
         }
+      }
+    } else {
+      newSelectedCategories = newSelectedCategories.filter(id => id !== subcategoryId);
+      
+      if (parentCategory && parentCategory.subcategories) {
+        // Sempre remover a categoria principal quando uma subcategoria é desmarcada
+        // Isso permite que o estado indeterminate funcione corretamente
+        newSelectedCategories = newSelectedCategories.filter(id => id !== parentCategory.categoryId);
       }
     }
 
@@ -327,6 +337,13 @@ export default function SearchFilter({
                 const selectedSubcategoriesCount = category.subcategories 
                   ? category.subcategories.filter(sub => selectedCategories.includes(sub.subcategoryId)).length 
                   : 0;
+                const totalSubcategoriesCount = category.subcategories ? category.subcategories.length : 0;
+                
+                // Estado indeterminate: algumas subcategorias selecionadas, mas não todas
+                const isIndeterminate = !isMainCategorySelected && selectedSubcategoriesCount > 0 && selectedSubcategoriesCount < totalSubcategoriesCount;
+                
+                // Categoria está "checked" se ela própria está selecionada OU se todas as subcategorias estão selecionadas
+                const isChecked = isMainCategorySelected || (totalSubcategoriesCount > 0 && selectedSubcategoriesCount === totalSubcategoriesCount);
 
                 return (
                   <div key={category.categoryId} className="space-y-1">
@@ -335,7 +352,8 @@ export default function SearchFilter({
                       <div className="flex-1">
                         <Checkbox
                           label={category.name}
-                          checked={isMainCategorySelected}
+                          checked={isChecked}
+                          indeterminate={isIndeterminate}
                           onChange={(checked) => handleCategoryChange(category.categoryId, checked)}
                           size="medium"
                         />

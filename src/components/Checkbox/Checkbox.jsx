@@ -43,7 +43,7 @@ export default function Checkbox({
                 checked={checked}
                 disabled={disabled}
                 onChange={handleChange}
-                className={checkboxInputStyles({ size, checked, disabled })}
+                className={checkboxInputStyles({ size, checked, indeterminate, disabled })}
                 ref={(input) => {
                     if (input) {
                         input.indeterminate = indeterminate;
