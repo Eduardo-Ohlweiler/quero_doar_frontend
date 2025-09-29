@@ -295,4 +295,98 @@ describe('Validation Tests', () => {
             expect(isType([], ['array', PersonDTO])).toBe(true);
         });
     });
+
+    describe('Validation.isType - Arrays com múltiplos tipos (incluindo null/undefined)', () => {
+        it('deve validar arrays com null usando ["array", "string", "null"]', () => {
+            const schema = ['array', 'string', 'null'];
+            
+            // Array válido de strings
+            expect(isType(['a', 'b', 'c'], schema)).toBe(true);
+            
+            // Array com null (elementos podem ser null)
+            expect(isType(['a', null, 'c'], schema)).toBe(true);
+            
+            // Valor null (o próprio campo pode ser null)
+            expect(isType(null, schema)).toBe(true);
+            
+            // Array com tipos inválidos
+            expect(isType(['a', 123, 'c'], schema)).toBe(false);
+        });
+
+        it('deve validar arrays com undefined usando ["array", "string", "undefined"]', () => {
+            const schema = ['array', 'string', 'undefined'];
+            
+            // Array válido de strings
+            expect(isType(['a', 'b', 'c'], schema)).toBe(true);
+            
+            // Array com undefined (elementos podem ser undefined)
+            expect(isType(['a', undefined, 'c'], schema)).toBe(true);
+            
+            // Valor undefined (o próprio campo pode ser undefined)
+            expect(isType(undefined, schema)).toBe(true);
+            
+            // Array com tipos inválidos
+            expect(isType(['a', 123, 'c'], schema)).toBe(false);
+        });
+
+        it('deve validar arrays com null e undefined usando ["array", "string", "null", "undefined"]', () => {
+            const schema = ['array', 'string', 'null', 'undefined'];
+            
+            // Array válido de strings
+            expect(isType(['a', 'b', 'c'], schema)).toBe(true);
+            
+            // Array com null e undefined
+            expect(isType(['a', null, undefined, 'c'], schema)).toBe(true);
+            
+            // Só null
+            expect(isType(null, schema)).toBe(true);
+            
+            // Só undefined
+            expect(isType(undefined, schema)).toBe(true);
+            
+            // Array com tipos inválidos
+            expect(isType(['a', 123, 'c'], schema)).toBe(false);
+        });
+
+        it('deve validar arrays de DTOs com null e undefined usando ["array", PersonDTO, "null", "undefined"]', () => {
+            const schema = ['array', PersonDTO, 'null', 'undefined'];
+            
+            const validPersons = [
+                { id: 1, name: 'John', email: 'john@test.com', isActive: true, birthDate: '2000-01-01', metadata: null },
+                { id: 2, name: 'Jane', email: 'jane@test.com', isActive: false, birthDate: '1995-05-15', metadata: {} }
+            ];
+            
+            // Array válido de DTOs
+            expect(isType(validPersons, schema, true)).toBe(true);
+            
+            // Array com null e undefined
+            expect(isType([validPersons[0], null, undefined], schema, true)).toBe(true);
+            
+            // Só null
+            expect(isType(null, schema)).toBe(true);
+            
+            // Só undefined
+            expect(isType(undefined, schema)).toBe(true);
+        });
+
+        it('deve validar independentemente da ordem dos tipos ["null", "undefined", "array", PersonDTO]', () => {
+            const schema = ['null', 'undefined', 'array', PersonDTO];
+            
+            const validPersons = [
+                { id: 1, name: 'John', email: 'john@test.com', isActive: true, birthDate: '2000-01-01', metadata: null }
+            ];
+            
+            // Array válido de DTOs
+            expect(isType(validPersons, schema, true)).toBe(true);
+            
+            // Array com null e undefined
+            expect(isType([validPersons[0], null, undefined], schema, true)).toBe(true);
+            
+            // Só null
+            expect(isType(null, schema)).toBe(true);
+            
+            // Só undefined
+            expect(isType(undefined, schema)).toBe(true);
+        });
+    });
 });

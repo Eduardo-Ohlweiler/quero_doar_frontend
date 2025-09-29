@@ -56,11 +56,18 @@ export default class BaseDTO {
                 continue;
             }
             
-            // Conversão de arrays tipados - verifica se o primeiro elemento é 'array'
-            if (typesArr.length === 2 && typesArr[0] === 'array' && Array.isArray(value)) {
-                const elementType = typesArr[1];
-                if (typeof elementType === 'function' && elementType.fromJson) {
-                    parsedObj[key] = value.map(item => elementType.fromJson(item, acceptNulls));
+            // Conversão de arrays tipados - verifica se contém 'array' nos tipos
+            if (typesArr.includes('array') && Array.isArray(value)) {
+                // Procura por DTOs nos tipos do array (ignora 'array', 'null', 'undefined', etc.)
+                const dtoType = typesArr.find(type => typeof type === 'function' && type.fromJson);
+                if (dtoType) {
+                    parsedObj[key] = value.map(item => {
+                        if (item === null || item === undefined) return item;
+                        if (typeof item === 'object' && !Array.isArray(item)) {
+                            return dtoType.fromJson(item, acceptNulls);
+                        }
+                        return item;
+                    });
                 }
                 continue;
             }

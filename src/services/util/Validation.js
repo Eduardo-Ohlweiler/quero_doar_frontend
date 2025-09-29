@@ -25,11 +25,16 @@ class Validation {
     // Validation.isType([{id: 1}], ['array', SomeDTO]); // validates array of SomeDTO
     static isType(value, type, acceptNulls = true) {
         if (Array.isArray(type)) {
-            // Verifica se é um array tipado (primeiro elemento é 'array' e segundo é o tipo dos elementos)
-            if (type.length === 2 && type[0] === 'array') {
-                if (!Array.isArray(value)) return false;
-                const elementType = type[1];
-                return value.every(item => Validation.isType(item, elementType, acceptNulls));
+            // Verifica se é um array tipado (primeiro elemento é 'array')
+            if (type.length >= 2 && type[0] === 'array') {
+                // Se o valor não é um array, verifica se é um dos tipos alternativos (null, undefined, etc.)
+                if (!Array.isArray(value)) {
+                    const alternativeTypes = type.slice(1).filter(t => t !== type[1]); // Remove o tipo principal do elemento
+                    return alternativeTypes.length > 0 && alternativeTypes.some(t => Validation.isType(value, t, acceptNulls));
+                }
+                // Se é um array, valida cada elemento com os tipos válidos
+                const elementTypes = type.length === 2 ? type[1] : type.slice(1);
+                return value.every(item => Validation.isType(item, elementTypes, acceptNulls));
             }
             // Comportamento original para múltiplos tipos aceitos
             return type.some(t => Validation.isType(value, t, acceptNulls));

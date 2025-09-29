@@ -78,7 +78,85 @@ class CompanyDTO extends BaseDTO {
     };
 }
 
+// DTO para testar arrays com múltiplos tipos
+class ArrayWithMultipleTypesDTO extends BaseDTO {
+    constructor() {
+        super();
+        this.tags = null;
+        this.categories = null;
+        this.optionalItems = null;
+    }
+
+    static schema = {
+        tags: ['array', 'string', 'null'],           // Array de strings OU null
+        categories: ['array', 'string', 'null', 'undefined'], // Array de strings OU null OU undefined
+        optionalItems: ['null', 'undefined', 'array', PersonDTO] // Ordem diferentes + DTO
+    };
+}
+
 describe('BaseDTO Tests', () => {
+    
+    describe('BaseDTO.fromJson - Arrays com múltiplos tipos', () => {
+        it('deve validar e converter arrays com null como alternativa', () => {
+            const validData1 = {
+                tags: ['tag1', 'tag2'],
+                categories: ['cat1', 'cat2'],
+                optionalItems: null
+            };
+            
+            const dto1 = ArrayWithMultipleTypesDTO.fromJson(validData1, false);
+            expect(dto1).toBeInstanceOf(ArrayWithMultipleTypesDTO);
+            expect(dto1.tags).toEqual(['tag1', 'tag2']);
+            expect(dto1.categories).toEqual(['cat1', 'cat2']);
+            expect(dto1.optionalItems).toBe(null);
+        });
+
+        it('deve aceitar null como valor principal do campo', () => {
+            const validData2 = {
+                tags: null,
+                categories: undefined,
+                optionalItems: null
+            };
+            
+            const dto2 = ArrayWithMultipleTypesDTO.fromJson(validData2, false);
+            expect(dto2).toBeInstanceOf(ArrayWithMultipleTypesDTO);
+            expect(dto2.tags).toBe(null);
+            expect(dto2.categories).toBe(undefined);
+            expect(dto2.optionalItems).toBe(null);
+        });
+
+        it('deve aceitar arrays com elementos null/undefined', () => {
+            const validData3 = {
+                tags: ['tag1', null, 'tag3'],
+                categories: ['cat1', undefined, null, 'cat4'],
+                optionalItems: [
+                    { id: 1, name: 'John', email: 'john@test.com', isActive: true, birthDate: '2000-01-01', metadata: null },
+                    null,
+                    undefined
+                ]
+            };
+            
+            const dto3 = ArrayWithMultipleTypesDTO.fromJson(validData3, true);
+            expect(dto3).toBeInstanceOf(ArrayWithMultipleTypesDTO);
+            expect(dto3.tags).toEqual(['tag1', null, 'tag3']);
+            expect(dto3.categories).toEqual(['cat1', undefined, null, 'cat4']);
+            expect(dto3.optionalItems).toHaveLength(3);
+            expect(dto3.optionalItems[0]).toBeInstanceOf(PersonDTO);
+            expect(dto3.optionalItems[1]).toBe(null);
+            expect(dto3.optionalItems[2]).toBe(undefined);
+        });
+
+        it('deve rejeitar tipos inválidos no array', () => {
+            const invalidData = {
+                tags: ['tag1', 123, 'tag3'], // número não é válido
+                categories: ['cat1'],
+                optionalItems: null
+            };
+            
+            expect(() => ArrayWithMultipleTypesDTO.fromJson(invalidData, false)).toThrow();
+        });
+    });
+    
     
     describe('BaseDTO.fromJson - Falsy Values', () => {
         it('deve preservar valores falsy válidos (false, 0, "")', () => {
