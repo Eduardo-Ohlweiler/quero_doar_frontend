@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { FaChevronDown, FaChevronUp, FaFilter, FaTimes, FaInfoCircle } from 'react-icons/fa';
 import LocationFilter from './LocationFilter/LocationFilter';
+import Checkbox from '../Checkbox/Checkbox';
+import RadioGroup from '../RadioGroup/RadioGroup';
 import {
   searchFilterStyles,
   searchFilterHeaderStyles,
@@ -260,20 +262,16 @@ export default function SearchFilter({
         {renderSectionHeader('Tipo de Doação', 'donationType')}
         {expandedSections.donationType && (
           <div className={searchFilterSectionContentStyles()}>
-            <div className={searchFilterCheckboxGroupStyles()}>
+            <div className="space-y-1">
               {donationTypeOptions.map((option) => (
-                <label key={option.id} className={searchFilterCheckboxItemStyles()}>
-                  <input
-                    type="checkbox"
-                    checked={donationTypes.includes(option.id)}
-                    onChange={(e) => handleCheckboxChange(option.id, donationTypes, onDonationTypesChange)}
-                    className={searchFilterCheckboxStyles()}
-                  />
-                  <span className={searchFilterLabelStyles()}>{option.label}</span>
-                  {option.count > 0 && (
-                    <span className={searchFilterCountStyles()}>({option.count})</span>
-                  )}
-                </label>
+                <Checkbox
+                  key={option.id}
+                  label={option.label}
+                  count={option.count > 0 ? option.count : undefined}
+                  checked={donationTypes.includes(option.id)}
+                  onChange={(checked) => handleCheckboxChange(option.id, donationTypes, onDonationTypesChange)}
+                  size="medium"
+                />
               ))}
             </div>
           </div>
@@ -285,20 +283,16 @@ export default function SearchFilter({
         {renderSectionHeader('Acesso', 'accessType')}
         {expandedSections.accessType && (
           <div className={searchFilterSectionContentStyles()}>
-            <div className={searchFilterCheckboxGroupStyles()}>
+            <div className="space-y-1">
               {accessTypeOptions.map((option) => (
-                <label key={option.id} className={searchFilterCheckboxItemStyles()}>
-                  <input
-                    type="checkbox"
-                    checked={accessTypes.includes(option.id)}
-                    onChange={(e) => handleCheckboxChange(option.id, accessTypes, onAccessTypesChange)}
-                    className={searchFilterCheckboxStyles()}
-                  />
-                  <span className={searchFilterLabelStyles()}>{option.label}</span>
-                  {option.count > 0 && (
-                    <span className={searchFilterCountStyles()}>({option.count})</span>
-                  )}
-                </label>
+                <Checkbox
+                  key={option.id}
+                  label={option.label}
+                  count={option.count > 0 ? option.count : undefined}
+                  checked={accessTypes.includes(option.id)}
+                  onChange={(checked) => handleCheckboxChange(option.id, accessTypes, onAccessTypesChange)}
+                  size="medium"
+                />
               ))}
             </div>
           </div>
@@ -335,23 +329,22 @@ export default function SearchFilter({
                   : 0;
 
                 return (
-                  <div key={category.id} className="space-y-2">
+                  <div key={category.id} className="space-y-1">
                     {/* Categoria Principal */}
-                    <label className={searchFilterCheckboxItemStyles()}>
-                      <input
-                        type="checkbox"
-                        checked={isMainCategorySelected}
-                        onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
-                        className={searchFilterCheckboxStyles()}
-                      />
-                      <span className={searchFilterLabelStyles()}>{category.name}</span>
-                      {category.count > 0 && (
-                        <span className={searchFilterCountStyles()}>({category.count})</span>
-                      )}
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <Checkbox
+                          label={category.name}
+                          count={category.count > 0 ? category.count : undefined}
+                          checked={isMainCategorySelected}
+                          onChange={(checked) => handleCategoryChange(category.id, checked)}
+                          size="medium"
+                        />
+                      </div>
                       {category.subcategories && category.subcategories.length > 0 && (
                         <button
                           onClick={() => toggleCategory(category.id)}
-                          className="ml-auto text-gray-400 hover:text-gray-600 transition-colors"
+                          className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                         >
                           {expandedCategories[category.id] ? (
                             <FaChevronUp className="w-3 h-3" />
@@ -360,26 +353,22 @@ export default function SearchFilter({
                           )}
                         </button>
                       )}
-                    </label>
+                    </div>
 
                     {/* Subcategorias */}
                     {category.subcategories && 
                      category.subcategories.length > 0 && 
                      expandedCategories[category.id] && (
-                      <div className="ml-6 space-y-1">
+                      <div className="ml-4 space-y-1">
                         {category.subcategories.map((subcategory) => (
-                          <label key={subcategory.id} className={searchFilterCheckboxItemStyles()}>
-                            <input
-                              type="checkbox"
-                              checked={selectedCategories.includes(subcategory.id)}
-                              onChange={(e) => handleSubcategoryChange(subcategory.id, e.target.checked)}
-                              className={searchFilterCheckboxStyles()}
-                            />
-                            <span className={searchFilterLabelStyles()}>{subcategory.name}</span>
-                            {subcategory.count > 0 && (
-                              <span className={searchFilterCountStyles()}>({subcategory.count})</span>
-                            )}
-                          </label>
+                          <Checkbox
+                            key={subcategory.id}
+                            label={subcategory.name}
+                            count={subcategory.count > 0 ? subcategory.count : undefined}
+                            checked={selectedCategories.includes(subcategory.id)}
+                            onChange={(checked) => handleSubcategoryChange(subcategory.id, checked)}
+                            size="medium"
+                          />
                         ))}
                       </div>
                     )}
@@ -400,21 +389,17 @@ export default function SearchFilter({
         )}
         {expandedSections.distance && (
           <div className={searchFilterSectionContentStyles()}>
-            <div className={searchFilterRadioGroupStyles()}>
-              {distanceOptions.map((option) => (
-                <label key={option.id} className={searchFilterRadioItemStyles()}>
-                  <input
-                    type="radio"
-                    name="distance"
-                    value={option.id}
-                    checked={selectedDistance === option.id}
-                    onChange={(e) => onDistanceChange?.(e.target.value)}
-                    className={searchFilterRadioStyles()}
-                  />
-                  <span className={searchFilterLabelStyles()}>{option.label}</span>
-                </label>
-              ))}
-            </div>
+            <RadioGroup
+              name="distance"
+              value={selectedDistance}
+              options={distanceOptions.map(option => ({
+                value: option.id,
+                label: option.label
+              }))}
+              onChange={(value) => onDistanceChange?.(value)}
+              size="medium"
+              orientation="vertical"
+            />
           </div>
         )}
       </div>
@@ -424,20 +409,16 @@ export default function SearchFilter({
         {renderSectionHeader('Estado do Item', 'itemState')}
         {expandedSections.itemState && (
           <div className={searchFilterSectionContentStyles()}>
-            <div className={searchFilterCheckboxGroupStyles()}>
+            <div className="space-y-1">
               {itemStateOptions.map((option) => (
-                <label key={option.id} className={searchFilterCheckboxItemStyles()}>
-                  <input
-                    type="checkbox"
-                    checked={itemStates.includes(option.id)}
-                    onChange={(e) => handleCheckboxChange(option.id, itemStates, onItemStatesChange)}
-                    className={searchFilterCheckboxStyles()}
-                  />
-                  <span className={searchFilterLabelStyles()}>{option.label}</span>
-                  {option.count > 0 && (
-                    <span className={searchFilterCountStyles()}>({option.count})</span>
-                  )}
-                </label>
+                <Checkbox
+                  key={option.id}
+                  label={option.label}
+                  count={option.count > 0 ? option.count : undefined}
+                  checked={itemStates.includes(option.id)}
+                  onChange={(checked) => handleCheckboxChange(option.id, itemStates, onItemStatesChange)}
+                  size="medium"
+                />
               ))}
             </div>
           </div>
