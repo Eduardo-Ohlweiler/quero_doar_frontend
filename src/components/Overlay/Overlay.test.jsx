@@ -1,35 +1,51 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import Overlay from './Overlay';
 
 describe('Overlay Component', () => {
-  it('should render children when active', () => {
+  // Backup das propriedades originais do body para restaurar após os testes
+  let originalBodyStyle;
+
+  beforeEach(() => {
+    originalBodyStyle = {
+      overflow: document.body.style.overflow,
+      paddingRight: document.body.style.paddingRight
+    };
+  });
+
+  afterEach(() => {
+    // Restaura as propriedades originais do body
+    document.body.style.overflow = originalBodyStyle.overflow;
+    document.body.style.paddingRight = originalBodyStyle.paddingRight;
+  });
+
+  it('CT01 - deve renderizar children quando ativo', () => {
     render(
       <Overlay isActive={true}>
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
     expect(screen.getByTestId('overlay-content')).toBeInTheDocument();
   });
 
-  it('should not render when inactive', () => {
+  it('CT02 - não deve renderizar quando inativo', () => {
     render(
       <Overlay isActive={false}>
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
     expect(screen.queryByTestId('overlay-content')).not.toBeInTheDocument();
   });
 
-  it('should call onBackgroundClick when clicking on background', () => {
+  it('CT03 - deve chamar onBackgroundClick ao clicar no fundo', () => {
     const handleBackgroundClick = vi.fn();
     
     render(
       <Overlay isActive={true} onBackgroundClick={handleBackgroundClick}>
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -39,7 +55,7 @@ describe('Overlay Component', () => {
     expect(handleBackgroundClick).toHaveBeenCalledTimes(1);
   });
 
-  it('should call onClose when clicking on background and closeOnBackgroundClick is true', () => {
+  it('CT04 - deve chamar onClose ao clicar no fundo quando closeOnBackgroundClick é true', () => {
     const handleClose = vi.fn();
     
     render(
@@ -48,7 +64,7 @@ describe('Overlay Component', () => {
         closeOnBackgroundClick={true}
         onClose={handleClose}
       >
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -58,7 +74,7 @@ describe('Overlay Component', () => {
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should not call onClose when clicking on background and closeOnBackgroundClick is false', () => {
+  it('CT05 - não deve chamar onClose ao clicar no fundo quando closeOnBackgroundClick é false', () => {
     const handleClose = vi.fn();
     
     render(
@@ -67,7 +83,7 @@ describe('Overlay Component', () => {
         closeOnBackgroundClick={false}
         onClose={handleClose}
       >
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -77,7 +93,7 @@ describe('Overlay Component', () => {
     expect(handleClose).not.toHaveBeenCalled();
   });
 
-  it('should call both onBackgroundClick and onClose when both are provided', () => {
+  it('CT06 - deve chamar ambos onBackgroundClick e onClose quando ambos são fornecidos', () => {
     const handleBackgroundClick = vi.fn();
     const handleClose = vi.fn();
     
@@ -88,7 +104,7 @@ describe('Overlay Component', () => {
         onBackgroundClick={handleBackgroundClick}
         onClose={handleClose}
       >
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -99,12 +115,12 @@ describe('Overlay Component', () => {
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should not call onBackgroundClick when clicking on content', () => {
+  it('CT07 - não deve chamar onBackgroundClick ao clicar no conteúdo', () => {
     const handleBackgroundClick = vi.fn();
     
     render(
       <Overlay isActive={true} onBackgroundClick={handleBackgroundClick}>
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -114,7 +130,7 @@ describe('Overlay Component', () => {
     expect(handleBackgroundClick).not.toHaveBeenCalled();
   });
 
-  it('should not call onClose when clicking on content', () => {
+  it('CT08 - não deve chamar onClose ao clicar no conteúdo', () => {
     const handleClose = vi.fn();
     
     render(
@@ -123,7 +139,7 @@ describe('Overlay Component', () => {
         closeOnBackgroundClick={true}
         onClose={handleClose}
       >
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -133,34 +149,34 @@ describe('Overlay Component', () => {
     expect(handleClose).not.toHaveBeenCalled();
   });
 
-  it('should apply custom className', () => {
+  it('CT09 - deve aplicar className personalizada', () => {
     render(
-      <Overlay isActive={true} className="custom-overlay">
-        <div>Test Content</div>
+      <Overlay isActive={true} className="overlay-customizada">
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
     const overlay = screen.getByRole('dialog');
-    expect(overlay).toHaveClass('custom-overlay');
+    expect(overlay).toHaveClass('overlay-customizada');
   });
 
-  it('should apply custom contentClassName', () => {
+  it('CT10 - deve aplicar contentClassName personalizada', () => {
     render(
-      <Overlay isActive={true} contentClassName="custom-content">
-        <div data-testid="overlay-content">Test Content</div>
+      <Overlay isActive={true} contentClassName="conteudo-customizado">
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
     const content = screen.getByTestId('overlay-content').parentElement;
-    expect(content).toHaveClass('custom-content');
+    expect(content).toHaveClass('conteudo-customizado');
   });
 
-  it('should apply custom styles', () => {
-    const customStyle = { backgroundColor: 'rgba(255, 0, 0, 0.8)' };
+  it('CT11 - deve aplicar estilos personalizados', () => {
+    const estiloPersonalizado = { backgroundColor: 'rgba(255, 0, 0, 0.8)' };
     
     render(
-      <Overlay isActive={true} style={customStyle}>
-        <div>Test Content</div>
+      <Overlay isActive={true} style={estiloPersonalizado}>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -168,10 +184,10 @@ describe('Overlay Component', () => {
     expect(overlay).toHaveStyle('background-color: rgba(255, 0, 0, 0.8)');
   });
 
-  it('should have correct accessibility attributes when active', () => {
+  it('CT12 - deve ter atributos de acessibilidade corretos quando ativo', () => {
     render(
       <Overlay isActive={true}>
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -180,10 +196,10 @@ describe('Overlay Component', () => {
     expect(overlay).toHaveAttribute('aria-hidden', 'false');
   });
 
-  it('should have correct accessibility attributes when inactive', () => {
+  it('CT13 - deve ter atributos de acessibilidade corretos quando inativo', () => {
     render(
       <Overlay isActive={false} animated={true}>
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -191,20 +207,20 @@ describe('Overlay Component', () => {
     expect(overlay).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('should render with animation prop', () => {
+  it('CT14 - deve renderizar com propriedade de animação', () => {
     render(
       <Overlay isActive={true} animated={true}>
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
     expect(screen.getByTestId('overlay-content')).toBeInTheDocument();
   });
 
-  it('should render with default props', () => {
+  it('CT15 - deve renderizar com propriedades padrão', () => {
     render(
       <Overlay>
-        <div data-testid="overlay-content">Test Content</div>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -212,10 +228,10 @@ describe('Overlay Component', () => {
     expect(screen.queryByTestId('overlay-content')).not.toBeInTheDocument();
   });
 
-  it('should apply different z-levels', () => {
+  it('CT16 - deve aplicar diferentes níveis de z-index', () => {
     const { rerender } = render(
       <Overlay isActive={true} zLevel="low">
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -224,7 +240,7 @@ describe('Overlay Component', () => {
     
     rerender(
       <Overlay isActive={true} zLevel="medium">
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -233,7 +249,7 @@ describe('Overlay Component', () => {
     
     rerender(
       <Overlay isActive={true} zLevel="high">
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -241,10 +257,10 @@ describe('Overlay Component', () => {
     expect(overlay).toHaveClass('z-[9999]');
   });
 
-  it('should apply base overlay styles when active', () => {
+  it('CT17 - deve aplicar estilos base do overlay quando ativo', () => {
     render(
       <Overlay isActive={true}>
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -252,10 +268,10 @@ describe('Overlay Component', () => {
     expect(overlay).toHaveClass('fixed', 'inset-0', 'flex', 'items-center', 'justify-center');
   });
 
-  it('should have pointer-events-none when inactive', () => {
+  it('CT18 - deve ter pointer-events-none quando inativo', () => {
     render(
       <Overlay isActive={false} animated={true}>
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
@@ -263,14 +279,64 @@ describe('Overlay Component', () => {
     expect(overlay).toHaveClass('pointer-events-none');
   });
 
-  it('should have pointer-events-auto when active', () => {
+  it('CT19 - deve ter pointer-events-auto quando ativo', () => {
     render(
       <Overlay isActive={true}>
-        <div>Test Content</div>
+        <div>Conteúdo de Teste</div>
       </Overlay>
     );
     
     const overlay = screen.getByRole('dialog');
     expect(overlay).toHaveClass('pointer-events-auto');
+  });
+
+  it('CT20 - deve bloquear scroll do body quando ativo e preventBodyScroll é true', () => {
+    render(
+      <Overlay isActive={true} preventBodyScroll={true}>
+        <div>Conteúdo de Teste</div>
+      </Overlay>
+    );
+    
+    expect(document.body.style.overflow).toBe('hidden');
+  });
+
+  it('CT21 - não deve bloquear scroll do body quando preventBodyScroll é false', () => {
+    const originalOverflow = document.body.style.overflow;
+    
+    render(
+      <Overlay isActive={true} preventBodyScroll={false}>
+        <div>Conteúdo de Teste</div>
+      </Overlay>
+    );
+    
+    expect(document.body.style.overflow).toBe(originalOverflow);
+  });
+
+  it('CT22 - deve restaurar scroll do body quando desmontado', () => {
+    const originalOverflow = document.body.style.overflow;
+    
+    const { unmount } = render(
+      <Overlay isActive={true} preventBodyScroll={true}>
+        <div>Conteúdo de Teste</div>
+      </Overlay>
+    );
+    
+    expect(document.body.style.overflow).toBe('hidden');
+    
+    unmount();
+    
+    expect(document.body.style.overflow).toBe(originalOverflow);
+  });
+
+  it('CT23 - deve renderizar com animated=true mas inativo para permitir transição de saída', () => {
+    render(
+      <Overlay isActive={false} animated={true}>
+        <div data-testid="overlay-content">Conteúdo de Teste</div>
+      </Overlay>
+    );
+    
+    // Deve renderizar o overlay (mesmo inativo) para permitir animação de saída
+    const overlay = screen.getByRole('dialog', { hidden: true });
+    expect(overlay).toBeInTheDocument();
   });
 });
