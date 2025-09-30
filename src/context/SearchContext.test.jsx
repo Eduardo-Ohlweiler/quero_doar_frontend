@@ -4,12 +4,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SearchProvider, useSearch } from './SearchContext';
 
 // Componente de teste para usar o hook
-const TestComponent = ({ customOnSearch }) => {
+const TestComponent = ({ customOnSearch, allowEmpty = false }) => {
     const {
         searchTerm,
+        searchHistory,
         performSearch,
         updateSearchTerm,
         onSearch,
+        clearHistory,
+        removeFromHistory,
+        hasHistory,
+        hasSearchTerm,
+        isSearching,
     } = useSearch();
 
     // Registrar callback personalizado se fornecido
@@ -23,6 +29,11 @@ const TestComponent = ({ customOnSearch }) => {
     return (
         <div>
             <div data-testid="search-term">{searchTerm}</div>
+            <div data-testid="search-history">{JSON.stringify(searchHistory)}</div>
+            <div data-testid="history-count">{searchHistory.length}</div>
+            <div data-testid="has-history">{hasHistory.toString()}</div>
+            <div data-testid="has-search-term">{hasSearchTerm.toString()}</div>
+            <div data-testid="is-searching">{isSearching.toString()}</div>
             
             <input
                 data-testid="search-input"
@@ -32,7 +43,7 @@ const TestComponent = ({ customOnSearch }) => {
             
             <button
                 data-testid="search-button"
-                onClick={() => performSearch(searchTerm)}
+                onClick={() => performSearch(searchTerm, { allowEmpty })}
             >
                 Buscar
             </button>
@@ -42,6 +53,13 @@ const TestComponent = ({ customOnSearch }) => {
                 onClick={clearHistory}
             >
                 Limpar Histórico
+            </button>
+            
+            <button
+                data-testid="remove-first-history-button"
+                onClick={() => searchHistory.length > 0 && removeFromHistory(searchHistory[0])}
+            >
+                Remover Primeiro do Histórico
             </button>
         </div>
     );
@@ -107,7 +125,7 @@ describe('SearchContext', () => {
     describe('Search Execution', () => {
         it('should perform search and update state', () => {
             const onSearchMock = vi.fn();
-            renderWithProvider({ onSearch: onSearchMock });
+            renderWithProvider({ customOnSearch: onSearchMock });
             
             const input = screen.getByTestId('search-input');
             const searchButton = screen.getByTestId('search-button');
@@ -122,7 +140,7 @@ describe('SearchContext', () => {
 
         it('should not perform search with empty term by default', () => {
             const onSearchMock = vi.fn();
-            renderWithProvider({ onSearch: onSearchMock });
+            renderWithProvider({ customOnSearch: onSearchMock });
             
             const searchButton = screen.getByTestId('search-button');
             fireEvent.click(searchButton);
@@ -133,7 +151,7 @@ describe('SearchContext', () => {
 
         it('should perform search with empty term when allowEmpty is true', () => {
             const onSearchMock = vi.fn();
-            renderWithProvider({ onSearch: onSearchMock, allowEmpty: true });
+            renderWithProvider({ customOnSearch: onSearchMock, allowEmpty: true });
             
             const searchButton = screen.getByTestId('search-button');
             fireEvent.click(searchButton);
@@ -144,7 +162,7 @@ describe('SearchContext', () => {
 
         it('should trim search terms', () => {
             const onSearchMock = vi.fn();
-            renderWithProvider({ onSearch: onSearchMock });
+            renderWithProvider({ customOnSearch: onSearchMock });
             
             const input = screen.getByTestId('search-input');
             const searchButton = screen.getByTestId('search-button');

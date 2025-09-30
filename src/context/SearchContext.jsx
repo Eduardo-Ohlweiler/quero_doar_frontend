@@ -18,6 +18,7 @@ export const SearchProvider = ({ children }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchHistory, setSearchHistory] = useState([]);
     const [searchListeners, setSearchListeners] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
 
     // Função para registrar listener para quando busca for executada
     const onSearch = useCallback((callback) => {
@@ -34,10 +35,12 @@ export const SearchProvider = ({ children }) => {
         const trimmedTerm = term?.trim() || '';
         
         if (!trimmedTerm && !options.allowEmpty) {
+            setIsSearching(false);
             return;
         }
 
         setSearchTerm(trimmedTerm);
+        setIsSearching(true);
 
         // Adicionar ao histórico se não for vazio e não for uma repetição imediata
         if (trimmedTerm && searchHistory[0] !== trimmedTerm) {
@@ -49,7 +52,7 @@ export const SearchProvider = ({ children }) => {
         }
 
         // Notificar todos os listeners sobre a busca
-        if (trimmedTerm) {
+        if (trimmedTerm || options.allowEmpty) {
             searchListeners.forEach(listener => {
                 try {
                     listener(trimmedTerm);
@@ -89,6 +92,7 @@ export const SearchProvider = ({ children }) => {
         // Estado
         searchTerm,
         searchHistory,
+        isSearching,
         
         // Ações
         performSearch,
