@@ -6,6 +6,7 @@ import Logo from '../Logo/Logo';
 import SearchBar from '../SearchBar/SearchBar';
 import UserMenu from '../UserMenu/UserMenu';
 import Button from '../Button/Button';
+import { useSearchBar } from '../../hooks/useSearchBar';
 import { headerStyles } from './Header.styles';
 
 const Header = ({
@@ -19,6 +20,13 @@ const Header = ({
   className,
   children,
 }) => {
+  // Hook para integração com o contexto de busca
+  const searchBarProps = useSearchBar({
+    navigateOnSearch: true,
+    searchRoute: '/search',
+    syncWithUrl: true,
+    onSearch: onSearch, // Callback customizado se fornecido
+  });
   return (
     <header className={twMerge(clsx(headerStyles(), className))}>
       <div className="flex items-center justify-between w-full px-4 py-2">
@@ -37,9 +45,9 @@ const Header = ({
             <SearchBar
               className="w-full max-w-[800px]"
               appearance="outlined"
-              onSearch={onSearch}
-              placeholder="Buscar..."
+              placeholder="Buscar doações..."
               iconPosition="right"
+              {...searchBarProps}
             />
           )}
         </div>
