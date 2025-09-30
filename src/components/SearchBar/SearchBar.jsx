@@ -116,7 +116,11 @@ const SearchBar = forwardRef(({
                 onKeyDown={handleKeyDown}
                 aria-busy={loading || undefined}
                 aria-label={rest['aria-label'] || `Buscar ${placeholder.toLowerCase()}`}
-                {...rest}
+                {...(() => {
+                    // Filtrar props que não devem ser passadas para o elemento DOM
+                    const { searchTerm, hasSearchTerm, clear, ...validProps } = rest;
+                    return validProps;
+                })()}
             />
             
             {iconPosition === 'right' && (
