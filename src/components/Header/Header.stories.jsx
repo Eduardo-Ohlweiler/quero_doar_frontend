@@ -1,6 +1,8 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import Header from './Header';
 import { AuthProvider } from '../../context/AuthContext.jsx';
+import { SearchProvider } from '../../context/SearchContext.jsx';
 
 const ZOO_BG = 'https://upload.wikimedia.org/wikipedia/commons/8/8d/San_Diego_Zoo_April_2013_07.JPG';
 
@@ -8,7 +10,17 @@ export default {
   title: 'Components/Header',
   component: Header,
   tags: ['autodocs'],
-  decorators: [(Story) => <AuthProvider><Story/></AuthProvider>],
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <SearchProvider>
+          <AuthProvider>
+            <Story/>
+          </AuthProvider>
+        </SearchProvider>
+      </BrowserRouter>
+    )
+  ],
   parameters: {
     layout: 'fullscreen',
     backgrounds: {
