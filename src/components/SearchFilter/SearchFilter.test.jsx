@@ -158,9 +158,9 @@ describe('SearchFilter', () => {
     
     await user.click(checkbox);
     
-    // Verificar se onCategoriesChange foi chamado com a categoria e subcategorias
-    // Quando uma categoria principal é selecionada, as subcategorias também são selecionadas
-    expect(onCategoriesChange).toHaveBeenCalledWith([1, 101, 102]);
+    // Verificar se onCategoriesChange foi chamado apenas com as subcategorias
+    // Quando uma categoria principal é selecionada, apenas as subcategorias são incluídas (categoria principal é abstrata)
+    expect(onCategoriesChange).toHaveBeenCalledWith([101, 102]);
   });
 
   // TC6: Expansão de subcategorias

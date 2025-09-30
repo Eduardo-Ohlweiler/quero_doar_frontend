@@ -97,7 +97,7 @@ export default function SearchFilter({
     onAccessTypesChange?.([]);
     onStatesChange?.([]);
     onCitiesChange?.([]);
-    onCategoriesChange?.([]);
+    onCategoriesChange?.([]); // Agora limpa apenas subcategorias
     onDistanceChange?.('any');
     onItemStatesChange?.([]);
     onClearAll?.();
@@ -147,10 +147,7 @@ export default function SearchFilter({
     let newSelectedCategories = [...selectedCategories];
 
     if (isSelected) {
-      // Adicionar categoria principal e todas as subcategorias
-      if (!newSelectedCategories.includes(categoryId)) {
-        newSelectedCategories.push(categoryId);
-      }
+      // Adicionar APENAS as subcategorias (categoria principal é abstrata)
       if (category.subcategories) {
         category.subcategories.forEach(sub => {
           if (!newSelectedCategories.includes(sub.subcategoryId)) {
@@ -159,8 +156,7 @@ export default function SearchFilter({
         });
       }
     } else {
-      // Remover categoria principal e todas as subcategorias
-      newSelectedCategories = newSelectedCategories.filter(id => id !== categoryId);
+      // Remover APENAS as subcategorias (categoria principal é abstrata)
       if (category.subcategories) {
         category.subcategories.forEach(sub => {
           newSelectedCategories = newSelectedCategories.filter(id => id !== sub.subcategoryId);
@@ -174,34 +170,14 @@ export default function SearchFilter({
   const handleSubcategoryChange = (subcategoryId, isSelected) => {
     let newSelectedCategories = [...selectedCategories];
 
-    // Encontrar a categoria pai
-    const parentCategory = categories.find(cat => 
-      cat.subcategories && cat.subcategories.some(sub => sub.subcategoryId === subcategoryId)
-    );
-
     if (isSelected) {
+      // Adicionar apenas a subcategoria (categorias principais são abstratas)
       if (!newSelectedCategories.includes(subcategoryId)) {
         newSelectedCategories.push(subcategoryId);
       }
-      
-      // Se todas as subcategorias estão agora selecionadas, adicionar a categoria principal
-      if (parentCategory && parentCategory.subcategories) {
-        const allSubcategoriesSelected = parentCategory.subcategories.every(sub =>
-          newSelectedCategories.includes(sub.subcategoryId)
-        );
-        
-        if (allSubcategoriesSelected && !newSelectedCategories.includes(parentCategory.categoryId)) {
-          newSelectedCategories.push(parentCategory.categoryId);
-        }
-      }
     } else {
+      // Remover apenas a subcategoria
       newSelectedCategories = newSelectedCategories.filter(id => id !== subcategoryId);
-      
-      if (parentCategory && parentCategory.subcategories) {
-        // Sempre remover a categoria principal quando uma subcategoria é desmarcada
-        // Isso permite que o estado indeterminate funcione corretamente
-        newSelectedCategories = newSelectedCategories.filter(id => id !== parentCategory.categoryId);
-      }
     }
 
     onCategoriesChange?.(newSelectedCategories);
@@ -335,17 +311,16 @@ export default function SearchFilter({
           <div className={searchFilterSectionContentStyles()}>
             <div className={searchFilterCheckboxGroupStyles()}>
               {categories.map((category) => {
-                const isMainCategorySelected = selectedCategories.includes(category.categoryId);
                 const selectedSubcategoriesCount = category.subcategories 
                   ? category.subcategories.filter(sub => selectedCategories.includes(sub.subcategoryId)).length 
                   : 0;
                 const totalSubcategoriesCount = category.subcategories ? category.subcategories.length : 0;
                 
                 // Estado indeterminate: algumas subcategorias selecionadas, mas não todas
-                const isIndeterminate = !isMainCategorySelected && selectedSubcategoriesCount > 0 && selectedSubcategoriesCount < totalSubcategoriesCount;
+                const isIndeterminate = selectedSubcategoriesCount > 0 && selectedSubcategoriesCount < totalSubcategoriesCount;
                 
-                // Categoria está "checked" se ela própria está selecionada OU se todas as subcategorias estão selecionadas
-                const isChecked = isMainCategorySelected || (totalSubcategoriesCount > 0 && selectedSubcategoriesCount === totalSubcategoriesCount);
+                // Categoria está "checked" apenas se TODAS as subcategorias estão selecionadas
+                const isChecked = totalSubcategoriesCount > 0 && selectedSubcategoriesCount === totalSubcategoriesCount;
 
                 return (
                   <div key={category.categoryId} className="space-y-1">
