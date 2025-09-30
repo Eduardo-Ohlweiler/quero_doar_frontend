@@ -223,7 +223,7 @@ export default function LocationFilter({
             ...city,
             stateId,
             stateName: state.name,
-            displayName: `${city.name}, ${state.name}`
+            displayName: `${city.name} (${state.acronym})`
           });
         });
       }
@@ -256,7 +256,7 @@ export default function LocationFilter({
               ...city,
               stateId,
               stateName: state.name,
-              displayName: `${city.name}, ${state.name}`
+              displayName: `${city.name} (${state.acronym})`
             });
           }
         });
@@ -284,7 +284,7 @@ export default function LocationFilter({
           stateName: state.name,
           cities: filteredCities.map(city => ({
             ...city,
-            displayName: `${city.name}, ${state.name}`
+            displayName: `${city.name} (${state.acronym})`
           }))
         });
       }

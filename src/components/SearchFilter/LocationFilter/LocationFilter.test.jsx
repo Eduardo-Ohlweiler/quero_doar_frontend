@@ -8,6 +8,7 @@ describe('LocationFilter', () => {
     {
       stateId: 1,
       name: 'Rio de Janeiro',
+      acronym: 'RJ',
       cities: [
         { cityId: 1, name: 'Rio de Janeiro' },
         { cityId: 2, name: 'Niterói' },
@@ -17,6 +18,7 @@ describe('LocationFilter', () => {
     {
       stateId: 2,
       name: 'São Paulo',
+      acronym: 'SP',
       cities: [
         { cityId: 4, name: 'São Paulo' },
         { cityId: 5, name: 'Campinas' },
@@ -136,7 +138,7 @@ describe('LocationFilter', () => {
     render(<LocationFilter {...props} />);
     
     expect(screen.getByText('Cidades selecionadas:')).toBeInTheDocument();
-    expect(screen.getByText('Rio de Janeiro, Rio de Janeiro')).toBeInTheDocument();
+    expect(screen.getByText('Rio de Janeiro (RJ)')).toBeInTheDocument();
   });
 
   it('should handle city dropdown interaction', async () => {

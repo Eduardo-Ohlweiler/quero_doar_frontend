@@ -19,6 +19,7 @@ const mockStates = [
   {
     stateId: 1,
     name: 'Rio de Janeiro',
+    acronym: 'RJ',
     cities: [
       { cityId: 1, name: 'Rio de Janeiro' },
       { cityId: 2, name: 'Niterói' },
@@ -35,6 +36,7 @@ const mockStates = [
   {
     stateId: 2,
     name: 'São Paulo',
+    acronym: 'SP',
     cities: [
       { cityId: 11, name: 'São Paulo' },
       { cityId: 12, name: 'Campinas' },
@@ -51,6 +53,7 @@ const mockStates = [
   {
     stateId: 3,
     name: 'Minas Gerais',
+    acronym: 'MG',
     cities: [
       { cityId: 21, name: 'Belo Horizonte' },
       { cityId: 22, name: 'Uberlândia' },
@@ -130,6 +133,7 @@ const largeDataset = [
   {
     stateId: 1,
     name: 'Rio de Janeiro',
+    acronym: 'RJ',
     cities: Array.from({ length: 92 }, (_, i) => ({
       cityId: i + 1,
       name: `Cidade ${i + 1} - RJ`
@@ -138,6 +142,7 @@ const largeDataset = [
   {
     stateId: 2, 
     name: 'São Paulo',
+    acronym: 'SP',
     cities: Array.from({ length: 645 }, (_, i) => ({
       cityId: i + 93,
       name: `Cidade ${i + 1} - SP`
