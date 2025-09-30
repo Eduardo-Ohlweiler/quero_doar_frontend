@@ -276,5 +276,96 @@ describe('useSearchBar', () => {
             expect(screen.getByTestId('search-input')).toHaveValue('initial search');
             expect(screen.getByTestId('search-term')).toHaveTextContent('initial search');
         });
+
+        it('should not restore URL value when user manually clears the field', async () => {
+            // Renderiza com URL que já tem parâmetro de busca
+            renderWithProviders(['/search?q=existing-search']);
+
+            // Verifica que o valor inicial foi carregado da URL
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('existing-search');
+            });
+
+            const searchInput = screen.getByTestId('search-input');
+            
+            // Usuário limpa o campo manualmente
+            fireEvent.change(searchInput, { target: { value: '' } });
+
+            // Verifica que o campo permanece vazio
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('');
+                expect(screen.getByTestId('search-term')).toHaveTextContent('');
+            });
+
+            // Mesmo após um breve delay, o campo deve permanecer vazio
+            // (não deve ser re-preenchido pela sincronização com URL)
+            await new Promise(resolve => setTimeout(resolve, 100));
+            expect(screen.getByTestId('search-input')).toHaveValue('');
+        });
+
+        it('should not restore URL value when user deletes characters one by one', async () => {
+            // Renderiza com URL que já tem parâmetro de busca
+            renderWithProviders(['/search?q=test']);
+
+            // Verifica que o valor inicial foi carregado da URL
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('test');
+            });
+
+            const searchInput = screen.getByTestId('search-input');
+            
+            // Simular usuário apagando caracteres um por um
+            fireEvent.change(searchInput, { target: { value: 'tes' } });
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('tes');
+            });
+
+            fireEvent.change(searchInput, { target: { value: 'te' } });
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('te');
+            });
+
+            fireEvent.change(searchInput, { target: { value: 't' } });
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('t');
+            });
+
+            // Apagar o último caractere - aqui era onde ocorria o problema
+            fireEvent.change(searchInput, { target: { value: '' } });
+
+            // Verifica que o campo permanece vazio e não volta com "test"
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('');
+            });
+
+            // Aguarda mais tempo para garantir que não há sincronização
+            await new Promise(resolve => setTimeout(resolve, 200));
+            expect(screen.getByTestId('search-input')).toHaveValue('');
+        });
+
+        it('should not restore URL value when user clicks clear button', async () => {
+            // Renderiza com URL que já tem parâmetro de busca
+            renderWithProviders(['/search?q=test-search']);
+
+            // Verifica que o valor inicial foi carregado da URL
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('test-search');
+            });
+
+            const clearButton = screen.getByTestId('clear-button');
+            
+            // Usuário clica no botão limpar
+            fireEvent.click(clearButton);
+
+            // Verifica que o campo foi limpo e permanece vazio
+            await waitFor(() => {
+                expect(screen.getByTestId('search-input')).toHaveValue('');
+                expect(screen.getByTestId('search-term')).toHaveTextContent('');
+            });
+
+            // Aguarda tempo suficiente para garantir que não há re-sincronização
+            await new Promise(resolve => setTimeout(resolve, 1100)); // Maior que o timeout de 1000ms
+            expect(screen.getByTestId('search-input')).toHaveValue('');
+        });
     });
 });

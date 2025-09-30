@@ -28,24 +28,60 @@ export const useSearchBar = (options = {}) => {
     } = useSearch();
 
     const [localValue, setLocalValue] = useState('');
+    const [userInteracting, setUserInteracting] = useState(false);
+    const [lastUrlSync, setLastUrlSync] = useState('');
+    const [userIntentionallyClearedField, setUserIntentionallyClearedField] = useState(false);
 
-    // Sincronizar valor local com o contexto
+    // Sincronizar valor local com o contexto apenas se não está interagindo e não limpou intencionalmente
     useEffect(() => {
-        setLocalValue(searchTerm);
-    }, [searchTerm]);
+        if (!userInteracting && !userIntentionallyClearedField) {
+            setLocalValue(searchTerm);
+        }
+    }, [searchTerm, userInteracting, userIntentionallyClearedField]);
 
     // Sincronizar com parâmetros da URL se habilitado
     useEffect(() => {
-        if (syncWithUrl) {
+        if (syncWithUrl && !userInteracting && !userIntentionallyClearedField) {
             const urlParams = new URLSearchParams(location.search);
             const urlSearchTerm = urlParams.get('q') || '';
             
-            if (urlSearchTerm !== searchTerm) {
+            // Só sincroniza se a URL realmente mudou para um valor diferente
+            // e não é resultado de uma interação do usuário
+            if (urlSearchTerm !== lastUrlSync && urlSearchTerm !== searchTerm) {
+                if (urlSearchTerm) {
+                    // Nova busca via URL
+                    updateSearchTerm(urlSearchTerm);
+                    setLocalValue(urlSearchTerm);
+                    setLastUrlSync(urlSearchTerm);
+                } else if (!localValue && !searchTerm) {
+                    // URL sem parâmetro e campos vazios - tudo ok
+                    setLastUrlSync('');
+                }
+            } else if (!localValue && !searchTerm && urlSearchTerm) {
+                // Primeira carga da página com parâmetro q
                 updateSearchTerm(urlSearchTerm);
                 setLocalValue(urlSearchTerm);
+                setLastUrlSync(urlSearchTerm);
             }
         }
-    }, [location.search, syncWithUrl, searchTerm, updateSearchTerm]);
+    }, [location.search, syncWithUrl, searchTerm, updateSearchTerm, localValue, userInteracting, lastUrlSync, userIntentionallyClearedField]);
+
+    // Reset do flag userInteracting após um delay mais longo
+    useEffect(() => {
+        if (userInteracting) {
+            const timeout = setTimeout(() => {
+                setUserInteracting(false);
+            }, 1000); // Delay ainda maior para garantir que não há re-sincronização
+            return () => clearTimeout(timeout);
+        }
+    }, [userInteracting]);
+
+    // Reset do flag de limpeza intencional quando usuário digita algo novo
+    useEffect(() => {
+        if (localValue && userIntentionallyClearedField) {
+            setUserIntentionallyClearedField(false);
+        }
+    }, [localValue, userIntentionallyClearedField]);
 
     // Função para executar a busca
     const handleSearch = useCallback((term) => {
@@ -70,18 +106,31 @@ export const useSearchBar = (options = {}) => {
     // Função para tratar mudanças no input
     const handleChange = useCallback((e) => {
         const newValue = e.target.value;
+        
+        // Marcar que usuário está interagindo
+        setUserInteracting(true);
+        
+        // Se usuário apagou tudo, marcar como limpeza intencional
+        if (newValue === '' && localValue !== '') {
+            setUserIntentionallyClearedField(true);
+        } else if (newValue !== '') {
+            // Se digitou algo novo, resetar flag de limpeza
+            setUserIntentionallyClearedField(false);
+        }
+        
         setLocalValue(newValue);
         
-        // Atualizar o contexto sem executar busca
-        if (newValue === '') {
-            updateSearchTerm('');
-        }
-    }, [updateSearchTerm]);
+        // Atualizar o contexto
+        updateSearchTerm(newValue);
+    }, [updateSearchTerm, localValue]);
 
     // Função para limpar a busca
     const handleClear = useCallback(() => {
+        setUserInteracting(true);
+        setUserIntentionallyClearedField(true); // Marcar limpeza intencional
         setLocalValue('');
         updateSearchTerm('');
+        setLastUrlSync(''); // Reset do tracking de URL
         
         if (syncWithUrl && location.pathname === searchRoute) {
             // Remove o parâmetro de busca da URL
