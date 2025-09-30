@@ -14,9 +14,7 @@ export const searchFilterTitleStyles = cva(
   'text-lg font-semibold text-gray-900'
 );
 
-export const searchFilterClearButtonStyles = cva(
-  'text-sm text-[var(--color-primary)] hover:text-[var(--color-secondary)] font-medium transition-colors cursor-pointer'
-);
+
 
 // Seções do filtro
 export const searchFilterSectionStyles = cva(

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { FaChevronDown, FaChevronUp, FaFilter, FaTimes, FaInfoCircle } from 'react-icons/fa';
+import Button from '../Button/Button';
 import LocationFilter from './LocationFilter/LocationFilter';
 import Checkbox from '../Checkbox/Checkbox';
 import RadioGroup from '../RadioGroup/RadioGroup';
@@ -10,7 +11,6 @@ import {
   searchFilterStyles,
   searchFilterHeaderStyles,
   searchFilterTitleStyles,
-  searchFilterClearButtonStyles,
   searchFilterSectionStyles,
   searchFilterSectionHeaderStyles,
   searchFilterSectionTitleStyles,
@@ -259,12 +259,14 @@ export default function SearchFilter({
           <FaFilter className="w-4 h-4 text-[var(--color-primary)]" />
           <h2 className={searchFilterTitleStyles()}>Filtros</h2>
         </div>
-        <button
+        <Button
+          appearance="ghost"
+          size="small"
           onClick={handleClearAll}
-          className={searchFilterClearButtonStyles()}
+          className="text-[var(--color-primary)] hover:text-[var(--color-secondary)] hover:bg-[var(--color-primary)]/10"
         >
           Limpar tudo
-        </button>
+        </Button>
       </div>
 
       {/* Filtro por Doações */}
