@@ -1,3 +1,10 @@
+/**
+ * SearchFilter Stories
+ * 
+ * Stories para demonstração e teste visual do componente SearchFilter otimizado.
+ * Inclui todos os estados e interações do componente refatorado.
+ */
+
 import React, { useState } from 'react';
 import SearchFilter from './SearchFilter';
 
@@ -8,7 +15,28 @@ export default {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Componente de filtro lateral para busca e filtragem de doações com múltiplos critérios.'
+        component: `
+## SearchFilter Component
+
+Componente de filtros avançados com arquitetura híbrida otimizada:
+
+### Filtros Estáticos
+- **Tipos de doação**: Quem doa / Quem precisa
+- **Tipos de acesso**: Públicas / Privadas
+- **Distância**: Opções fixas de alcance
+
+### Filtros Dinâmicos
+- **Localização**: Estados e cidades com integração API
+- **Categorias**: Estrutura hierárquica com subcategorias
+- **Estado do item**: Tags dinâmicas configurables via props
+
+### Funcionalidades
+- Expand/collapse de seções
+- Estados indeterminados para categorias
+- Tooltips informativos
+- Limpeza geral de filtros
+- Acessibilidade completa
+        `
       }
     }
   },

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import { FaChevronDown, FaChevronUp, FaFilter, FaTimes, FaInfoCircle } from 'react-icons/fa';
+import { twMerge } from 'tailwind-merge';
+import clsx from 'clsx';
+
 import Button from '../Button/Button';
 import LocationFilter from './LocationFilter/LocationFilter';
 import Checkbox from '../Checkbox/Checkbox';
@@ -17,26 +18,35 @@ import {
   searchFilterSectionToggleStyles,
   searchFilterSectionContentStyles,
   searchFilterCheckboxGroupStyles,
-  searchFilterCheckboxItemStyles,
-  searchFilterCheckboxStyles,
-  searchFilterLabelStyles,
-  searchFilterCountStyles,
-  searchFilterRadioGroupStyles,
-  searchFilterRadioItemStyles,
-  searchFilterRadioStyles,
   searchFilterTooltipStyles
 } from './SearchFilter.styles';
 
-export default function SearchFilter({
-  // Filtro por doações
+/**
+ * SearchFilter Component
+ * 
+ * Componente de filtros avançados com arquitetura híbrida:
+ * - Filtros estáticos: Tipos de doação, acesso e distância (estrutura {id, name})
+ * - Filtros dinâmicos: Estados/cidades, categorias e tags de item (estruturas específicas)
+ * 
+ * @component
+ * @example
+ * <SearchFilter
+ *   donationTypes={[1, 2]}
+ *   categories={categoriesData}
+ *   availableItemStates={tagsData}
+ *   onDonationTypesChange={handleDonationTypes}
+ * />
+ */
+function SearchFilter({
+  // Filtros estáticos - Tipos de doação
   donationTypes = [],
   onDonationTypesChange,
   
-  // Filtro por tipo de doação
+  // Filtros estáticos - Tipos de acesso
   accessTypes = [],
   onAccessTypesChange,
   
-  // Filtro por localização
+  // Filtros dinâmicos - Localização
   availableStates = [],
   selectedStates = [],
   selectedCities = [],
@@ -44,16 +54,16 @@ export default function SearchFilter({
   onCitiesChange,
   onFetchCities,
   
-  // Filtro por categoria
+  // Filtros dinâmicos - Categorias
   categories = [],
   selectedCategories = [],
   onCategoriesChange,
   
-  // Filtro por distância
+  // Filtros estáticos - Distância
   selectedDistance = null,
   onDistanceChange,
   
-  // Filtro por estado do item (tags dinâmicas)
+  // Filtros dinâmicos - Estado do item (tags)
   itemStates = [],
   onItemStatesChange,
   availableItemStates = [],
@@ -63,7 +73,14 @@ export default function SearchFilter({
   onClearAll,
   ...rest
 }) {
-  // Estados para controlar seções expandidas/recolhidas
+  // ========================================
+  // HOOKS DE ESTADO
+  // ========================================
+  
+  /**
+   * Estado para controlar quais seções estão expandidas
+   * Todas as seções começam expandidas para melhor UX
+   */
   const [expandedSections, setExpandedSections] = useState({
     donationType: true,
     accessType: true,
@@ -73,51 +90,44 @@ export default function SearchFilter({
     itemState: true
   });
 
-  // Estados para controlar expansão de subcategorias
+  /**
+   * Estado para controlar expansão de subcategorias individuais
+   * Permite expandir/recolher cada categoria independentemente
+   */
   const [expandedCategories, setExpandedCategories] = useState({});
 
-  // Estados para tooltips
+  /**
+   * Estado para controlar exibição do tooltip de distância
+   */
   const [showDistanceTooltip, setShowDistanceTooltip] = useState(false);
 
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
-
-  const toggleCategory = (categoryId) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [categoryId]: !prev[categoryId]
-    }));
-  };
-
-  const handleClearAll = () => {
-    onDonationTypesChange?.([]);
-    onAccessTypesChange?.([]);
-    onStatesChange?.([]);
-    onCitiesChange?.([]);
-    onCategoriesChange?.([]); // Agora limpa apenas subcategorias
-    onDistanceChange?.(null); // Limpa seleção de distância
-    onItemStatesChange?.([]);
-    onClearAll?.();
-  };
-
-  // Opções fixas de tipo de doação
-  const donationTypeOptions = [
+  // ========================================
+  // DADOS ESTÁTICOS
+  // ========================================
+  
+  /**
+   * Opções fixas para tipos de doação
+   * Estrutura padrão: {id, name}
+   */
+  const DONATION_TYPE_OPTIONS = [
     { id: 1, name: 'Quem doa' },
     { id: 2, name: 'Quem precisa' }
   ];
 
-  // Opções fixas de tipo de acesso
-  const accessTypeOptions = [
+  /**
+   * Opções fixas para tipos de acesso
+   * Estrutura padrão: {id, name}
+   */
+  const ACCESS_TYPE_OPTIONS = [
     { id: 1, name: 'Públicas' },
     { id: 2, name: 'Privadas' }
   ];
 
-  // Opções fixas de distância
-  const distanceOptions = [
+  /**
+   * Opções fixas para distância
+   * Estrutura padrão: {id, name}
+   */
+  const DISTANCE_OPTIONS = [
     { id: 1, name: 'Qualquer distância' },
     { id: 2, name: 'Até 2km' },
     { id: 3, name: 'Até 5km' },
@@ -125,21 +135,73 @@ export default function SearchFilter({
     { id: 5, name: 'Até 50km' }
   ];
 
+  // ========================================
+  // HANDLERS GENÉRICOS
+  // ========================================
+  
+  /**
+   * Handler genérico para mudanças em checkboxes
+   * Evita duplicação de código para arrays de seleção
+   * 
+   * @param {number|string} value - Valor a ser adicionado/removido
+   * @param {Array} currentArray - Array atual de valores selecionados
+   * @param {Function} onChange - Callback para atualizar o estado
+   */
   const handleCheckboxChange = (value, currentArray, onChange) => {
+    if (!onChange) return;
+    
     const newArray = currentArray.includes(value)
       ? currentArray.filter(item => item !== value)
       : [...currentArray, value];
-    onChange?.(newArray);
+    
+    onChange(newArray);
   };
 
+  /**
+   * Handler para toggle de seções
+   * Controla expansão/recolhimento das seções principais
+   * 
+   * @param {string} sectionKey - Chave da seção a ser toggleada
+   */
+  const toggleSection = (sectionKey) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey]
+    }));
+  };
+
+  /**
+   * Handler para toggle de categorias individuais
+   * Controla expansão/recolhimento de subcategorias
+   * 
+   * @param {number} categoryId - ID da categoria a ser toggleada
+   */
+  const toggleCategory = (categoryId) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
+
+  // ========================================
+  // HANDLERS ESPECÍFICOS
+  // ========================================
+  
+  /**
+   * Handler para mudanças em categorias principais
+   * Trata categorias como abstratas - seleciona/deseleciona todas as subcategorias
+   * 
+   * @param {number} categoryId - ID da categoria principal
+   * @param {boolean} isSelected - Se a categoria deve ser selecionada
+   */
   const handleCategoryChange = (categoryId, isSelected) => {
     const category = categories.find(cat => cat.categoryId === categoryId);
-    if (!category) return;
+    if (!category || !onCategoriesChange) return;
 
     let newSelectedCategories = [...selectedCategories];
 
     if (isSelected) {
-      // Adicionar APENAS as subcategorias (categoria principal é abstrata)
+      // Adicionar todas as subcategorias (categoria principal é abstrata)
       if (category.subcategories) {
         category.subcategories.forEach(sub => {
           if (!newSelectedCategories.includes(sub.subcategoryId)) {
@@ -148,7 +210,7 @@ export default function SearchFilter({
         });
       }
     } else {
-      // Remover APENAS as subcategorias (categoria principal é abstrata)
+      // Remover todas as subcategorias (categoria principal é abstrata)
       if (category.subcategories) {
         category.subcategories.forEach(sub => {
           newSelectedCategories = newSelectedCategories.filter(id => id !== sub.subcategoryId);
@@ -156,14 +218,23 @@ export default function SearchFilter({
       }
     }
 
-    onCategoriesChange?.(newSelectedCategories);
+    onCategoriesChange(newSelectedCategories);
   };
 
+  /**
+   * Handler para mudanças em subcategorias
+   * Trata subcategorias como entidades reais de seleção
+   * 
+   * @param {number} subcategoryId - ID da subcategoria
+   * @param {boolean} isSelected - Se a subcategoria deve ser selecionada
+   */
   const handleSubcategoryChange = (subcategoryId, isSelected) => {
+    if (!onCategoriesChange) return;
+    
     let newSelectedCategories = [...selectedCategories];
 
     if (isSelected) {
-      // Adicionar apenas a subcategoria (categorias principais são abstratas)
+      // Adicionar apenas a subcategoria
       if (!newSelectedCategories.includes(subcategoryId)) {
         newSelectedCategories.push(subcategoryId);
       }
@@ -172,9 +243,36 @@ export default function SearchFilter({
       newSelectedCategories = newSelectedCategories.filter(id => id !== subcategoryId);
     }
 
-    onCategoriesChange?.(newSelectedCategories);
+    onCategoriesChange(newSelectedCategories);
   };
 
+  /**
+   * Handler para limpar todos os filtros
+   * Reseta todos os estados para valores padrão
+   */
+  const handleClearAll = () => {
+    onDonationTypesChange?.([]);
+    onAccessTypesChange?.([]);
+    onStatesChange?.([]);
+    onCitiesChange?.([]);
+    onCategoriesChange?.([]);
+    onDistanceChange?.(null);
+    onItemStatesChange?.([]);
+    onClearAll?.();
+  };
+
+  // ========================================
+  // COMPONENTES AUXILIARES
+  // ========================================
+  
+  /**
+   * Renderiza o cabeçalho de uma seção com toggle e tooltip opcional
+   * 
+   * @param {string} title - Título da seção
+   * @param {string} sectionKey - Chave da seção para controle de estado
+   * @param {string} [tooltip] - Texto do tooltip (opcional)
+   * @returns {JSX.Element} Cabeçalho renderizado
+   */
   const renderSectionHeader = (title, sectionKey, tooltip = null) => (
     <div className={searchFilterSectionHeaderStyles()}>
       <div className="flex items-center gap-2">
@@ -182,6 +280,7 @@ export default function SearchFilter({
           onClick={() => toggleSection(sectionKey)}
           className={searchFilterSectionToggleStyles()}
           aria-expanded={expandedSections[sectionKey]}
+          aria-label={`${expandedSections[sectionKey] ? 'Recolher' : 'Expandir'} seção ${title}`}
         >
           {expandedSections[sectionKey] ? (
             <FaChevronUp className="w-4 h-4" />
@@ -199,6 +298,7 @@ export default function SearchFilter({
               onMouseLeave={() => sectionKey === 'distance' && setShowDistanceTooltip(false)}
               onClick={() => sectionKey === 'distance' && setShowDistanceTooltip(!showDistanceTooltip)}
               className="text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Informações sobre distância"
             >
               <FaInfoCircle className="w-3 h-3" />
             </button>
@@ -213,6 +313,103 @@ export default function SearchFilter({
     </div>
   );
 
+  /**
+   * Renderiza uma lista de checkboxes genérica
+   * Reutilizável para diferentes tipos de filtros
+   * 
+   * @param {Array} options - Array de opções {id, name}
+   * @param {Array} selectedValues - Array de valores selecionados
+   * @param {Function} onChange - Handler para mudanças
+   * @returns {JSX.Element} Lista de checkboxes renderizada
+   */
+  const renderCheckboxList = (options, selectedValues, onChange) => (
+    <div className="space-y-1">
+      {options.map((option) => (
+        <Checkbox
+          key={option.id}
+          label={option.name}
+          checked={selectedValues.includes(option.id)}
+          onChange={(checked) => handleCheckboxChange(option.id, selectedValues, onChange)}
+          size="medium"
+        />
+      ))}
+    </div>
+  );
+
+  /**
+   * Renderiza o filtro de categorias com lógica de indeterminate
+   * Categorias principais são abstratas, subcategorias são concretas
+   * 
+   * @returns {JSX.Element} Filtro de categorias renderizado
+   */
+  const renderCategoriesFilter = () => (
+    <div className={searchFilterCheckboxGroupStyles()}>
+      {categories.map((category) => {
+        const selectedSubcategoriesCount = category.subcategories 
+          ? category.subcategories.filter(sub => selectedCategories.includes(sub.subcategoryId)).length 
+          : 0;
+        const totalSubcategoriesCount = category.subcategories ? category.subcategories.length : 0;
+        
+        // Estado indeterminate: algumas subcategorias selecionadas, mas não todas
+        const isIndeterminate = selectedSubcategoriesCount > 0 && selectedSubcategoriesCount < totalSubcategoriesCount;
+        
+        // Categoria está "checked" apenas se TODAS as subcategorias estão selecionadas
+        const isChecked = totalSubcategoriesCount > 0 && selectedSubcategoriesCount === totalSubcategoriesCount;
+
+        return (
+          <div key={category.categoryId} className="space-y-1">
+            {/* Categoria Principal */}
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <Checkbox
+                  label={category.name}
+                  checked={isChecked}
+                  indeterminate={isIndeterminate}
+                  onChange={(checked) => handleCategoryChange(category.categoryId, checked)}
+                  size="medium"
+                />
+              </div>
+              {category.subcategories && category.subcategories.length > 0 && (
+                <button
+                  onClick={() => toggleCategory(category.categoryId)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                  aria-label={`${expandedCategories[category.categoryId] ? 'Recolher' : 'Expandir'} subcategorias de ${category.name}`}
+                >
+                  {expandedCategories[category.categoryId] ? (
+                    <FaChevronUp className="w-3 h-3" />
+                  ) : (
+                    <FaChevronDown className="w-3 h-3" />
+                  )}
+                </button>
+              )}
+            </div>
+
+            {/* Subcategorias */}
+            {category.subcategories && 
+             category.subcategories.length > 0 && 
+             expandedCategories[category.categoryId] && (
+              <div className="ml-4 space-y-1">
+                {category.subcategories.map((subcategory) => (
+                  <Checkbox
+                    key={subcategory.subcategoryId}
+                    label={subcategory.name}
+                    checked={selectedCategories.includes(subcategory.subcategoryId)}
+                    onChange={(checked) => handleSubcategoryChange(subcategory.subcategoryId, checked)}
+                    size="medium"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  // ========================================
+  // RENDER PRINCIPAL
+  // ========================================
+  
   return (
     <div
       className={twMerge(clsx(
@@ -242,17 +439,7 @@ export default function SearchFilter({
         {renderSectionHeader('Tipo de Doação', 'donationType')}
         {expandedSections.donationType && (
           <div className={searchFilterSectionContentStyles()}>
-            <div className="space-y-1">
-              {donationTypeOptions.map((option) => (
-                <Checkbox
-                  key={option.id}
-                  label={option.name}
-                  checked={donationTypes.includes(option.id)}
-                  onChange={(checked) => handleCheckboxChange(option.id, donationTypes, onDonationTypesChange)}
-                  size="medium"
-                />
-              ))}
-            </div>
+            {renderCheckboxList(DONATION_TYPE_OPTIONS, donationTypes, onDonationTypesChange)}
           </div>
         )}
       </div>
@@ -262,17 +449,7 @@ export default function SearchFilter({
         {renderSectionHeader('Acesso', 'accessType')}
         {expandedSections.accessType && (
           <div className={searchFilterSectionContentStyles()}>
-            <div className="space-y-1">
-              {accessTypeOptions.map((option) => (
-                <Checkbox
-                  key={option.id}
-                  label={option.name}
-                  checked={accessTypes.includes(option.id)}
-                  onChange={(checked) => handleCheckboxChange(option.id, accessTypes, onAccessTypesChange)}
-                  size="medium"
-                />
-              ))}
-            </div>
+            {renderCheckboxList(ACCESS_TYPE_OPTIONS, accessTypes, onAccessTypesChange)}
           </div>
         )}
       </div>
@@ -299,66 +476,7 @@ export default function SearchFilter({
         {renderSectionHeader('Categoria', 'category')}
         {expandedSections.category && (
           <div className={searchFilterSectionContentStyles()}>
-            <div className={searchFilterCheckboxGroupStyles()}>
-              {categories.map((category) => {
-                const selectedSubcategoriesCount = category.subcategories 
-                  ? category.subcategories.filter(sub => selectedCategories.includes(sub.subcategoryId)).length 
-                  : 0;
-                const totalSubcategoriesCount = category.subcategories ? category.subcategories.length : 0;
-                
-                // Estado indeterminate: algumas subcategorias selecionadas, mas não todas
-                const isIndeterminate = selectedSubcategoriesCount > 0 && selectedSubcategoriesCount < totalSubcategoriesCount;
-                
-                // Categoria está "checked" apenas se TODAS as subcategorias estão selecionadas
-                const isChecked = totalSubcategoriesCount > 0 && selectedSubcategoriesCount === totalSubcategoriesCount;
-
-                return (
-                  <div key={category.categoryId} className="space-y-1">
-                    {/* Categoria Principal */}
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1">
-                        <Checkbox
-                          label={category.name}
-                          checked={isChecked}
-                          indeterminate={isIndeterminate}
-                          onChange={(checked) => handleCategoryChange(category.categoryId, checked)}
-                          size="medium"
-                        />
-                      </div>
-                      {category.subcategories && category.subcategories.length > 0 && (
-                        <button
-                          onClick={() => toggleCategory(category.categoryId)}
-                          className="text-gray-400 hover:text-gray-600 transition-colors p-1"
-                        >
-                          {expandedCategories[category.categoryId] ? (
-                            <FaChevronUp className="w-3 h-3" />
-                          ) : (
-                            <FaChevronDown className="w-3 h-3" />
-                          )}
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Subcategorias */}
-                    {category.subcategories && 
-                     category.subcategories.length > 0 && 
-                     expandedCategories[category.categoryId] && (
-                      <div className="ml-4 space-y-1">
-                        {category.subcategories.map((subcategory) => (
-                          <Checkbox
-                            key={subcategory.subcategoryId}
-                            label={subcategory.name}
-                            checked={selectedCategories.includes(subcategory.subcategoryId)}
-                            onChange={(checked) => handleSubcategoryChange(subcategory.subcategoryId, checked)}
-                            size="medium"
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            {renderCategoriesFilter()}
           </div>
         )}
       </div>
@@ -375,7 +493,7 @@ export default function SearchFilter({
             <RadioGroup
               name="distance"
               value={selectedDistance}
-              options={distanceOptions.map(option => ({
+              options={DISTANCE_OPTIONS.map(option => ({
                 value: option.id,
                 label: option.name
               }))}
@@ -410,16 +528,20 @@ export default function SearchFilter({
   );
 }
 
+// ========================================
+// PROP TYPES
+// ========================================
+
 SearchFilter.propTypes = {
-  // Filtro por doações (fixo)
+  // Filtros estáticos - Doações
   donationTypes: PropTypes.arrayOf(PropTypes.number),
   onDonationTypesChange: PropTypes.func,
   
-  // Filtro por tipo de doação (fixo)
+  // Filtros estáticos - Acesso
   accessTypes: PropTypes.arrayOf(PropTypes.number),
   onAccessTypesChange: PropTypes.func,
   
-  // Filtro por localização
+  // Filtros dinâmicos - Localização
   availableStates: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
@@ -434,7 +556,7 @@ SearchFilter.propTypes = {
   onCitiesChange: PropTypes.func,
   onFetchCities: PropTypes.func,
   
-  // Filtro por categoria
+  // Filtros dinâmicos - Categorias
   categories: PropTypes.arrayOf(PropTypes.shape({
     categoryId: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
@@ -446,11 +568,11 @@ SearchFilter.propTypes = {
   selectedCategories: PropTypes.arrayOf(PropTypes.number),
   onCategoriesChange: PropTypes.func,
   
-  // Filtro por distância (fixo)
+  // Filtros estáticos - Distância
   selectedDistance: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([null])]),
   onDistanceChange: PropTypes.func,
   
-  // Filtro por estado do item (tags dinâmicas)
+  // Filtros dinâmicos - Estado do item (tags)
   itemStates: PropTypes.arrayOf(PropTypes.number),
   onItemStatesChange: PropTypes.func,
   availableItemStates: PropTypes.arrayOf(PropTypes.shape({
@@ -462,3 +584,5 @@ SearchFilter.propTypes = {
   className: PropTypes.string,
   onClearAll: PropTypes.func
 };
+
+export default SearchFilter;

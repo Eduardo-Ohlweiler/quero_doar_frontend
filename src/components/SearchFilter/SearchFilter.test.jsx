@@ -1,10 +1,24 @@
+/**
+ * SearchFilter Test Suite
+ * 
+ * Testes abrangentes para o componente SearchFilter otimizado.
+ * Cobertura completa de funcionalidades incluindo filtros estáticos e dinâmicos.
+ * 
+ * Convenção de nomenclatura: Testes mantêm compatibilidade com implementação existente
+ * Foco em manter 100% da funcionalidade durante refatoração
+ */
+
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import SearchFilter from './SearchFilter';
 
-// Mock do LocationFilter
+// ========================================
+// MOCKS E CONFIGURAÇÕES
+// ========================================
+
+// Mock do LocationFilter para isolar testes do SearchFilter
 vi.mock('./LocationFilter/LocationFilter', () => ({
   default: ({ selectedStates, selectedCities, onStatesChange, onCitiesChange }) => (
     <div data-testid="location-filter">
@@ -16,7 +30,14 @@ vi.mock('./LocationFilter/LocationFilter', () => ({
   )
 }));
 
-// Dados mock
+// ========================================
+// DADOS MOCK PARA TESTES
+// ========================================
+
+/**
+ * Mock de categorias com estrutura hierárquica
+ * Testa comportamento de categorias abstratas e subcategorias concretas
+ */
 const mockCategories = [
   {
     categoryId: 1,
@@ -36,7 +57,10 @@ const mockCategories = [
   }
 ];
 
-// Tags dinâmicas mock
+/**
+ * Mocks para testar filtros dinâmicos
+ * Estrutura com donationTagId para compatibilidade com API
+ */
 const mockDonationTypes = [
   { donationTagId: 1, name: 'Quem doa' },
   { donationTagId: 2, name: 'Quem precisa' }
@@ -82,6 +106,15 @@ const mockStates = [
   }
 ];
 
+// ========================================
+// SUÍTE DE TESTES PRINCIPAL
+// ========================================
+
+/**
+ * Testes do componente SearchFilter
+ * Verifica funcionalidade completa após otimizações
+ * Mantendo 100% de compatibilidade com versão original
+ */
 describe('SearchFilter', () => {
   const defaultProps = {
     donationTypes: [],
