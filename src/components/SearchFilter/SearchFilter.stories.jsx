@@ -135,6 +135,15 @@ const mockCategories = [
   }
 ];
 
+// Apenas tags de estado do item são dinâmicas
+const mockItemStates = [
+  { donationTagId: 10, name: 'Novo em folha' },
+  { donationTagId: 11, name: 'Quase novo' },
+  { donationTagId: 12, name: 'Bem conservado' },
+  { donationTagId: 13, name: 'Com sinais de uso' },
+  { donationTagId: 14, name: 'Precisa de reparos' }
+];
+
 // Story padrão
 export const Default = {
   args: {
@@ -145,23 +154,27 @@ export const Default = {
     selectedCities: [],
     categories: mockCategories,
     selectedCategories: [],
-    selectedDistance: 'any',
-    itemStates: []
+    selectedDistance: null,
+    itemStates: [],
+    // Apenas tags de item são dinâmicas
+    availableItemStates: mockItemStates
   }
 };
 
 // Story com algumas seleções
 export const WithSelections = {
   args: {
-    donationTypes: ['giver'],
-    accessTypes: ['public', 'private'],
+    donationTypes: [1],
+    accessTypes: [1, 2],
     availableStates: mockStates,
     selectedStates: ['SP', 'RJ'],
-    selectedCities: ['sao-paulo', 'campinas', 'rio-de-janeiro'],
+    selectedCities: ['sao-paulo', 'campinas', 'rio-de-Janeiro'],
     categories: mockCategories,
-    selectedCategories: [1, 101, 102],
-    selectedDistance: '5km',
-    itemStates: ['new', 'like_new']
+    selectedCategories: [101, 102],
+    selectedDistance: 3,
+    itemStates: [10, 11],
+    // Apenas tags de item são dinâmicas
+    availableItemStates: mockItemStates
   }
 };
 
@@ -173,7 +186,7 @@ export const Interactive = () => {
     selectedStates: [],
     selectedCities: [],
     selectedCategories: [],
-    selectedDistance: 'any',
+    selectedDistance: null,
     itemStates: []
   });
 
@@ -199,7 +212,7 @@ export const Interactive = () => {
       selectedStates: [],
       selectedCities: [],
       selectedCategories: [],
-      selectedDistance: 'any',
+      selectedDistance: null,
       itemStates: []
     });
     console.log('Todos os filtros foram limpos');
@@ -231,6 +244,9 @@ export const Interactive = () => {
           
           itemStates={filters.itemStates}
           onItemStatesChange={(value) => handleFilterChange('itemStates', value)}
+          
+          // Apenas tags de item são dinâmicas
+          availableItemStates={mockItemStates}
           
           onClearAll={handleClearAll}
         />

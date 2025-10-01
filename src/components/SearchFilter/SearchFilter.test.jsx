@@ -36,6 +36,33 @@ const mockCategories = [
   }
 ];
 
+// Tags dinâmicas mock
+const mockDonationTypes = [
+  { donationTagId: 1, name: 'Quem doa' },
+  { donationTagId: 2, name: 'Quem precisa' }
+];
+
+const mockAccessTypes = [
+  { donationTagId: 3, name: 'Públicas' },
+  { donationTagId: 4, name: 'Privadas' }
+];
+
+const mockDistances = [
+  { donationTagId: 5, name: 'Qualquer distância' },
+  { donationTagId: 6, name: 'Até 2km' },
+  { donationTagId: 7, name: 'Até 5km' },
+  { donationTagId: 8, name: 'Até 10km' },
+  { donationTagId: 9, name: 'Até 50km' }
+];
+
+const mockItemStates = [
+  { donationTagId: 10, name: 'Novo em folha' },
+  { donationTagId: 11, name: 'Quase novo' },
+  { donationTagId: 12, name: 'Bem conservado' },
+  { donationTagId: 13, name: 'Com sinais de uso' },
+  { donationTagId: 14, name: 'Precisa de reparos' }
+];
+
 const mockStates = [
   {
     stateId: 1,
@@ -64,8 +91,11 @@ describe('SearchFilter', () => {
     selectedCities: [],
     categories: mockCategories,
     selectedCategories: [],
-    selectedDistance: 'any',
+    selectedDistance: null,
     itemStates: [],
+    // Apenas tags são dinâmicas
+    availableItemStates: mockItemStates,
+    // Handlers
     onDonationTypesChange: vi.fn(),
     onAccessTypesChange: vi.fn(),
     onStatesChange: vi.fn(),
@@ -120,8 +150,8 @@ describe('SearchFilter', () => {
     
     const giverCheckbox = screen.getByLabelText('Quem doa');
     await user.click(giverCheckbox);
-    
-    expect(onDonationTypesChange).toHaveBeenCalledWith(['giver']);
+
+    expect(onDonationTypesChange).toHaveBeenCalledWith([1]);
   });
 
   // TC4: Seleção de tipos de acesso
@@ -133,8 +163,8 @@ describe('SearchFilter', () => {
     
     const publicCheckbox = screen.getByLabelText('Públicas');
     await user.click(publicCheckbox);
-    
-    expect(onAccessTypesChange).toHaveBeenCalledWith(['public']);
+
+    expect(onAccessTypesChange).toHaveBeenCalledWith([1]);
   });
 
   // TC5: Seleção de categorias principais
@@ -200,8 +230,8 @@ describe('SearchFilter', () => {
     
     const distance5km = screen.getByLabelText('Até 5km');
     await user.click(distance5km);
-    
-    expect(onDistanceChange).toHaveBeenCalledWith('5km');
+
+    expect(onDistanceChange).toHaveBeenCalledWith(3);
   });
 
   // TC8: Seleção de estados de item
@@ -213,8 +243,8 @@ describe('SearchFilter', () => {
     
     const newItemCheckbox = screen.getByLabelText('Novo em folha');
     await user.click(newItemCheckbox);
-    
-    expect(onItemStatesChange).toHaveBeenCalledWith(['new']);
+
+    expect(onItemStatesChange).toHaveBeenCalledWith([10]);
   });
 
   // TC9: Tooltip de distância
@@ -262,7 +292,7 @@ describe('SearchFilter', () => {
     expect(mockProps.onStatesChange).toHaveBeenCalledWith([]);
     expect(mockProps.onCitiesChange).toHaveBeenCalledWith([]);
     expect(mockProps.onCategoriesChange).toHaveBeenCalledWith([]);
-    expect(mockProps.onDistanceChange).toHaveBeenCalledWith('any');
+    expect(mockProps.onDistanceChange).toHaveBeenCalledWith(null);
     expect(mockProps.onItemStatesChange).toHaveBeenCalledWith([]);
     expect(mockProps.onClearAll).toHaveBeenCalled();
   });
@@ -284,17 +314,16 @@ describe('SearchFilter', () => {
     // Selecionar primeira opção
     const giverCheckbox = screen.getByLabelText('Quem doa');
     await user.click(giverCheckbox);
-    expect(onDonationTypesChange).toHaveBeenCalledWith(['giver']);
+    expect(onDonationTypesChange).toHaveBeenCalledWith([1]);
     
     // Simular que o estado foi atualizado
-    const updatedProps = { ...defaultProps, donationTypes: ['giver'], onDonationTypesChange };
+    const updatedProps = { ...defaultProps, donationTypes: [1], onDonationTypesChange };
     rerender(<SearchFilter {...updatedProps} />);
     
-    // Selecionar segunda opção - agora usar getAllByLabelText e escolher a primeira que não está selecionada
-    const receiverCheckboxes = screen.getAllByLabelText('Quem precisa');
-    const receiverCheckbox = receiverCheckboxes.find(checkbox => !checkbox.checked) || receiverCheckboxes[0];
+    // Selecionar segunda opção
+    const receiverCheckbox = screen.getByLabelText('Quem precisa');
     await user.click(receiverCheckbox);
-    expect(onDonationTypesChange).toHaveBeenCalledWith(['giver', 'receiver']);
+    expect(onDonationTypesChange).toHaveBeenCalledWith([1, 2]);
   });
 
   // TC13: Deseleção de itens
@@ -304,7 +333,7 @@ describe('SearchFilter', () => {
     
     const propsWithSelection = {
       ...defaultProps,
-      donationTypes: ['giver', 'receiver'],
+      donationTypes: [1, 2],
       onDonationTypesChange
     };
     
@@ -314,7 +343,7 @@ describe('SearchFilter', () => {
     const giverCheckbox = screen.getByLabelText('Quem doa');
     await user.click(giverCheckbox);
     
-    expect(onDonationTypesChange).toHaveBeenCalledWith(['receiver']);
+    expect(onDonationTypesChange).toHaveBeenCalledWith([2]);
   });
 
   // TC14: Acessibilidade de navegação por teclado

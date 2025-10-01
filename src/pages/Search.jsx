@@ -4,19 +4,21 @@ import { useState, useEffect } from "react";
 
 import locationService from "../services/location/locationService";
 import categoryService from "../services/category/categoryService";
+import donationService from "../services/donation/donationService";
 
 export default function Search() {
 
     const [states, setStates] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [tags, setTags] = useState([]);
     const [donationFilter, setDonationFilter] = useState({
-        donationTypes: [],          // "giver", "receiver"
-        accessTypes: [],            // "public", "private"
+        donationTypes: [],          // Lista de IDs (números)
+        accessTypes: [],            // Lista de IDs (números)
         selectedStates: [],         // Lista de Ids de estados selecionados
         selectedCities: [],         // Lista de Ids de cidades selecionadas
         selectedCategories: [],     // Lista de Ids de subcategorias selecionadas
-        selectedDistance: 'any',    // "any", "5km", "10km", "20km", "50km"
-        itemStates: []              // Lista de Ids de tags 
+        selectedDistance: null,     // ID da distância selecionada (número) ou null
+        itemStates: []              // Lista de Ids de tags (donationTagId)
     });
 
     const fetchStates = async () => {
@@ -37,9 +39,20 @@ export default function Search() {
         }
     };
 
+    const fetchTags = async () => {
+        try {
+            const data = await donationService.GetAllTags();
+            setTags(data);
+        } catch (error) {
+            console.error("Erro ao buscar tags:", error);
+        }
+    };
+
+
     useEffect(() => {
         fetchStates();
         fetchCategories();
+        fetchTags();
     }, []);
 
     const fetchCitiesByStates = async (stateIds) => {
@@ -58,18 +71,17 @@ export default function Search() {
 
 
     return (
-        // <section className="min-h-screen pt-20 bg-gray-100">
         <section className="min-h-screen p-2 pt-16 bg-gradient-primary flex flex-row gap-2">
             <SearchFilter
-                // Donations
+                // Donations (fixo - não precisa passar props)
                 donationTypes={donationFilter.donationTypes}
                 onDonationTypesChange={(value) => setDonationFilter(prev => ({...prev, donationTypes: value}))}
                 
-                // Access
+                // Access (fixo - não precisa passar props)
                 accessTypes={donationFilter.accessTypes}
                 onAccessTypesChange={(value) => setDonationFilter(prev => ({...prev, accessTypes: value}))}
                 
-                // Location
+                // Location (dinâmico)
                 availableStates={states}
                 selectedStates={donationFilter.selectedStates}
                 selectedCities={donationFilter.selectedCities}
@@ -77,16 +89,17 @@ export default function Search() {
                 onCitiesChange={(value) => setDonationFilter(prev => ({...prev, selectedCities: value}))}
                 onFetchCities={fetchCitiesByStates}
 
-                // Categories
+                // Categories (dinâmico)
                 categories={categories}
                 selectedCategories={donationFilter.selectedCategories}
                 onCategoriesChange={(value) => setDonationFilter(prev => ({...prev, selectedCategories: value}))}
 
-                // Distance
+                // Distance (fixo - não precisa passar props)
                 selectedDistance={donationFilter.selectedDistance}
                 onDistanceChange={(value) => setDonationFilter(prev => ({...prev, selectedDistance: value}))}
 
-                // Item States
+                // Item tags (dinâmico)
+                availableItemStates={tags}
                 itemStates={donationFilter.itemStates}
                 onItemStatesChange={(value) => setDonationFilter(prev => ({...prev, itemStates: value}))}
             />

@@ -50,12 +50,13 @@ export default function SearchFilter({
   onCategoriesChange,
   
   // Filtro por distância
-  selectedDistance = 'any',
+  selectedDistance = null,
   onDistanceChange,
   
-  // Filtro por estado do item
+  // Filtro por estado do item (tags dinâmicas)
   itemStates = [],
   onItemStatesChange,
+  availableItemStates = [],
   
   // Props gerais
   className,
@@ -98,39 +99,30 @@ export default function SearchFilter({
     onStatesChange?.([]);
     onCitiesChange?.([]);
     onCategoriesChange?.([]); // Agora limpa apenas subcategorias
-    onDistanceChange?.('any');
+    onDistanceChange?.(null); // Limpa seleção de distância
     onItemStatesChange?.([]);
     onClearAll?.();
   };
 
-  // Opções de tipo de doação
+  // Opções fixas de tipo de doação
   const donationTypeOptions = [
-    { id: 'giver', label: 'Quem doa', count: 0 },
-    { id: 'receiver', label: 'Quem precisa', count: 0 }
+    { id: 1, name: 'Quem doa' },
+    { id: 2, name: 'Quem precisa' }
   ];
 
-  // Opções de tipo de acesso
+  // Opções fixas de tipo de acesso
   const accessTypeOptions = [
-    { id: 'public', label: 'Públicas', count: 0 },
-    { id: 'private', label: 'Privadas', count: 0 }
+    { id: 1, name: 'Públicas' },
+    { id: 2, name: 'Privadas' }
   ];
 
-  // Opções de distância
+  // Opções fixas de distância
   const distanceOptions = [
-    { id: 'any', label: 'Qualquer distância' },
-    { id: '2km', label: 'Até 2km' },
-    { id: '5km', label: 'Até 5km' },
-    { id: '10km', label: 'Até 10km' },
-    { id: '50km', label: 'Até 50km' }
-  ];
-
-  // Opções de estado do item
-  const itemStateOptions = [
-    { id: 'new', label: 'Novo em folha', count: 0 },
-    { id: 'like_new', label: 'Quase novo', count: 0 },
-    { id: 'good', label: 'Bem conservado', count: 0 },
-    { id: 'used', label: 'Com sinais de uso', count: 0 },
-    { id: 'needs_repair', label: 'Precisa de reparos', count: 0 }
+    { id: 1, name: 'Qualquer distância' },
+    { id: 2, name: 'Até 2km' },
+    { id: 3, name: 'Até 5km' },
+    { id: 4, name: 'Até 10km' },
+    { id: 5, name: 'Até 50km' }
   ];
 
   const handleCheckboxChange = (value, currentArray, onChange) => {
@@ -254,8 +246,7 @@ export default function SearchFilter({
               {donationTypeOptions.map((option) => (
                 <Checkbox
                   key={option.id}
-                  label={option.label}
-                  count={option.count > 0 ? option.count : undefined}
+                  label={option.name}
                   checked={donationTypes.includes(option.id)}
                   onChange={(checked) => handleCheckboxChange(option.id, donationTypes, onDonationTypesChange)}
                   size="medium"
@@ -275,8 +266,7 @@ export default function SearchFilter({
               {accessTypeOptions.map((option) => (
                 <Checkbox
                   key={option.id}
-                  label={option.label}
-                  count={option.count > 0 ? option.count : undefined}
+                  label={option.name}
                   checked={accessTypes.includes(option.id)}
                   onChange={(checked) => handleCheckboxChange(option.id, accessTypes, onAccessTypesChange)}
                   size="medium"
@@ -387,7 +377,7 @@ export default function SearchFilter({
               value={selectedDistance}
               options={distanceOptions.map(option => ({
                 value: option.id,
-                label: option.label
+                label: option.name
               }))}
               onChange={(value) => onDistanceChange?.(value)}
               size="medium"
@@ -403,13 +393,12 @@ export default function SearchFilter({
         {expandedSections.itemState && (
           <div className={searchFilterSectionContentStyles()}>
             <div className="space-y-1">
-              {itemStateOptions.map((option) => (
+              {availableItemStates.map((tag) => (
                 <Checkbox
-                  key={option.id}
-                  label={option.label}
-                  count={option.count > 0 ? option.count : undefined}
-                  checked={itemStates.includes(option.id)}
-                  onChange={(checked) => handleCheckboxChange(option.id, itemStates, onItemStatesChange)}
+                  key={tag.donationTagId}
+                  label={tag.name}
+                  checked={itemStates.includes(tag.donationTagId)}
+                  onChange={(checked) => handleCheckboxChange(tag.donationTagId, itemStates, onItemStatesChange)}
                   size="medium"
                 />
               ))}
@@ -422,12 +411,12 @@ export default function SearchFilter({
 }
 
 SearchFilter.propTypes = {
-  // Filtro por doações
-  donationTypes: PropTypes.arrayOf(PropTypes.string),
+  // Filtro por doações (fixo)
+  donationTypes: PropTypes.arrayOf(PropTypes.number),
   onDonationTypesChange: PropTypes.func,
   
-  // Filtro por tipo de doação
-  accessTypes: PropTypes.arrayOf(PropTypes.string),
+  // Filtro por tipo de doação (fixo)
+  accessTypes: PropTypes.arrayOf(PropTypes.number),
   onAccessTypesChange: PropTypes.func,
   
   // Filtro por localização
@@ -457,13 +446,17 @@ SearchFilter.propTypes = {
   selectedCategories: PropTypes.arrayOf(PropTypes.number),
   onCategoriesChange: PropTypes.func,
   
-  // Filtro por distância
-  selectedDistance: PropTypes.string,
+  // Filtro por distância (fixo)
+  selectedDistance: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([null])]),
   onDistanceChange: PropTypes.func,
   
-  // Filtro por estado do item
-  itemStates: PropTypes.arrayOf(PropTypes.string),
+  // Filtro por estado do item (tags dinâmicas)
+  itemStates: PropTypes.arrayOf(PropTypes.number),
   onItemStatesChange: PropTypes.func,
+  availableItemStates: PropTypes.arrayOf(PropTypes.shape({
+    donationTagId: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired
+  })),
   
   // Props gerais
   className: PropTypes.string,
