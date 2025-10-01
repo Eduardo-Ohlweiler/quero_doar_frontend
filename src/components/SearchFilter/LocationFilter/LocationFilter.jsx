@@ -1,3 +1,30 @@
+/**
+ * LocationFilter Component
+ * 
+ * Componente de filtro avançado de localização com interface de combobox.
+ * Suporta seleção múltipla de estados e cidades com funcionalidades avançadas:
+ * 
+ * - Interface de combobox consistente para estados e cidades
+ * - Busca em tempo real com debounce
+ * - Seleção em lote ("Selecionar todos")
+ * - Tags otimizadas para seleções completas
+ * - Agrupamento hierárquico por estado
+ * - Gerenciamento inteligente de dependências (cidades dependem de estados)
+ * - Fechamento automático por clique externo
+ * - Navegação por teclado
+ * 
+ * @component
+ * @example
+ * <LocationFilter
+ *   availableStates={states}
+ *   selectedStates={[1, 2]}
+ *   selectedCities={[101, 102]}
+ *   onStatesChange={handleStatesChange}
+ *   onCitiesChange={handleCitiesChange}
+ *   onFetchCities={handleFetchCities}
+ * />
+ */
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -7,18 +34,6 @@ import Input from '../../Input/Input';
 import {
   locationFilterStyles,
   locationFilterStateGroupStyles,
-  locationFilterStateItemStyles,
-  locationFilterStateCheckboxStyles,
-  locationFilterStateLabelStyles,
-  locationFilterCityGroupStyles,
-  locationFilterCityHeaderStyles,
-  locationFilterCityHeaderTitleStyles,
-  locationFilterCitySelectAllStyles,
-  locationFilterCityListStyles,
-  locationFilterCityItemStyles,
-  locationFilterCityCheckboxStyles,
-  locationFilterCityLabelStyles,
-  locationFilterSearchStyles,
   locationFilterComboboxStyles,
   locationFilterDropdownStyles,
   locationFilterOptionStyles,
@@ -26,6 +41,19 @@ import {
   locationFilterTagStyles
 } from './LocationFilter.styles';
 
+/**
+ * LocationFilter - Componente principal de filtro de localização
+ * 
+ * @param {Object} props - Props do componente
+ * @param {Array} props.availableStates - Estados disponíveis com suas cidades
+ * @param {Array} props.selectedStates - IDs dos estados selecionados
+ * @param {Array} props.selectedCities - IDs das cidades selecionadas
+ * @param {Function} props.onStatesChange - Callback para mudanças nos estados
+ * @param {Function} props.onCitiesChange - Callback para mudanças nas cidades
+ * @param {Function} props.onFetchCities - Callback para buscar cidades de um estado
+ * @param {string} props.className - Classes CSS adicionais
+ * @returns {JSX.Element} Componente renderizado
+ */
 export default function LocationFilter({
   availableStates = [],
   selectedStates = [],
@@ -36,25 +64,54 @@ export default function LocationFilter({
   className,
   ...rest
 }) {
+  // ========================================
+  // HOOKS DE ESTADO
+  // ========================================
+  
+  /**
+   * Termos de busca para filtrar opções nos dropdowns
+   */
   const [citySearchTerm, setCitySearchTerm] = useState('');
   const [stateSearchTerm, setStateSearchTerm] = useState('');
+  
+  /**
+   * Controle de visibilidade dos dropdowns
+   */
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [showStateDropdown, setShowStateDropdown] = useState(false);
+  
+  /**
+   * Referências para controle de foco e clique externo
+   */
   const cityDropdownRef = useRef(null);
   const cityInputRef = useRef(null);
   const stateDropdownRef = useRef(null);
   const stateInputRef = useRef(null);
 
-  // Fechar dropdowns ao clicar fora
+  // ========================================
+  // EFEITOS E LISTENERS
+  // ========================================
+
+  /**
+   * Effect para fechar dropdowns ao clicar fora
+   * Implementa o padrão de "click outside" para melhor UX
+   */
   useEffect(() => {
+    /**
+     * Handler para cliques externos aos dropdowns
+     * @param {Event} event - Evento de clique
+     */
     const handleClickOutside = (event) => {
+      // Fechar dropdown de cidades se clique for externo
       if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target)) {
         setShowCityDropdown(false);
-        setCitySearchTerm('');
+        setCitySearchTerm(''); // Limpar busca ao fechar
       }
+      
+      // Fechar dropdown de estados se clique for externo
       if (stateDropdownRef.current && !stateDropdownRef.current.contains(event.target)) {
         setShowStateDropdown(false);
-        setStateSearchTerm('');
+        setStateSearchTerm(''); // Limpar busca ao fechar
       }
     };
 
@@ -62,11 +119,23 @@ export default function LocationFilter({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // ========================================
+  // HANDLERS DE MUDANÇA DE ESTADO
+  // ========================================
+
+  /**
+   * Handler para mudanças na seleção de estados
+   * Gerencia automaticamente as cidades relacionadas
+   * 
+   * @param {number} stateId - ID do estado sendo modificado
+   * @param {boolean} isSelected - Se o estado deve ser selecionado ou removido
+   */
   const handleStateChange = (stateId, isSelected) => {
     let newSelectedStates = [...selectedStates];
     let newSelectedCities = [...selectedCities];
 
     if (isSelected) {
+      // Adicionar estado se não estiver selecionado
       if (!newSelectedStates.includes(stateId)) {
         newSelectedStates.push(stateId);
         // Buscar cidades do estado quando selecionado
@@ -88,24 +157,43 @@ export default function LocationFilter({
     }
   };
 
+  /**
+   * Handler para mudanças na seleção de cidades
+   * Opera de forma independente, sem afetar estados
+   * 
+   * @param {number} cityId - ID da cidade sendo modificada
+   * @param {boolean} isSelected - Se a cidade deve ser selecionada ou removida
+   */
   const handleCityChange = (cityId, isSelected) => {
     let newSelectedCities = [...selectedCities];
 
     if (isSelected) {
+      // Adicionar cidade se não estiver selecionada
       if (!newSelectedCities.includes(cityId)) {
         newSelectedCities.push(cityId);
       }
     } else {
+      // Remover cidade
       newSelectedCities = newSelectedCities.filter(id => id !== cityId);
     }
 
     onCitiesChange?.(newSelectedCities);
   };
 
-  // Toggle dropdown de cidades
+  // ========================================
+  // HANDLERS DE INTERFACE (DROPDOWNS)
+  // ========================================
+
+  /**
+   * Toggle do dropdown de cidades
+   * Só permite abertura se houver estados selecionados
+   */
   const toggleCityDropdown = () => {
-    if (selectedStates.length === 0) return;
+    if (selectedStates.length === 0) return; // Prevenir abertura sem estados
+    
     setShowCityDropdown(prev => !prev);
+    
+    // Focar no input de busca ao abrir
     if (!showCityDropdown) {
       setTimeout(() => cityInputRef.current?.focus(), 100);
     } else {
@@ -113,23 +201,39 @@ export default function LocationFilter({
     }
   };
 
-  // Toggle dropdown de estados
+  /**
+   * Toggle do dropdown de estados
+   * Sempre disponível independente de seleções
+   */
   const toggleStateDropdown = () => {
     setShowStateDropdown(prev => !prev);
+    
+    // Focar no input de busca ao abrir
     if (!showStateDropdown) {
       setTimeout(() => stateInputRef.current?.focus(), 100);
     } else {
-      setStateSearchTerm('');
+      setStateSearchTerm(''); // Limpar busca ao fechar
     }
   };
 
-  // Remover cidade selecionada via tag
+  // ========================================
+  // HANDLERS DE REMOÇÃO (TAGS)
+  // ========================================
+
+  /**
+   * Remove uma cidade específica via tag
+   * @param {number} cityId - ID da cidade a ser removida
+   */
   const removeSelectedCity = (cityId) => {
     const newSelectedCities = selectedCities.filter(id => id !== cityId);
     onCitiesChange?.(newSelectedCities);
   };
 
-  // Remover estado selecionado via tag
+  /**
+   * Remove um estado específico via tag
+   * Remove automaticamente todas as cidades deste estado
+   * @param {number} stateId - ID do estado a ser removido
+   */
   const removeSelectedState = (stateId) => {
     const newStates = selectedStates.filter(id => id !== stateId);
     // Remover também todas as cidades desse estado
@@ -142,7 +246,14 @@ export default function LocationFilter({
     onStatesChange?.(newStates);
   };
 
-  // Selecionar/deselecionar todos os estados
+  // ========================================
+  // HANDLERS DE SELEÇÃO EM LOTE
+  // ========================================
+
+  /**
+   * Handler para selecionar/deselecionar todos os estados
+   * Quando deseleciona, remove automaticamente todas as cidades
+   */
   const handleSelectAllStates = () => {
     const allStateIds = availableStates.map(state => state.stateId);
     const areAllSelected = allStateIds.every(id => selectedStates.includes(id));
@@ -154,7 +265,7 @@ export default function LocationFilter({
     } else {
       // Selecionar todos estados
       onStatesChange?.(allStateIds);
-      // Buscar cidades para todos estados
+      // Buscar cidades para todos estados que não têm dados
       allStateIds.forEach(stateId => {
         if (!availableStates.find(s => s.stateId === stateId)?.cities) {
           onFetchCities?.(stateId);
@@ -163,7 +274,10 @@ export default function LocationFilter({
     }
   };
 
-  // Selecionar/deselecionar todas as cidades de um estado
+  /**
+   * Handler para selecionar/deselecionar todas as cidades de um estado
+   * @param {number} stateId - ID do estado cujas cidades serão selecionadas
+   */
   const handleSelectAllCitiesForState = (stateId) => {
     const state = availableStates.find(s => s.stateId === stateId);
     if (!state || !state.cities) return;
@@ -212,7 +326,14 @@ export default function LocationFilter({
     onCitiesChange?.(newSelectedCities);
   };
 
-  // Obter todas as cidades dos estados selecionados para o dropdown
+  // ========================================
+  // COMPUTED VALUES E MEMO
+  // ========================================
+
+  /**
+   * Todas as cidades disponíveis dos estados selecionados
+   * Usado para popular o dropdown de cidades
+   */
   const allAvailableCities = useMemo(() => {
     const cities = [];
     selectedStates.forEach(stateId => {
@@ -481,7 +602,7 @@ export default function LocationFilter({
 
       {/* Lista de Cidades - Combobox */}
       {hasSelectedStates && (
-        <div className={locationFilterCityGroupStyles()}>
+        <div className="space-y-2">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-sm font-medium text-gray-700">
               Cidades ({totalSelectedCities} selecionadas)
