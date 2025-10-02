@@ -75,7 +75,6 @@ export default function Combobox({
   
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
-  const buttonRef = useRef(null);
 
   // ========================================
   // EFEITO - FECHAR AO CLICAR FORA
@@ -102,28 +101,14 @@ export default function Combobox({
   
   /**
    * Toggle do dropdown
+   * A verificação de disabled não é necessária pois o botão já possui o atributo disabled
    */
-  const handleToggle = () => {
-    if (!disabled) {
-      setIsOpen(!isOpen);
-    }
-  };
+  const handleToggle = () => setIsOpen(!isOpen);
 
   /**
    * Fecha o dropdown
    */
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
-  /**
-   * Handler para mudança no dropdown padrão
-   */
-  const handleDefaultChange = (itemId, isSelected) => {
-    if (onChange) {
-      onChange(itemId, isSelected);
-    }
-  };
+  const handleClose = () => setIsOpen(false);
 
   // ========================================
   // COMPUTED VALUES
@@ -131,23 +116,14 @@ export default function Combobox({
   
   /**
    * Texto exibido no botão
+   * Prioridade: buttonText customizado > label do item único > contador de múltiplos > placeholder
    */
   const displayText = (() => {
-    // Se buttonText foi fornecido, usa ele
     if (buttonText) return buttonText;
-    
-    // Senão, usa a lógica padrão
     if (selectedIds.length === 0) return placeholder;
     
-    if (items.length > 0) {
-      const selectedItems = items.filter(item => selectedIds.includes(item.id));
-      if (selectedItems.length === 1) {
-        return selectedItems[0].label;
-      }
-      if (selectedItems.length > 1) {
-        return `${selectedItems.length} selecionados`;
-      }
-    }
+    const selectedItems = items.filter(item => selectedIds.includes(item.id));
+    if (selectedItems.length === 1) return selectedItems[0].label;
     
     return `${selectedIds.length} selecionados`;
   })();
@@ -165,7 +141,7 @@ export default function Combobox({
       return renderDropdown({
         items,
         selectedIds,
-        onChange: onChange,
+        onChange,
         onClose: handleClose,
       });
     }
@@ -186,7 +162,7 @@ export default function Combobox({
             <input
               type="checkbox"
               checked={selectedIds.includes(item.id)}
-              onChange={(e) => handleDefaultChange(item.id, e.target.checked)}
+              onChange={(e) => onChange?.(item.id, e.target.checked)}
               className="w-4 h-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)] focus:ring-2"
             />
             <span className="text-sm text-gray-700">
@@ -223,7 +199,6 @@ export default function Combobox({
 
       {/* Botão do Combobox */}
       <button
-        ref={buttonRef}
         type="button"
         onClick={handleToggle}
         disabled={disabled}

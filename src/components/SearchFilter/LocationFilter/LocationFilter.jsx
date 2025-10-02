@@ -1,8 +1,8 @@
 /**
- * LocationFilter Component (Refatorado)
+ * LocationFilter Component
  * 
  * Componente de filtro avançado de localização usando Combobox + DropdownList.
- * Versão simplificada e modular mantendo todas as funcionalidades originais.
+ * Oferece seleção múltipla de estados e cidades com busca e tags otimizadas.
  * 
  * @component
  */
@@ -18,12 +18,11 @@ import {
   locationFilterStateGroupStyles
 } from './LocationFilter.styles';
 
-// ========================================
-// FUNÇÕES UTILITÁRIAS PARA TAGLIST
-// ========================================
-
 /**
- * Converte dados de estados selecionados para formato de tags
+ * Converte estados selecionados para formato de tags
+ * @param {number[]} selectedStates - IDs dos estados selecionados
+ * @param {Array} availableStates - Estados disponíveis
+ * @returns {Array} Tags formatadas
  */
 const convertStatesToTags = (selectedStates, availableStates) => {
   if (selectedStates.length === availableStates.length && availableStates.length > 0) {
@@ -45,24 +44,28 @@ const convertStatesToTags = (selectedStates, availableStates) => {
 };
 
 /**
- * Converte dados de cidades selecionadas para formato de tags
- * OTIMIZADO: Usa Map para melhor performance com grandes datasets
+ * Converte cidades selecionadas para formato de tags otimizadas
+ * Usa Map para melhor performance (O(1)) em grandes datasets
+ * Agrupa cidades por estado e detecta quando todas as cidades de um estado estão selecionadas
+ * 
+ * @param {number[]} selectedCities - IDs das cidades selecionadas
+ * @param {number[]} selectedStates - IDs dos estados selecionados
+ * @param {Array} availableStates - Estados disponíveis com suas cidades
+ * @returns {Array} Tags formatadas
  */
 const convertCitiesToTags = (selectedCities, selectedStates, availableStates) => {
   if (selectedCities.length === 0) return [];
   
   const tags = [];
   const stateGroups = new Map();
-  
-  // Criar um Map de estados para acesso O(1)
   const statesMap = new Map();
+  
   availableStates.forEach(state => {
     if (state.cities) {
       statesMap.set(state.stateId, state);
     }
   });
   
-  // Agrupar cidades por estado - performance otimizada
   selectedCities.forEach(cityId => {
     for (const [stateId, state] of statesMap) {
       const city = state.cities.find(c => c.cityId === cityId);
@@ -74,12 +77,11 @@ const convertCitiesToTags = (selectedCities, selectedStates, availableStates) =>
           });
         }
         stateGroups.get(stateId).cities.push(city);
-        break; // Cidade encontrada, não precisa continuar procurando
+        break;
       }
     }
   });
 
-  // Gerar tags
   stateGroups.forEach((group, stateId) => {
     const allStateCities = group.state.cities || [];
     const isAllCitiesSelected = allStateCities.length > 0 &&
@@ -105,9 +107,6 @@ const convertCitiesToTags = (selectedCities, selectedStates, availableStates) =>
   return tags;
 };
 
-/**
- * LocationFilter - Componente principal refatorado
- */
 export default function LocationFilter({
   availableStates = [],
   selectedStates = [],
@@ -118,10 +117,6 @@ export default function LocationFilter({
   className,
   ...rest
 }) {
-  // ========================================
-  // HANDLERS DE MUDANÇA
-  // ========================================
-
   const handleStateChange = (stateId, isSelected) => {
     if (isSelected) {
       if (!selectedStates.includes(stateId)) {
@@ -129,7 +124,6 @@ export default function LocationFilter({
         onFetchCities?.(stateId);
       }
     } else {
-      // Remover estado e todas as cidades desse estado de forma eficiente
       onStatesChange?.(selectedStates.filter(id => id !== stateId));
       
       const state = availableStates.find(s => s.stateId === stateId);
@@ -144,7 +138,6 @@ export default function LocationFilter({
   };
 
   const handleCityChange = (cityId, isSelected) => {
-    // Otimização: evitar spread operator desnecessário
     if (isSelected) {
       if (!selectedCities.includes(cityId)) {
         onCitiesChange?.([...selectedCities, cityId]);
@@ -178,12 +171,10 @@ export default function LocationFilter({
     const areAllSelected = stateCityIds.every(cityId => selectedCities.includes(cityId));
 
     if (areAllSelected) {
-      // Remover todas as cidades deste estado - mais eficiente com Set
       const cityIdsSet = new Set(stateCityIds);
       const newSelectedCities = selectedCities.filter(cityId => !cityIdsSet.has(cityId));
       onCitiesChange?.(newSelectedCities);
     } else {
-      // Adicionar apenas as cidades que ainda não estão selecionadas - mais eficiente com Set
       const currentSelectedSet = new Set(selectedCities);
       const citiesToAdd = stateCityIds.filter(cityId => !currentSelectedSet.has(cityId));
       if (citiesToAdd.length > 0) {
@@ -194,30 +185,19 @@ export default function LocationFilter({
 
   const handleSelectAllCities = (shouldSelectAll) => {
     if (shouldSelectAll) {
-      // Selecionar todas as cidades de todos os estados selecionados
-      const allCityIds = [];
-      selectedStates.forEach(stateId => {
+      const allCityIds = selectedStates.flatMap(stateId => {
         const state = availableStates.find(s => s.stateId === stateId);
-        if (state?.cities) {
-          state.cities.forEach(city => {
-            allCityIds.push(city.cityId);
-          });
-        }
+        return state?.cities?.map(city => city.cityId) || [];
       });
       onCitiesChange?.(allCityIds);
     } else {
-      // Desselecionar todas as cidades
       onCitiesChange?.([]);
     }
   };
 
-  // ========================================
-  // HANDLERS DE TAGS
-  // ========================================
-
   const handleRemoveTag = (tagId, tagType) => {
     switch (tagType) {
-      case 'state':
+      case 'state': {
         if (tagId === 'all-states') {
           onStatesChange?.([]);
           onCitiesChange?.([]);
@@ -232,12 +212,13 @@ export default function LocationFilter({
           onStatesChange?.(newStates);
         }
         break;
+      }
       
       case 'city':
         onCitiesChange?.(selectedCities.filter(id => id !== tagId));
         break;
       
-      case 'city-group':
+      case 'city-group': {
         const stateId = parseInt(tagId.replace('state-cities-', ''));
         const state = availableStates.find(s => s.stateId === stateId);
         if (state?.cities) {
@@ -246,9 +227,10 @@ export default function LocationFilter({
           onCitiesChange?.(newCities);
         }
         break;
+      }
       
       default:
-        console.warn(`Tipo de tag não reconhecido: ${tagType}`);
+        break;
     }
   };
 
@@ -260,10 +242,6 @@ export default function LocationFilter({
   const handleClearAllCities = () => {
     onCitiesChange?.([]);
   };
-
-  // ========================================
-  // COMPUTED VALUES
-  // ========================================
 
   const statesForDropdown = useMemo(() => {
     return availableStates.map(state => ({
@@ -298,16 +276,11 @@ export default function LocationFilter({
 
   const hasSelectedStates = selectedStates.length > 0;
 
-  // ========================================
-  // RENDER
-  // ========================================
-
   return (
     <div
       className={twMerge(locationFilterStyles(), className)}
       {...rest}
     >
-      {/* Estados */}
       <div className={locationFilterStateGroupStyles()}>
         <Combobox
           label={`Estados (${selectedStates.length} selecionados)`}
@@ -341,7 +314,6 @@ export default function LocationFilter({
         />
       </div>
 
-      {/* Cidades */}
       {hasSelectedStates && (
         <div className={locationFilterStateGroupStyles()}>
           <Combobox
