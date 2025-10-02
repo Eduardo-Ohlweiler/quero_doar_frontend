@@ -31,15 +31,115 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { FaSearch, FaCheck, FaChevronDown, FaTimes, FaMapMarkerAlt, FaMinus } from 'react-icons/fa';
 import Input from '../../Input/Input';
+import TagList from '../../TagList/TagList';
 import {
   locationFilterStyles,
   locationFilterStateGroupStyles,
   locationFilterComboboxStyles,
   locationFilterDropdownStyles,
-  locationFilterOptionStyles,
-  locationFilterSelectedTagStyles,
-  locationFilterTagStyles
+  locationFilterOptionStyles
 } from './LocationFilter.styles';
+
+// ========================================
+// FUNÇÕES UTILITÁRIAS PARA TAGLIST
+// ========================================
+
+/**
+ * Converte dados de estados selecionados para formato de tags
+ * @param {Array} selectedStates - IDs dos estados selecionados
+ * @param {Array} availableStates - Estados disponíveis
+ * @returns {Array} Array de tags formatadas para o TagList
+ */
+const convertStatesToTags = (selectedStates, availableStates) => {
+  // Se todos os estados estão selecionados, criar tag consolidada
+  if (selectedStates.length === availableStates.length && availableStates.length > 0) {
+    return [{
+      id: 'all-states',
+      label: `Todos estados (${selectedStates.length})`,
+      type: 'state',
+      consolidated: true
+    }];
+  }
+
+  // Criar tags individuais para estados
+  return selectedStates.map(stateId => {
+    const state = availableStates.find(s => s.stateId === stateId);
+    return {
+      id: stateId,
+      label: state?.name || `Estado ${stateId}`,
+      type: 'state',
+      consolidated: false,
+      stateId
+    };
+  });
+};
+
+/**
+ * Converte dados de cidades selecionadas para formato de tags
+ * @param {Array} selectedCities - IDs das cidades selecionadas  
+ * @param {Array} selectedStates - IDs dos estados selecionados
+ * @param {Array} availableStates - Estados disponíveis
+ * @returns {Array} Array de tags formatadas para o TagList
+ */
+const convertCitiesToTags = (selectedCities, selectedStates, availableStates) => {
+  const tags = [];
+  const stateGroups = new Map();
+  
+  // Agrupar cidades por estado
+  selectedCities.forEach(cityId => {
+    selectedStates.forEach(stateId => {
+      const state = availableStates.find(s => s.stateId === stateId);
+      if (state && state.cities) {
+        const city = state.cities.find(c => c.cityId === cityId);
+        if (city) {
+          if (!stateGroups.has(stateId)) {
+            stateGroups.set(stateId, {
+              stateName: state.name,
+              stateAcronym: state.acronym,
+              totalCities: state.cities.length,
+              selectedCities: []
+            });
+          }
+          stateGroups.get(stateId).selectedCities.push({
+            cityId: city.cityId,
+            cityName: city.name
+          });
+        }
+      }
+    });
+  });
+
+  // Criar tags baseadas nos grupos
+  stateGroups.forEach((group, stateId) => {
+    const allCitiesSelected = group.selectedCities.length === group.totalCities;
+    
+    if (allCitiesSelected) {
+      // Tag consolidada para o estado
+      tags.push({
+        id: `state-cities-${stateId}`,
+        label: `${group.stateName} (Todas cidades)`,
+        type: 'city-group',
+        consolidated: true,
+        stateId,
+        cityIds: group.selectedCities.map(c => c.cityId)
+      });
+    } else {
+      // Tags individuais das cidades
+      group.selectedCities.forEach(city => {
+        tags.push({
+          id: city.cityId,
+          label: `${city.cityName} (${group.stateAcronym})`,
+          type: 'city',
+          consolidated: false,
+          cityId: city.cityId,
+          stateId
+        });
+      });
+    }
+  });
+
+  return tags;
+};
 
 /**
  * LocationFilter - Componente principal de filtro de localização
@@ -327,6 +427,64 @@ export default function LocationFilter({
   };
 
   // ========================================
+  // HANDLERS PARA TAGLIST
+  // ========================================
+
+  /**
+   * Handler para remoção de tags via TagList
+   * @param {string|number} tagId - ID da tag a ser removida
+   * @param {string} tagType - Tipo da tag (state, city, city-group)
+   */
+  const handleRemoveTag = (tagId, tagType) => {
+    switch (tagType) {
+      case 'state':
+        if (tagId === 'all-states') {
+          // Remover todos os estados e cidades
+          onStatesChange?.([]);
+          onCitiesChange?.([]);
+        } else {
+          // Remover estado específico
+          removeSelectedState(tagId);
+        }
+        break;
+      
+      case 'city':
+        // Remover cidade específica
+        removeSelectedCity(tagId);
+        break;
+      
+      case 'city-group':
+        // Remover todas as cidades de um estado específico
+        const stateId = parseInt(tagId.replace('state-cities-', ''));
+        const state = availableStates.find(s => s.stateId === stateId);
+        if (state && state.cities) {
+          const stateCityIds = state.cities.map(city => city.cityId);
+          const newCities = selectedCities.filter(cityId => !stateCityIds.includes(cityId));
+          onCitiesChange?.(newCities);
+        }
+        break;
+      
+      default:
+        console.warn(`Tipo de tag não reconhecido: ${tagType}`);
+    }
+  };
+
+  /**
+   * Handler para limpar todas as tags de estados
+   */
+  const handleClearAllStates = () => {
+    onStatesChange?.([]);
+    onCitiesChange?.([]);
+  };
+
+  /**
+   * Handler para limpar todas as tags de cidades
+   */
+  const handleClearAllCities = () => {
+    onCitiesChange?.([]);
+  };
+
+  // ========================================
   // COMPUTED VALUES E MEMO
   // ========================================
 
@@ -360,31 +518,7 @@ export default function LocationFilter({
     );
   }, [availableStates, stateSearchTerm]);
 
-  // Obter estados selecionados com nomes para as tags
-  const selectedStatesWithNames = useMemo(() => {
-    return availableStates.filter(state => selectedStates.includes(state.stateId));
-  }, [availableStates, selectedStates]);
 
-  // Obter cidades selecionadas com nomes completos para as tags
-  const selectedCitiesWithNames = useMemo(() => {
-    const cities = [];
-    selectedStates.forEach(stateId => {
-      const state = availableStates.find(s => s.stateId === stateId);
-      if (state && state.cities) {
-        state.cities.forEach(city => {
-          if (selectedCities.includes(city.cityId)) {
-            cities.push({
-              ...city,
-              stateId,
-              stateName: state.name,
-              displayName: `${city.name} (${state.acronym})`
-            });
-          }
-        });
-      }
-    });
-    return cities;
-  }, [selectedStates, availableStates, selectedCities]);
 
   // Agrupar cidades por estado para o dropdown (com filtro de busca)
   const citiesByState = useMemo(() => {
@@ -435,6 +569,24 @@ export default function LocationFilter({
 
     return result;
   }, [selectedStates, availableStates, citySearchTerm]);
+
+  // ========================================
+  // DADOS PARA TAGLIST
+  // ========================================
+
+  /**
+   * Tags de estados formatadas para o TagList
+   */
+  const stateTags = useMemo(() => {
+    return convertStatesToTags(selectedStates, availableStates);
+  }, [selectedStates, availableStates]);
+
+  /**
+   * Tags de cidades formatadas para o TagList
+   */
+  const cityTags = useMemo(() => {
+    return convertCitiesToTags(selectedCities, selectedStates, availableStates);
+  }, [selectedCities, selectedStates, availableStates]);
 
   const totalSelectedCities = selectedCities.length;
   const hasSelectedStates = selectedStates.length > 0;
@@ -556,48 +708,14 @@ export default function LocationFilter({
           )}
         </div>
 
-        {/* Tags dos estados selecionados */}
-        {selectedStatesWithNames.length > 0 && (
-          <div className={locationFilterSelectedTagStyles()}>
-            <span className="text-xs font-medium text-gray-600 mb-2 block">
-              Estados selecionados:
-            </span>
-            <div className="flex flex-wrap gap-1">
-              {selectedStatesWithNames.length === availableStates.length ? (
-                <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-700 bg-green-100 border border-green-300 rounded-md">
-                  <FaCheck className="w-3 h-3" />
-                  Todos estados ({selectedStatesWithNames.length})
-                  <button
-                    onClick={() => {
-                      onStatesChange?.([]);
-                      onCitiesChange?.([]);
-                    }}
-                    className="ml-1 hover:text-red-600 transition-colors"
-                    aria-label="Remover todos estados"
-                  >
-                    <FaTimes className="w-3 h-3" />
-                  </button>
-                </span>
-              ) : (
-                selectedStatesWithNames.map((state) => (
-                  <span
-                    key={`state-tag-${state.stateId}`}
-                    className={locationFilterTagStyles()}
-                  >
-                    {state.name}
-                    <button
-                      onClick={() => removeSelectedState(state.stateId)}
-                      className="ml-1 hover:text-red-600 transition-colors"
-                      aria-label={`Remover ${state.name}`}
-                    >
-                      <FaTimes className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))
-              )}
-            </div>
-          </div>
-        )}
+        {/* Tags dos estados selecionados usando TagList */}
+        <TagList
+          title="Estados selecionados:"
+          tags={stateTags}
+          onRemoveTag={handleRemoveTag}
+          onClearAll={handleClearAllStates}
+          showClearAll={stateTags.length > 0}
+        />
       </div>
 
       {/* Lista de Cidades - Combobox */}
@@ -735,84 +853,14 @@ export default function LocationFilter({
             )}
           </div>
 
-          {/* Tags das cidades selecionadas */}
-          {selectedCitiesWithNames.length > 0 && (
-            <div className={locationFilterSelectedTagStyles()}>
-              <span className="text-xs font-medium text-gray-600 mb-2 block">
-                Cidades selecionadas:
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {(() => {
-                  // Agrupar cidades por estado para verificar se todas do estado estão selecionadas
-                  const stateGroups = new Map();
-                  
-                  selectedCitiesWithNames.forEach(city => {
-                    if (!stateGroups.has(city.stateId)) {
-                      const state = availableStates.find(s => s.stateId === city.stateId);
-                      stateGroups.set(city.stateId, {
-                        stateName: state?.name || '',
-                        totalCities: state?.cities?.length || 0,
-                        selectedCities: []
-                      });
-                    }
-                    stateGroups.get(city.stateId).selectedCities.push(city);
-                  });
-
-                  const tags = [];
-                  
-                  stateGroups.forEach((group, stateId) => {
-                    const allCitiesSelected = group.selectedCities.length === group.totalCities;
-                    
-                    if (allCitiesSelected) {
-                      // Mostrar tag consolidada para o estado
-                      tags.push(
-                        <span
-                          key={`state-all-${stateId}`}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-700 bg-green-100 border border-green-300 rounded-md"
-                        >
-                          <FaCheck className="w-3 h-3" />
-                          {group.stateName} (Todas cidades)
-                          <button
-                            onClick={() => {
-                              // Remover todas as cidades do estado
-                              const stateCityIds = group.selectedCities.map(city => city.cityId);
-                              const newCities = selectedCities.filter(cityId => !stateCityIds.includes(cityId));
-                              onCitiesChange?.(newCities);
-                            }}
-                            className="ml-1 hover:text-red-600 transition-colors"
-                            aria-label={`Remover todas cidades de ${group.stateName}`}
-                          >
-                            <FaTimes className="w-3 h-3" />
-                          </button>
-                        </span>
-                      );
-                    } else {
-                      // Mostrar tags individuais das cidades
-                      group.selectedCities.forEach(city => {
-                        tags.push(
-                          <span
-                            key={`tag-${city.stateId}-${city.cityId}`}
-                            className={locationFilterTagStyles()}
-                          >
-                            {city.displayName}
-                            <button
-                              onClick={() => removeSelectedCity(city.cityId)}
-                              className="ml-1 hover:text-red-600 transition-colors"
-                              aria-label={`Remover ${city.displayName}`}
-                            >
-                              <FaTimes className="w-3 h-3" />
-                            </button>
-                          </span>
-                        );
-                      });
-                    }
-                  });
-
-                  return tags;
-                })()}
-              </div>
-            </div>
-          )}
+          {/* Tags das cidades selecionadas usando TagList */}
+          <TagList
+            title="Cidades selecionadas:"
+            tags={cityTags}
+            onRemoveTag={handleRemoveTag}
+            onClearAll={handleClearAllCities}
+            showClearAll={cityTags.length > 0}
+          />
         </div>
       )}
 
