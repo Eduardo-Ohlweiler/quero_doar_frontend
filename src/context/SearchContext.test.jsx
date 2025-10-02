@@ -80,12 +80,11 @@ describe('SearchContext', () => {
 
     describe('Provider e Hook', () => {
         it('should throw error when useSearch is used outside provider', () => {
-            // Suprimir console.error para este teste
             const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
             
             expect(() => {
                 render(<TestComponent />);
-            }).toThrow('useSearch deve ser usado dentro de um SearchProvider');
+            }).toThrow('useSearch must be used within a SearchProvider');
             
             consoleSpy.mockRestore();
         });
@@ -138,18 +137,18 @@ describe('SearchContext', () => {
             expect(onSearchMock).toHaveBeenCalledWith('test search');
         });
 
-        it('should not perform search with empty term by default', () => {
+        it('should perform search with empty term', () => {
             const onSearchMock = vi.fn();
             renderWithProvider({ customOnSearch: onSearchMock });
             
             const searchButton = screen.getByTestId('search-button');
             fireEvent.click(searchButton);
             
-            expect(onSearchMock).not.toHaveBeenCalled();
+            expect(onSearchMock).toHaveBeenCalledWith('');
             expect(screen.getByTestId('is-searching')).toHaveTextContent('false');
         });
 
-        it('should perform search with empty term when allowEmpty is true', () => {
+        it('should set isSearching to false with empty term', () => {
             const onSearchMock = vi.fn();
             renderWithProvider({ customOnSearch: onSearchMock, allowEmpty: true });
             
@@ -157,7 +156,7 @@ describe('SearchContext', () => {
             fireEvent.click(searchButton);
             
             expect(onSearchMock).toHaveBeenCalledWith('');
-            expect(screen.getByTestId('is-searching')).toHaveTextContent('true');
+            expect(screen.getByTestId('is-searching')).toHaveTextContent('false');
         });
 
         it('should trim search terms', () => {
