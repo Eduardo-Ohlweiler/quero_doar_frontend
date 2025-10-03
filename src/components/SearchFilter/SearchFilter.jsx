@@ -21,6 +21,8 @@ import {
   searchFilterTooltipStyles
 } from './SearchFilter.styles';
 
+import { DONATION_TYPE_OPTIONS, ACCESS_TYPE_OPTIONS, DISTANCE_OPTIONS } from '../../services/donation/constant/donationFilter';
+
 /**
  * SearchFilter Component
  * 
@@ -84,24 +86,6 @@ function SearchFilter({
 
   const [expandedCategories, setExpandedCategories] = useState({});
   const [showDistanceTooltip, setShowDistanceTooltip] = useState(false);
-
-  const DONATION_TYPE_OPTIONS = [
-    { id: 1, name: 'Quem doa' },
-    { id: 2, name: 'Quem precisa' }
-  ];
-
-  const ACCESS_TYPE_OPTIONS = [
-    { id: 1, name: 'Públicas' },
-    { id: 2, name: 'Privadas' }
-  ];
-
-  const DISTANCE_OPTIONS = [
-    { id: 1, name: 'Qualquer distância' },
-    { id: 2, name: 'Até 2km' },
-    { id: 3, name: 'Até 5km' },
-    { id: 4, name: 'Até 10km' },
-    { id: 5, name: 'Até 50km' }
-  ];
 
   /**
    * Handler genérico para mudanças em checkboxes
