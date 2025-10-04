@@ -73,6 +73,10 @@ Componente de filtros avançados com arquitetura híbrida otimizada:
     itemStates: {
       description: 'Array com estados do item selecionados',
       control: { type: 'object' }
+    },
+    onUseMyLocation: {
+      description: 'Callback disparado ao clicar no botão de usar minha localização',
+      action: 'useMyLocation'
     }
   }
 };
@@ -262,6 +266,10 @@ export const Interactive = () => {
           onStatesChange={(value) => handleFilterChange('selectedStates', value)}
           onCitiesChange={(value) => handleFilterChange('selectedCities', value)}
           onFetchCities={handleFetchCities}
+          onUseMyLocation={() => {
+            console.log('🗺️ Usar minha localização clicado!');
+            alert('Funcionalidade: Obter localização do usuário e filtrar por proximidade');
+          }}
           
           categories={mockCategories}
           selectedCategories={filters.selectedCategories}

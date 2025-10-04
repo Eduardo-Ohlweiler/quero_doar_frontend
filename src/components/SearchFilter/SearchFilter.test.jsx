@@ -400,4 +400,34 @@ describe('SearchFilter', () => {
     const filterElement = screen.getByTestId('search-filter');
     expect(filterElement).toHaveClass('custom-class');
   });
+
+  // TC16: Botão de usar minha localização
+  it('TC16: renders location button when onUseMyLocation is provided', () => {
+    const onUseMyLocation = vi.fn();
+    render(<SearchFilter {...defaultProps} onUseMyLocation={onUseMyLocation} />);
+    
+    const locationButton = screen.getByLabelText('Filtrar pela minha localização');
+    expect(locationButton).toBeInTheDocument();
+    expect(locationButton).toHaveAttribute('title', 'Filtrar pela minha localização');
+  });
+
+  // TC17: Botão de localização não renderiza quando callback não é fornecido
+  it('TC17: does not render location button when onUseMyLocation is not provided', () => {
+    render(<SearchFilter {...defaultProps} />);
+    
+    const locationButton = screen.queryByLabelText('Filtrar pela minha localização');
+    expect(locationButton).not.toBeInTheDocument();
+  });
+
+  // TC18: Clique no botão de usar minha localização
+  it('TC18: calls onUseMyLocation when location button is clicked', async () => {
+    const user = userEvent.setup();
+    const onUseMyLocation = vi.fn();
+    render(<SearchFilter {...defaultProps} onUseMyLocation={onUseMyLocation} />);
+    
+    const locationButton = screen.getByLabelText('Filtrar pela minha localização');
+    await user.click(locationButton);
+    
+    expect(onUseMyLocation).toHaveBeenCalledTimes(1);
+  });
 });

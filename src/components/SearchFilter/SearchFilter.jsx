@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FaChevronDown, FaChevronUp, FaFilter, FaInfoCircle } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaFilter, FaInfoCircle, FaMapMarkerAlt } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
@@ -37,6 +37,7 @@ import { DONATION_TYPE_OPTIONS, ACCESS_TYPE_OPTIONS, DISTANCE_OPTIONS } from '..
  *   categories={categoriesData}
  *   availableItemStates={tagsData}
  *   onDonationTypesChange={handleDonationTypes}
+ *   onUseMyLocation={handleUseMyLocation}
  * />
  */
 function SearchFilter({
@@ -55,6 +56,7 @@ function SearchFilter({
   onStatesChange,
   onCitiesChange,
   onFetchCities,
+  onUseMyLocation,
   
   // Filtros dinâmicos - Categorias
   categories = [],
@@ -173,9 +175,13 @@ function SearchFilter({
   };
 
   /**
-   * Renderiza o cabeçalho de uma seção com toggle e tooltip opcional
+   * Renderiza o cabeçalho de uma seção com toggle, tooltip opcional e botão customizado
+   * @param {string} title - Título da seção
+   * @param {string} sectionKey - Chave da seção para controle de expansão
+   * @param {string|null} tooltip - Texto do tooltip (opcional)
+   * @param {React.ReactNode|null} customButton - Botão customizado ao lado do título (opcional)
    */
-  const renderSectionHeader = (title, sectionKey, tooltip = null) => (
+  const renderSectionHeader = (title, sectionKey, tooltip = null, customButton = null) => (
     <div className={searchFilterSectionHeaderStyles()}>
       <div className="flex items-center gap-2">
         <button
@@ -193,6 +199,7 @@ function SearchFilter({
         <h3 className={searchFilterSectionTitleStyles()}>
           {title}
         </h3>
+        {customButton}
         {tooltip && (
           <div className="relative">
             <button
@@ -339,7 +346,21 @@ function SearchFilter({
       </div>
 
       <div className={searchFilterSectionStyles()}>
-        {renderSectionHeader('Localização', 'location')}
+        {renderSectionHeader(
+          'Localização', 
+          'location',
+          null,
+          onUseMyLocation && (
+            <button
+              onClick={onUseMyLocation}
+              className="p-1.5 rounded-md text-gray-400 hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors"
+              title="Filtrar pela minha localização"
+              aria-label="Filtrar pela minha localização"
+            >
+              <FaMapMarkerAlt className="w-3.5 h-3.5" />
+            </button>
+          )
+        )}
         {expandedSections.location && (
           <div className={searchFilterSectionContentStyles()}>
             <LocationFilter
@@ -431,6 +452,7 @@ SearchFilter.propTypes = {
   onStatesChange: PropTypes.func,
   onCitiesChange: PropTypes.func,
   onFetchCities: PropTypes.func,
+  onUseMyLocation: PropTypes.func,
   
   // Filtros dinâmicos - Categorias
   categories: PropTypes.arrayOf(PropTypes.shape({
