@@ -6,6 +6,7 @@ import { FaSearch, FaTh, FaList, FaInfoCircle } from 'react-icons/fa';
 import DonationPreview from '../DonationPreview/DonationPreview';
 import Button from '../Button/Button';
 import Skeleton from '../Skeleton/Skeleton';
+import Combobox from '../Combobox/Combobox';
 import {
     searchPreviewContainerStyles,
     searchPreviewHeaderStyles,
@@ -30,7 +31,10 @@ export default function SearchPreview({
     isWaiting = true,
     hasMoreItems = false,
     itemsPerPage = 6,
+    sortOptions = [],
+    selectedSort = null,
     onViewModeChange,
+    onSortChange,
     onDonationClick,
     onDonationActionClick,
     onLoadMore,
@@ -270,6 +274,40 @@ export default function SearchPreview({
 
                 {/* Controls */}
                 <div className={searchPreviewControlsStyles()}>
+                    {/* Sort Combobox */}
+                    {sortOptions.length > 0 && (
+                        <Combobox
+                            placeholder="Ordenar por"
+                            buttonText={selectedSort || 'Ordenar por'}
+                            disabled={false}
+                            showIcon={true}
+                            className="min-w-[180px]"
+                        >
+                            {({ onClose }) => (
+                                <div className="py-1">
+                                    {sortOptions.map((option, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => {
+                                                onSortChange?.(option);
+                                                onClose?.();
+                                            }}
+                                            className={clsx(
+                                                'w-full text-left px-4 py-2 text-sm transition-colors',
+                                                selectedSort === option
+                                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                                    : 'text-gray-700 hover:bg-gray-50'
+                                            )}
+                                        >
+                                            {option}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </Combobox>
+                    )}
+
+                    {/* View Mode Toggle */}
                     <div className={searchPreviewViewToggleStyles()}>
                         <button
                             onClick={() => handleViewModeToggle('grid')}
@@ -334,7 +372,10 @@ SearchPreview.propTypes = {
     isWaiting: PropTypes.bool,
     hasMoreItems: PropTypes.bool,
     itemsPerPage: PropTypes.number,
+    sortOptions: PropTypes.arrayOf(PropTypes.string),
+    selectedSort: PropTypes.string,
     onViewModeChange: PropTypes.func,
+    onSortChange: PropTypes.func,
     onDonationClick: PropTypes.func,
     onDonationActionClick: PropTypes.func,
     onLoadMore: PropTypes.func,

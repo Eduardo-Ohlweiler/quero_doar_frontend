@@ -51,7 +51,10 @@ describe('SearchPreview', () => {
         isWaiting: false,
         hasMoreItems: false,
         itemsPerPage: 6,
+        sortOptions: [],
+        selectedSort: null,
         onViewModeChange: vi.fn(),
+        onSortChange: vi.fn(),
         onDonationClick: vi.fn(),
         onDonationActionClick: vi.fn(),
         onLoadMore: vi.fn()
@@ -249,6 +252,89 @@ describe('SearchPreview', () => {
 
             await waitFor(() => {
                 expect(onDonationClick).toHaveBeenCalledWith(mockDonations[0]);
+            });
+        });
+    });
+
+    describe('Sort Functionality', () => {
+        const sortOptions = ['Mais recentes', 'Mais antigos', 'Distância (menor)', 'Distância (maior)'];
+
+        it('should not render sort combobox when sortOptions is empty', () => {
+            render(
+                <SearchPreview
+                    {...defaultProps}
+                    sortOptions={[]}
+                />
+            );
+
+            expect(screen.queryByText('Ordenar por')).not.toBeInTheDocument();
+        });
+
+        it('should render sort combobox when sortOptions are provided', () => {
+            render(
+                <SearchPreview
+                    {...defaultProps}
+                    sortOptions={sortOptions}
+                    selectedSort={null}
+                />
+            );
+
+            expect(screen.getByText('Ordenar por')).toBeInTheDocument();
+        });
+
+        it('should display selected sort option', () => {
+            render(
+                <SearchPreview
+                    {...defaultProps}
+                    sortOptions={sortOptions}
+                    selectedSort="Mais recentes"
+                />
+            );
+
+            expect(screen.getByText('Mais recentes')).toBeInTheDocument();
+        });
+
+        it('should call onSortChange when sort option is clicked', async () => {
+            const onSortChange = vi.fn();
+            render(
+                <SearchPreview
+                    {...defaultProps}
+                    sortOptions={sortOptions}
+                    selectedSort="Mais recentes"
+                    onSortChange={onSortChange}
+                />
+            );
+
+            // Click no combobox para abrir
+            const comboboxButton = screen.getByText('Mais recentes');
+            fireEvent.click(comboboxButton);
+
+            // Aguardar o dropdown abrir e clicar em uma opção
+            await waitFor(() => {
+                const option = screen.getByText('Distância (menor)');
+                fireEvent.click(option);
+            });
+
+            expect(onSortChange).toHaveBeenCalledWith('Distância (menor)');
+        });
+
+        it('should highlight selected sort option in dropdown', async () => {
+            render(
+                <SearchPreview
+                    {...defaultProps}
+                    sortOptions={sortOptions}
+                    selectedSort="Mais recentes"
+                />
+            );
+
+            // Click no combobox para abrir
+            const comboboxButton = screen.getByText('Mais recentes');
+            fireEvent.click(comboboxButton);
+
+            // Verificar se a opção selecionada tem a classe de highlight
+            await waitFor(() => {
+                const selectedOption = screen.getAllByText('Mais recentes')[1]; // O segundo é do dropdown
+                expect(selectedOption).toHaveClass('bg-blue-50', 'text-blue-700', 'font-medium');
             });
         });
     });

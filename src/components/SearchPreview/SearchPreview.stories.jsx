@@ -148,7 +148,16 @@ export default {
             control: { type: 'number', min: 1, max: 12 },
             description: 'Número de itens por página'
         },
+        sortOptions: {
+            control: { type: 'object' },
+            description: 'Opções de ordenação disponíveis'
+        },
+        selectedSort: {
+            control: { type: 'text' },
+            description: 'Opção de ordenação selecionada'
+        },
         onViewModeChange: { action: 'viewModeChanged' },
+        onSortChange: { action: 'sortChanged' },
         onDonationClick: { action: 'donationClicked' },
         onDonationActionClick: { action: 'donationActionClicked' },
         onLoadMore: { action: 'loadMore' }
@@ -193,7 +202,9 @@ export const WithResultsGrid = {
         isLoading: false,
         isWaiting: false,
         hasMoreItems: true,
-        itemsPerPage: 6
+        itemsPerPage: 6,
+        sortOptions: ['Mais recentes', 'Mais antigos', 'Distância (menor)', 'Distância (maior)'],
+        selectedSort: 'Mais recentes'
     }
 };
 
@@ -207,7 +218,9 @@ export const WithResultsList = {
         isLoading: false,
         isWaiting: false,
         hasMoreItems: true,
-        itemsPerPage: 6
+        itemsPerPage: 6,
+        sortOptions: ['Mais recentes', 'Mais antigos', 'Distância (menor)', 'Distância (maior)'],
+        selectedSort: 'Distância (menor)'
     }
 };
 
@@ -230,9 +243,15 @@ export const Interactive = {
     render: (args) => {
         const [viewMode, setViewMode] = useState('grid');
         const [currentPage, setCurrentPage] = useState(1);
+        const [selectedSort, setSelectedSort] = useState('Mais recentes');
         
         const handleViewModeChange = (newMode) => {
             setViewMode(newMode);
+        };
+        
+        const handleSortChange = (sortOption) => {
+            setSelectedSort(sortOption);
+            console.log('Sort changed to:', sortOption);
         };
         
         const handleLoadMore = (paginationInfo) => {
@@ -245,16 +264,18 @@ export const Interactive = {
                 <div className="bg-blue-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-blue-900 mb-2">Demonstração Interativa</h3>
                     <p className="text-sm text-blue-700 mb-2">
-                        Teste os diferentes modos de visualização e a funcionalidade de "carregar mais".
+                        Teste os diferentes modos de visualização, ordenação e a funcionalidade de "carregar mais".
                     </p>
                     <p className="text-xs text-blue-600">
-                        Página atual: {currentPage} | Modo de visualização: {viewMode}
+                        Página atual: {currentPage} | Modo de visualização: {viewMode} | Ordenação: {selectedSort}
                     </p>
                 </div>
                 <SearchPreview
                     {...args}
                     viewMode={viewMode}
+                    selectedSort={selectedSort}
                     onViewModeChange={handleViewModeChange}
+                    onSortChange={handleSortChange}
                     onLoadMore={handleLoadMore}
                     onDonationClick={(donation) => console.log('Clicked donation:', donation)}
                     onDonationActionClick={(donation, action) => console.log('Action clicked:', donation, action)}
@@ -269,12 +290,13 @@ export const Interactive = {
         isLoading: false,
         isWaiting: false,
         hasMoreItems: true,
-        itemsPerPage: 3
+        itemsPerPage: 3,
+        sortOptions: ['Mais recentes', 'Mais antigos', 'Distância (menor)', 'Distância (maior)']
     },
     parameters: {
         docs: {
             description: {
-                story: 'Versão interativa que permite testar mudanças de modo de visualização e paginação. Veja o console para logs das ações.'
+                story: 'Versão interativa que permite testar mudanças de modo de visualização, ordenação e paginação. Veja o console para logs das ações.'
             }
         }
     }
