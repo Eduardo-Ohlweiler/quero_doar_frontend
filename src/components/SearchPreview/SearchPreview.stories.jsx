@@ -239,50 +239,52 @@ export const NoResults = {
 };
 
 // Interactive - demonstração interativa com controle de estado
-export const Interactive = {
-    render: (args) => {
-        const [viewMode, setViewMode] = useState('grid');
-        const [currentPage, setCurrentPage] = useState(1);
-        const [selectedSort, setSelectedSort] = useState('Mais recentes');
-        
-        const handleViewModeChange = (newMode) => {
-            setViewMode(newMode);
-        };
-        
-        const handleSortChange = (sortOption) => {
-            setSelectedSort(sortOption);
-            console.log('Sort changed to:', sortOption);
-        };
-        
-        const handleLoadMore = (paginationInfo) => {
-            setCurrentPage(paginationInfo.page);
-            console.log('Load more:', paginationInfo);
-        };
-        
-        return (
-            <div className="max-w-6xl space-y-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-blue-900 mb-2">Demonstração Interativa</h3>
-                    <p className="text-sm text-blue-700 mb-2">
-                        Teste os diferentes modos de visualização, ordenação e a funcionalidade de "carregar mais".
-                    </p>
-                    <p className="text-xs text-blue-600">
-                        Página atual: {currentPage} | Modo de visualização: {viewMode} | Ordenação: {selectedSort}
-                    </p>
-                </div>
-                <SearchPreview
-                    {...args}
-                    viewMode={viewMode}
-                    selectedSort={selectedSort}
-                    onViewModeChange={handleViewModeChange}
-                    onSortChange={handleSortChange}
-                    onLoadMore={handleLoadMore}
-                    onDonationClick={(donation) => console.log('Clicked donation:', donation)}
-                    onDonationActionClick={(donation, action) => console.log('Action clicked:', donation, action)}
-                />
+const InteractiveStory = (args) => {
+    const [viewMode, setViewMode] = useState('grid');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedSort, setSelectedSort] = useState('Mais recentes');
+    
+    const handleViewModeChange = (newMode) => {
+        setViewMode(newMode);
+    };
+    
+    const handleSortChange = (sortOption) => {
+        setSelectedSort(sortOption);
+        console.log('Sort changed to:', sortOption);
+    };
+    
+    const handleLoadMore = (paginationInfo) => {
+        setCurrentPage(paginationInfo.page);
+        console.log('Load more:', paginationInfo);
+    };
+    
+    return (
+        <div className="max-w-6xl space-y-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-blue-900 mb-2">Demonstração Interativa</h3>
+                <p className="text-sm text-blue-700 mb-2">
+                    Teste os diferentes modos de visualização, ordenação e a funcionalidade de "carregar mais".
+                </p>
+                <p className="text-xs text-blue-600">
+                    Página atual: {currentPage} | Modo de visualização: {viewMode} | Ordenação: {selectedSort}
+                </p>
             </div>
-        );
-    },
+            <SearchPreview
+                {...args}
+                viewMode={viewMode}
+                selectedSort={selectedSort}
+                onViewModeChange={handleViewModeChange}
+                onSortChange={handleSortChange}
+                onLoadMore={handleLoadMore}
+                onDonationClick={(donation) => console.log('Clicked donation:', donation)}
+                onDonationActionClick={(donation, action) => console.log('Action clicked:', donation, action)}
+            />
+        </div>
+    );
+};
+
+export const Interactive = {
+    render: InteractiveStory,
     args: {
         searchTerm: 'Latas',
         totalResults: 25,

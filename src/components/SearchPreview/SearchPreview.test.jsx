@@ -64,8 +64,8 @@ describe('SearchPreview', () => {
         vi.clearAllMocks();
     });
 
-    describe('Waiting State', () => {
-        it('should render waiting state when isWaiting is true', () => {
+    describe('Estado de Espera', () => {
+        it('CT01 - Deve renderizar estado de espera quando isWaiting é true', () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -81,8 +81,8 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('Loading State', () => {
-        it('should render skeleton when isLoading is true', () => {
+    describe('Estado de Carregamento', () => {
+        it('CT02 - Deve renderizar skeleton quando isLoading é true', () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -97,29 +97,29 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('Results State', () => {
-        it('should render search results with correct term and count', () => {
+    describe('Estado com Resultados', () => {
+        it('CT03 - Deve renderizar resultados de pesquisa com termo e contagem corretos', () => {
             render(<SearchPreview {...defaultProps} />);
 
             expect(screen.getByText('Resultados para "Latas"')).toBeInTheDocument();
             expect(screen.getByText('2 resultados encontrados')).toBeInTheDocument();
         });
 
-        it('should render donations in grid mode', () => {
+        it('CT04 - Deve renderizar doações em modo grade', () => {
             render(<SearchPreview {...defaultProps} viewMode="grid" />);
 
             expect(screen.getByText('Latas de Alumínio')).toBeInTheDocument();
             expect(screen.getByText('Latas de Conserva')).toBeInTheDocument();
         });
 
-        it('should render donations in list mode', () => {
+        it('CT05 - Deve renderizar doações em modo lista', () => {
             render(<SearchPreview {...defaultProps} viewMode="list" />);
 
             expect(screen.getByText('Latas de Alumínio')).toBeInTheDocument();
             expect(screen.getByText('Latas de Conserva')).toBeInTheDocument();
         });
 
-        it('should show singular result count for one result', () => {
+        it('CT06 - Deve mostrar contagem singular para um resultado', () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -132,8 +132,8 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('View Mode Toggle', () => {
-        it('should render view mode toggle buttons', () => {
+    describe('Alternância de Modo de Visualização', () => {
+        it('CT07 - Deve renderizar botões de alternância de modo de visualização', () => {
             render(<SearchPreview {...defaultProps} />);
 
             const gridButton = screen.getByTitle('Visualização em grade');
@@ -143,7 +143,7 @@ describe('SearchPreview', () => {
             expect(listButton).toBeInTheDocument();
         });
 
-        it('should highlight active view mode', () => {
+        it('CT08 - Deve destacar o modo de visualização ativo', () => {
             render(<SearchPreview {...defaultProps} viewMode="grid" />);
 
             const gridButton = screen.getByTitle('Visualização em grade');
@@ -153,7 +153,7 @@ describe('SearchPreview', () => {
             expect(listButton).toHaveClass('bg-white');
         });
 
-        it('should call onViewModeChange when toggle button is clicked', () => {
+        it('CT09 - Deve chamar onViewModeChange quando botão de alternância é clicado', () => {
             const onViewModeChange = vi.fn();
             render(
                 <SearchPreview
@@ -169,7 +169,7 @@ describe('SearchPreview', () => {
             expect(onViewModeChange).toHaveBeenCalledWith('list');
         });
 
-        it('should not call onViewModeChange when same mode is clicked', () => {
+        it('CT10 - Não deve chamar onViewModeChange quando mesmo modo é clicado', () => {
             const onViewModeChange = vi.fn();
             render(
                 <SearchPreview
@@ -186,20 +186,20 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('Load More Functionality', () => {
-        it('should render load more button when hasMoreItems is true', () => {
+    describe('Funcionalidade Carregar Mais', () => {
+        it('CT11 - Deve renderizar botão carregar mais quando hasMoreItems é true', () => {
             render(<SearchPreview {...defaultProps} hasMoreItems={true} />);
 
             expect(screen.getByText('+ Carregar mais resultados')).toBeInTheDocument();
         });
 
-        it('should not render load more button when hasMoreItems is false', () => {
+        it('CT12 - Não deve renderizar botão carregar mais quando hasMoreItems é false', () => {
             render(<SearchPreview {...defaultProps} hasMoreItems={false} />);
 
             expect(screen.queryByText('+ Carregar mais resultados')).not.toBeInTheDocument();
         });
 
-        it('should call onLoadMore when load more button is clicked', () => {
+        it('CT13 - Deve chamar onLoadMore quando botão carregar mais é clicado', () => {
             const onLoadMore = vi.fn();
             render(
                 <SearchPreview
@@ -221,8 +221,8 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('No Results State', () => {
-        it('should render no results message when no donations found', () => {
+    describe('Estado Sem Resultados', () => {
+        it('CT14 - Deve renderizar mensagem de sem resultados quando nenhuma doação é encontrada', () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -237,8 +237,8 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('Donation Interactions', () => {
-        it('should call onDonationClick when donation is clicked', async () => {
+    describe('Interações com Doações', () => {
+        it('CT15 - Deve chamar onDonationClick quando doação é clicada', async () => {
             const onDonationClick = vi.fn();
             render(
                 <SearchPreview
@@ -256,10 +256,10 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('Sort Functionality', () => {
+    describe('Funcionalidade de Ordenação', () => {
         const sortOptions = ['Mais recentes', 'Mais antigos', 'Distância (menor)', 'Distância (maior)'];
 
-        it('should not render sort combobox when sortOptions is empty', () => {
+        it('CT16 - Não deve renderizar combobox de ordenação quando sortOptions está vazio', () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -270,7 +270,7 @@ describe('SearchPreview', () => {
             expect(screen.queryByText('Ordenar por')).not.toBeInTheDocument();
         });
 
-        it('should render sort combobox when sortOptions are provided', () => {
+        it('CT17 - Deve renderizar combobox de ordenação quando sortOptions são fornecidas', () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -282,7 +282,7 @@ describe('SearchPreview', () => {
             expect(screen.getByText('Ordenar por')).toBeInTheDocument();
         });
 
-        it('should display selected sort option', () => {
+        it('CT18 - Deve exibir opção de ordenação selecionada', () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -294,7 +294,7 @@ describe('SearchPreview', () => {
             expect(screen.getByText('Mais recentes')).toBeInTheDocument();
         });
 
-        it('should call onSortChange when sort option is clicked', async () => {
+        it('CT19 - Deve chamar onSortChange quando opção de ordenação é clicada', async () => {
             const onSortChange = vi.fn();
             render(
                 <SearchPreview
@@ -318,7 +318,7 @@ describe('SearchPreview', () => {
             expect(onSortChange).toHaveBeenCalledWith('Distância (menor)');
         });
 
-        it('should highlight selected sort option in dropdown', async () => {
+        it('CT20 - Deve destacar opção de ordenação selecionada no dropdown', async () => {
             render(
                 <SearchPreview
                     {...defaultProps}
@@ -339,15 +339,15 @@ describe('SearchPreview', () => {
         });
     });
 
-    describe('Accessibility', () => {
-        it('should have proper section structure', () => {
+    describe('Acessibilidade', () => {
+        it('CT21 - Deve ter estrutura de seção adequada', () => {
             render(<SearchPreview {...defaultProps} />);
 
             const section = document.querySelector('section');
             expect(section).toBeInTheDocument();
         });
 
-        it('should have proper button titles for view mode toggles', () => {
+        it('CT22 - Deve ter títulos adequados nos botões de alternância de modo de visualização', () => {
             render(<SearchPreview {...defaultProps} />);
 
             expect(screen.getByTitle('Visualização em grade')).toBeInTheDocument();

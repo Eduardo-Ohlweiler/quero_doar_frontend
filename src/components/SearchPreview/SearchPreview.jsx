@@ -22,11 +22,34 @@ import {
     searchPreviewSkeletonStyles
 } from './SearchPreview.styles';
 
+/**
+ * Componente de visualização de resultados de pesquisa de doações.
+ * Suporta diferentes modos de visualização (grid/list), paginação, ordenação e estados de carregamento.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {string} props.searchTerm - Termo de busca utilizado
+ * @param {number} props.totalResults - Total de resultados encontrados
+ * @param {Array} props.donations - Array de doações a serem exibidas
+ * @param {'grid'|'list'} props.viewMode - Modo de visualização dos resultados
+ * @param {boolean} props.isLoading - Estado de carregamento
+ * @param {boolean} props.isWaiting - Estado aguardando pesquisa
+ * @param {boolean} props.hasMoreItems - Indica se há mais itens para carregar
+ * @param {number} props.itemsPerPage - Quantidade de itens por página
+ * @param {Array<string>} props.sortOptions - Opções de ordenação disponíveis
+ * @param {string|null} props.selectedSort - Opção de ordenação selecionada
+ * @param {Function} props.onViewModeChange - Callback para mudança de modo de visualização
+ * @param {Function} props.onSortChange - Callback para mudança de ordenação
+ * @param {Function} props.onDonationClick - Callback para clique em doação
+ * @param {Function} props.onDonationActionClick - Callback para ação em doação
+ * @param {Function} props.onLoadMore - Callback para carregar mais resultados
+ * @param {string} props.className - Classes CSS adicionais
+ * @returns {JSX.Element} Componente de visualização de resultados
+ */
 export default function SearchPreview({
     searchTerm = '',
     totalResults = 0,
     donations = [],
-    viewMode = 'grid', // 'grid' | 'list'
+    viewMode = 'grid',
     isLoading = false,
     isWaiting = true,
     hasMoreItems = false,
