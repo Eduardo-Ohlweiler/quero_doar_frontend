@@ -12,8 +12,8 @@ export const DONATION_TYPE_OPTIONS = [
  * Value representa o campo donation.is_public
  */
 export  const ACCESS_TYPE_OPTIONS = [
-    { id: 1, value: true, name: 'Públicas' },
-    { id: 2, value: false, name: 'Privadas' }
+    { id: 1, value: 'public', name: 'Públicas' },
+    { id: 2, value: 'private', name: 'Privadas' }
   ];
 
   /**
