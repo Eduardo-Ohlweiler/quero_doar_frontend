@@ -325,6 +325,46 @@ describe('Combobox', () => {
       // DropdownList deve renderizar com seu cabeçalho
       expect(screen.getByText(/Test List/)).toBeInTheDocument();
     });
+
+    it('CTx04.05 - Deve chamar children como função e passar onClose', () => {
+      render(
+        <Combobox selectedIds={[]}>
+          {({ onClose }) => (
+            <div>
+              <button data-testid="close-btn" onClick={onClose}>
+                Fechar
+              </button>
+            </div>
+          )}
+        </Combobox>
+      );
+
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+
+      // Verifica que o dropdown está aberto
+      expect(screen.getByTestId('close-btn')).toBeInTheDocument();
+
+      // Clica no botão de fechar
+      const closeBtn = screen.getByTestId('close-btn');
+      fireEvent.click(closeBtn);
+
+      // Verifica que o dropdown foi fechado
+      expect(screen.queryByTestId('close-btn')).not.toBeInTheDocument();
+    });
+
+    it('CTx04.06 - Deve funcionar com children não-função (elemento estático)', () => {
+      render(
+        <Combobox selectedIds={[]}>
+          <div data-testid="static-content">Conteúdo Estático</div>
+        </Combobox>
+      );
+
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+
+      expect(screen.getByTestId('static-content')).toBeInTheDocument();
+    });
   });
 
   describe('CTx05 - Fechar ao Clicar Fora', () => {

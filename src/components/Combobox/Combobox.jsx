@@ -17,15 +17,27 @@
  * />
  * 
  * @example
- * // Dropdown customizado
+ * // Dropdown customizado com renderDropdown
  * <Combobox
  *   label="Selecionar"
  *   placeholder="Escolha uma opção"
  *   renderDropdown={(props) => <DropdownList {...props} />}
  * />
+ * 
+ * @example
+ * // Dropdown customizado com children como função (com onClose)
+ * <Combobox placeholder="Selecionar">
+ *   {({ onClose }) => (
+ *     <div>
+ *       <button onClick={() => { doSomething(); onClose(); }}>
+ *         Opção 1
+ *       </button>
+ *     </div>
+ *   )}
+ * </Combobox>
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { FaChevronDown } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
@@ -146,8 +158,23 @@ export default function Combobox({
       });
     }
 
-    // Se há children, renderiza eles
+    // Se há children, renderiza eles passando onClose
     if (children) {
+      // Se children é uma função, chama ela com onClose
+      if (typeof children === 'function') {
+        return children({ onClose: handleClose });
+      }
+      
+      // Se children é um elemento React, tenta clonar com onClose
+      if (typeof children === 'object' && children !== null) {
+        try {
+          return cloneElement(children, { onClose: handleClose });
+        } catch {
+          // Se falhar ao clonar (ex: children tem múltiplos elementos), retorna como está
+          return children;
+        }
+      }
+      
       return children;
     }
 
@@ -256,5 +283,8 @@ Combobox.propTypes = {
   className: PropTypes.string,
   buttonClassName: PropTypes.string,
   dropdownClassName: PropTypes.string,
-  children: PropTypes.node
+  children: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.func // ({ onClose }) => ReactNode
+  ])
 };

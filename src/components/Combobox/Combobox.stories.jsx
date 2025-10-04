@@ -196,3 +196,36 @@ export const WithCustomChildren = {
     )
   }
 };
+
+/**
+ * Combobox com children como função (com onClose)
+ */
+export const WithFunctionChildren = {
+  args: {
+    label: 'Dropdown com auto-close',
+    placeholder: 'Selecione uma opção',
+    children: ({ onClose }) => (
+      <div className="py-1">
+        {['Opção 1', 'Opção 2', 'Opção 3'].map((option, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              console.log('Selecionou:', option);
+              onClose?.();
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstra o uso de children como função para ter acesso ao onClose e fechar o dropdown após seleção.'
+      }
+    }
+  }
+};
