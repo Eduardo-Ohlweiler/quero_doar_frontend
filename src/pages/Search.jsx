@@ -14,6 +14,7 @@ export default function Search() {
     const [tags, setTags] = useState([]);
     const [loading, setLoading] = useState(true);
     const [donations, setDonations] = useState([]);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid' ou 'list'
     const [donationFilter, setDonationFilter] = useState({
         donationTypes: [],          // Lista de IDs (números)
         accessTypes: [],            // Lista de IDs (números)
@@ -191,6 +192,11 @@ export default function Search() {
                 hasMoreItems={true}
                 isWaiting={false}
 
+                viewMode={viewMode}
+                onViewModeChange={(mode) => {
+                    setViewMode(mode);
+                }}
+
                 sortOptions={['Mais recentes', 'Mais perto']}
                 selectedSort={'Mais recentes'}
                 onSortChange={(option) => {
@@ -200,6 +206,8 @@ export default function Search() {
                         setDonationFilter(prev => ({...prev, orderByDistance: false}));
                     }
                 }}
+
+                
 
             
             />
