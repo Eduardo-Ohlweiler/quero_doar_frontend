@@ -1,6 +1,8 @@
+// TODO: Corrigir comportamento de "piscada" ao carregar mais itens (causado ao redefinir a lista de doações)
+
 import SearchFilter from "../components/SearchFilter/SearchFilter";
 import SearchPreview from "../components/SearchPreview/SearchPreview";
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearch } from "../context/SearchContext";
 
 import locationService from "../services/location/locationService";
@@ -120,7 +122,8 @@ export default function Search() {
                 states
             );
 
-            setDonations(data.elements);
+            setDonations(prev => ([...prev, ...data.elements]));            
+
             setPagination(prev => ({
                 ...prev,
                 totalElements: data.totalElements,
@@ -207,9 +210,13 @@ export default function Search() {
                     }
                 }}
 
-                
-
-            
+                onLoadMore={() => {
+                    setPagination(prev => ({
+                        ...prev,
+                        currentPage: prev.currentPage + 1
+                    }));
+                    handleSearch();
+                }}
             />
         </section>
     )
