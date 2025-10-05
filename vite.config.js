@@ -13,6 +13,7 @@ const dirname = typeof __dirname !== 'undefined'
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), svgr()],
+  base: './',
   test: {
     projects: [
       // Projeto 1: Storybook
