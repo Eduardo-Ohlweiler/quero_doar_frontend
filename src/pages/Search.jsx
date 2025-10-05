@@ -1,5 +1,7 @@
 // TODO: Corrigir comportamento de "piscada" ao carregar mais itens (causado ao redefinir a lista de doações)
 
+// TODO: Carregamento de filtro deve ser destinto do carregamento de "+ carregar mais", também deve redefinir a paginação e a lista de doações
+
 import SearchFilter from "../components/SearchFilter/SearchFilter";
 import SearchPreview from "../components/SearchPreview/SearchPreview";
 import { useState, useEffect, useRef } from "react";
