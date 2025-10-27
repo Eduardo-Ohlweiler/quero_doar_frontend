@@ -18,7 +18,7 @@ const Footer = ({
     };
 
     const institutionalLinks = [
-        { name: 'Quem Somos', path: '/sobre' },
+        { name: 'Quem Somos', path: '/about-us' },
         { name: 'Termos de Uso', path: '/termos' },
         { name: 'Política de Privacidade', path: '/privacidade' },
         { name: 'Contato', path: '/contato' },
