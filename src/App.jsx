@@ -16,7 +16,7 @@ import LevelUpOverlayTest from "./pages/test/LevelUpOverlayTest";
 import Profile from "./pages/Profile";
 import Verify from "./pages/Verify";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
-
+import AboutUs from "./pages/AboutUs";
 
 function App() {
 
@@ -37,18 +37,22 @@ function App() {
           </Route>
 
 
-
+          
 
           {/* Layout completo do header e do footer */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />    
 
+          <Route path="/about-us" element={<AboutUs />} />
+          
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />
             </Route>
 
           </Route>
 
+        
+ 
           {/* <Route path="/createuser" element={<CreateUser />} /> */}
           <Route path="/createdonation" element={
             <ProtectedRoute>
