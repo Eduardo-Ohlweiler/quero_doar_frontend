@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import Verify from "./pages/Verify";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
 import AboutUs from "./pages/AboutUs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
 
@@ -45,6 +46,8 @@ function App() {
 
           <Route path="/about-us" element={<AboutUs />} />
           
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />
             </Route>
