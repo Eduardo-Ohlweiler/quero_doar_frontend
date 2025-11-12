@@ -20,13 +20,13 @@ const Footer = ({
     const institutionalLinks = [
         { name: 'Quem Somos', path: '/about-us' },
         { name: 'Termos de Uso', path: '/termos' },
+        { name: 'Política de Privacidade', path: '/PrivacyPolicy' },
         { name: 'Contato', path: '/contato' },
-        { name: 'Política de Privacidade', path: '/privacy-policy' },
     ];
 
     const donorLinks = [
         { name: 'Como Doar', path: '/como-doar' },
-        { name: 'Dicas de Doação', path: '/dicas' },
+        { name: 'Dicas de Doação', path: '/donation-tips' },
         { name: 'Sistema de Pontos', path: '/pontos' },
         { name: 'Hall da Fama', path: '/hall-da-fama' },
     ];
