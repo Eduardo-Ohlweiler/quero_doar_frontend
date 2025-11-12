@@ -18,6 +18,7 @@ import Verify from "./pages/Verify";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
 import AboutUs from "./pages/AboutUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import DonationTips from "./pages/DonationTips";
 
 function App() {
 
@@ -46,7 +47,9 @@ function App() {
 
           <Route path="/about-us" element={<AboutUs />} />
           
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />  
+
+          <Route path="/donation-tips" element={<DonationTips />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />
