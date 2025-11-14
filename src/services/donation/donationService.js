@@ -62,8 +62,8 @@ class DonationService {
                 size
             });
             const url = `${GET_DONATION_PUBLIC_SEARCH_ROUTE}?${searchDonationParams.toString()}`;
+            console.log(url);
             let data = await apiService.get(url);
-            console.log(data);
             return PagedResult.fromJson(data);
         } catch (error) {
             console.error(error);
@@ -218,8 +218,6 @@ class DonationService {
 
         return params;
     }
-
-
 }
 
 const donationService = new DonationService();

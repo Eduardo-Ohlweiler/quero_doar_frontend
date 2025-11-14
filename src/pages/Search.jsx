@@ -1,5 +1,4 @@
 // TODO: Corrigir comportamento de "piscada" ao carregar mais itens (causado ao redefinir a lista de doações)
-
 // TODO: Carregamento de filtro deve ser destinto do carregamento de "+ carregar mais", também deve redefinir a paginação e a lista de doações
 
 import SearchFilter from "../components/SearchFilter/SearchFilter";
@@ -36,6 +35,7 @@ export default function Search() {
         hasMoreItems: true
     });
     const handleSearchRef = useRef();
+    const [fisrtLoad, setFirstLoad] = useState(true);
 
 
     const fetchStates = async () => {
@@ -75,6 +75,7 @@ export default function Search() {
                 fetchTags()
             ]);
             setLoading(false);
+            await handleSearch();
         })();
 
         // Inscreve no onSearch para reagir a buscas
@@ -82,9 +83,9 @@ export default function Search() {
             handleSearchRef.current?.(term);
         }); 
 
-        if(searchTerm) {
-            handleSearch(searchTerm);
-        }
+        // if(searchTerm) {
+        //     handleSearch(searchTerm);
+        // }
 
         return () => {
             unsubscribe();
@@ -107,7 +108,9 @@ export default function Search() {
     };
 
     const handleSearch = async (term) => {
-        if(loading) {
+        if(fisrtLoad) {
+            setFirstLoad(false);
+        } else if(loading) {
             return;
         }
 
@@ -124,7 +127,9 @@ export default function Search() {
                 states
             );
 
-            setDonations(prev => ([...prev, ...data.elements]));            
+            // setDonations(prev => ([...prev, ...data.elements]));
+            // Redefinir a lista de doações
+            setDonations(data.elements);            
 
             setPagination(prev => ({
                 ...prev,
