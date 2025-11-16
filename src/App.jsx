@@ -19,6 +19,7 @@ import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
 import AboutUs from "./pages/AboutUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import DonationTips from "./pages/DonationTips";
+import TermsOfUse from "./pages/TermsOfUse";
 
 function App() {
 
@@ -50,6 +51,8 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />  
 
           <Route path="/donation-tips" element={<DonationTips />} />
+
+          <Route path="/terms-of-use" element={<TermsOfUse />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />
