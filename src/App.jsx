@@ -20,6 +20,7 @@ import AboutUs from "./pages/AboutUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import DonationTips from "./pages/DonationTips";
 import TermsOfUse from "./pages/TermsOfUse";
+import Contact from "./pages/Contact";
 
 function App() {
 
@@ -52,7 +53,9 @@ function App() {
 
           <Route path="/donation-tips" element={<DonationTips />} />
 
-          <Route path="/terms-of-use" element={<TermsOfUse />} />
+          <Route path="/terms-of-use" element={<TermsOfUse />} /> 
+          
+          <Route path="/contact" element={<Contact />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />

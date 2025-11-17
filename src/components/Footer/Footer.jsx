@@ -21,7 +21,7 @@ const Footer = ({
         { name: 'Quem Somos', path: '/about-us' },
         { name: 'Termos de Uso', path: '/terms-of-use' },
         { name: 'Política de Privacidade', path: '/privacy-policy' },
-        { name: 'Contato', path: '/contato' },
+        { name: 'Contato', path: '/contact' },
     ];
 
     const donorLinks = [
