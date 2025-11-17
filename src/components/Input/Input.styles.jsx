@@ -5,7 +5,7 @@ export const inputContainerStyles = cva(
     {
         variants: {
             appearance: {
-                default: 'bg-white/80 border-white/40',
+                default: 'bg-white/80 border-white/400',
                 minimal: 'bg-transparent border-white/20',
                 outlined: 'bg-white/10 border-white/60',
                 'outlined-white': 'bg-white/10 border-white/60',
